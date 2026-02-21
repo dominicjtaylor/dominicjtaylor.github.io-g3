@@ -32,7 +32,7 @@ export function Hero() {
     >
       {/* Gradient overlays for text readability */}
       <div className="absolute inset-0 bg-background/60" />
-      <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/30 to-background/80" />
+      <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/30 to-background/80" />
 
       {/* Content */}
       <div className="relative z-10 mx-auto max-w-5xl px-6 text-center">
@@ -58,7 +58,7 @@ export function Hero() {
           </a>
           <a
             href="#contact"
-            className="inline-flex h-12 min-w-[180px] items-center justify-center rounded-full border border-border bg-background/30 px-8 text-sm font-medium text-foreground backdrop-blur-sm transition-all duration-300 hover:bg-secondary"
+            className="inline-flex h-12 min-w-[180px] items-center justify-center rounded-full border border-border bg-background/50 px-8 text-sm font-medium text-foreground backdrop-blur-sm transition-all duration-300 hover:bg-secondary"
           >
             Get in Touch
           </a>
