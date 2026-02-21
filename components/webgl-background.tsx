@@ -31,7 +31,7 @@ export function WebGLBackground() {
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true })
     renderer.setSize(window.innerWidth, window.innerHeight)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-    renderer.setClearColor(0x0d1117, 0.3)
+    renderer.setClearColor(0x0d1117, 0.5)
 
     containerRef.current.innerHTML = ""
     containerRef.current.appendChild(renderer.domElement)
@@ -41,9 +41,9 @@ export function WebGLBackground() {
     composer.addPass(new RenderPass(scene, camera))
     const bloomPass = new UnrealBloomPass(
       new THREE.Vector2(window.innerWidth, window.innerHeight),
-      0.5,
+      0.7,
       0.3,
-      0.75
+      0.7
     )
     composer.addPass(bloomPass)
 
@@ -77,7 +77,7 @@ export function WebGLBackground() {
       color: 0xffffff,
       side: THREE.DoubleSide,
       transparent: true,
-      opacity: 0.4,
+      opacity: 0.6,
     })
     const orbitalArc = new THREE.Mesh(ringGeo, ringMat)
     orbitalArc.rotation.x = Math.PI / 4
@@ -87,7 +87,7 @@ export function WebGLBackground() {
     const nodeMaterial = new THREE.MeshStandardMaterial({
       color: 0xcfe6fa,
       emissive: 0xcfe6fa,
-      emissiveIntensity: 0.4,
+      emissiveIntensity: 0.7,
     })
     const nodeGeometry = new THREE.SphereGeometry(0.15, 6, 6)
 
