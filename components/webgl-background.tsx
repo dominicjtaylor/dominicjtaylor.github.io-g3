@@ -77,7 +77,7 @@ export function WebGLBackground() {
       color: 0xffffff,
       side: THREE.DoubleSide,
       transparent: true,
-      opacity: 0.6,
+      opacity: 0.9,
     })
     const orbitalArc = new THREE.Mesh(ringGeo, ringMat)
     orbitalArc.rotation.x = Math.PI / 4
@@ -270,8 +270,8 @@ export function WebGLBackground() {
       edgeDataList.forEach((data) => {
         data.progress = (data.progress + delta * particleSpeed) % 1
         data.particle.position.lerpVectors(data.a, data.b, data.progress)
-        ;(data.particle.material as THREE.MeshBasicMaterial).opacity =
-          particleOpacity
+          ; (data.particle.material as THREE.MeshBasicMaterial).opacity =
+            particleOpacity
       })
 
       // Smooth opacity transition
