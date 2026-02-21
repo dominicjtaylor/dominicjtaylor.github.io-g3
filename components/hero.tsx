@@ -45,9 +45,8 @@ export function Hero() {
           <span className="text-primary brightness-125">from the noise.</span>
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg font-medium leading-relaxed text-foreground/90 drop-shadow-md md:text-xl">
-          Dominic Taylor. Researcher bridging astrophysics, quantitative
-          modelling, and data science to uncover structure in noisy,
-          high-dimensional systems.
+          Researcher bridging astrophysics, quantitative modelling, and data
+          science to uncover structure in noisy, high-dimensional systems.
         </p>
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <a

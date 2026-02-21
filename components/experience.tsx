@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { Briefcase, FlaskConical, Code, Globe } from "lucide-react"
+import { FlaskConical, Globe } from "lucide-react"
 
 const experiences = [
   {
@@ -15,6 +15,16 @@ const experiences = [
       "Trained and applied a machine learning autoencoder to identify signal in noisy data, increasing identification by ~20%.",
       "Applied SQL/ADQL queries within automated Python workflows to extract and integrate multi-terabyte astronomical archive datasets, reducing data access time by ~95%.",
       "Tutorial Demonstrator in undergraduate computational workshops, delivering hands-on guidance in Python programming and data analysis.",
+    ],
+  },
+  {
+    icon: Globe,
+    role: "Startup Web Developer",
+    org: "TutorMia",
+    period: "2024",
+    highlights: [
+      "Designed and launched a responsive website contributing to a 200% increase in client acquisition.",
+      "Maintained and iteratively improved with modern web development practices and Git-based workflows.",
     ],
   },
   {
@@ -46,32 +56,9 @@ const experiences = [
       "Designed and implemented an interactive educational webpage using Streamlit to translate complex physics results into clear, user-friendly formats.",
     ],
   },
-  {
-    icon: Globe,
-    role: "Startup Web Developer",
-    org: "TutorMia",
-    period: "2021",
-    highlights: [
-      "Designed and launched a responsive website contributing to a 200% increase in client acquisition.",
-      "Maintained and iteratively improved with modern web development practices and Git-based workflows.",
-    ],
-  },
 ]
 
-const skills = [
-  { label: "Python", category: "core" },
-  { label: "Pandas", category: "core" },
-  { label: "NumPy", category: "core" },
-  { label: "SciPy", category: "core" },
-  { label: "TensorFlow / Keras", category: "core" },
-  { label: "SQL / ADQL", category: "core" },
-  { label: "Git", category: "core" },
-  { label: "Bash / Linux", category: "core" },
-  { label: "JavaScript / HTML / CSS", category: "secondary" },
-  { label: "Streamlit", category: "secondary" },
-  { label: "Matplotlib", category: "secondary" },
-  { label: "C", category: "secondary" },
-]
+
 
 export function Experience() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -155,31 +142,7 @@ export function Experience() {
           ))}
         </div>
 
-        {/* Skills grid */}
-        <div
-          className={`mt-16 transition-all duration-1000 ${
-            visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
-          }`}
-          style={{ transitionDelay: "800ms" }}
-        >
-          <h3 className="text-lg font-semibold tracking-tight text-white">
-            Technical skills
-          </h3>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {skills.map((skill) => (
-              <span
-                key={skill.label}
-                className={`rounded-full px-4 py-1.5 text-xs font-medium ${
-                  skill.category === "core"
-                    ? "bg-primary/15 text-primary"
-                    : "bg-secondary text-foreground/70"
-                }`}
-              >
-                {skill.label}
-              </span>
-            ))}
-          </div>
-        </div>
+
       </div>
     </section>
   )

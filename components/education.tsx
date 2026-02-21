@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { GraduationCap, BookOpen } from "lucide-react"
+import { GraduationCap } from "lucide-react"
 
 const education = [
   {
@@ -11,7 +11,7 @@ const education = [
     location: "Durham, UK",
     period: "Oct 2022 -- Mar 2026",
     detail:
-      "Thesis: Galaxy evolution through gas kinematics of submillimetre galaxies and changing-look AGN.",
+      "Thesis: Physical Properties of Submillimetre Galaxies from Integrated Gas Kinematics.",
   },
   {
     icon: GraduationCap,
@@ -20,17 +20,11 @@ const education = [
     location: "Liverpool, UK",
     period: "Oct 2017 -- Jun 2021",
     detail:
-      "First Class Honours. Thesis: What influences the efficiency of galaxy formation? Notable marks: Mathematics I (96%), Advanced Particle Physics (81%), Computational Astrophysics (80%).",
+      "First Class Honours. Thesis: What influences the efficiency of galaxy formation?",
   },
 ]
 
-const training = [
-  "Machine Learning (Google, Kaggle, MIT, Coursera)",
-  "SQL and cloud computing (AWS)",
-  "TensorFlow, PyTorch, and transformer models",
-  "Bayesian inference and advanced statistics",
-  "C programming foundations",
-]
+
 
 export function Education() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -99,34 +93,7 @@ export function Education() {
           ))}
         </div>
 
-        {/* Additional training */}
-        <div
-          className={`mt-12 rounded-2xl border border-border bg-card p-8 transition-all duration-700 ${
-            visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
-          }`}
-          style={{ transitionDelay: "500ms" }}
-        >
-          <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10">
-            <BookOpen className="h-5 w-5 text-primary" />
-          </div>
-          <h3 className="text-lg font-semibold tracking-tight text-white">
-            Additional Training
-          </h3>
-          <p className="mt-1 text-sm text-foreground/50">
-            5+ advanced courses and workshops
-          </p>
-          <ul className="mt-4 flex flex-col gap-2">
-            {training.map((item, i) => (
-              <li
-                key={i}
-                className="flex items-start gap-2 text-sm leading-relaxed text-foreground/70"
-              >
-                <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-primary/60" />
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
+
       </div>
     </section>
   )

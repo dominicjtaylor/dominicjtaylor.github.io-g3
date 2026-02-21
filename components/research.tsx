@@ -5,6 +5,16 @@ import { ArrowUpRight } from "lucide-react"
 
 const projects = [
   {
+    category: "Quantitative Finance",
+    title: "FX Machine Learning Volatility Forecasting",
+    description:
+      "Designed and evaluated ML models for forecasting FX volatility within a disciplined research pipeline. Built modular architecture for feature engineering, enforced strict in-sample/out-of-sample separation, and evaluated regime sensitivity with risk-adjusted metrics.",
+    tags: ["Time-series ML", "Backtesting", "Risk Evaluation", "Python"],
+    year: "2026",
+    journal: null,
+    link: "https://github.com/dominicjtaylor/fx-volatility-forecasting",
+  },
+  {
     category: "Astrophysics + ML",
     title: "KAOSS: Gas, Metals, Dust \u2014 and ML Signal Extraction",
     description:
@@ -26,21 +36,11 @@ const projects = [
   },
   {
     category: "Quantitative Finance",
-    title: "FX Machine Learning Volatility Forecasting",
-    description:
-      "Designed and evaluated ML models for forecasting FX volatility within a disciplined research pipeline. Built modular architecture for feature engineering, enforced strict in-sample/out-of-sample separation, and evaluated regime sensitivity with risk-adjusted metrics.",
-    tags: ["Time-series ML", "Backtesting", "Risk Evaluation", "Python"],
-    year: "2024",
-    journal: null,
-    link: "https://github.com/dominicjtaylor/fx-volatility-forecasting",
-  },
-  {
-    category: "Quantitative Finance",
     title: "Financial Backtesting Framework",
     description:
       "Developed a Python-based financial backtesting framework supporting modular trading strategies, moving average signals, and performance visualisation for systematic strategy evaluation.",
     tags: ["Backtesting", "Systematic Trading", "Python", "Modular Design"],
-    year: "2024",
+    year: "2025",
     journal: null,
     link: "https://github.com/dominicjtaylor/quantlab",
   },

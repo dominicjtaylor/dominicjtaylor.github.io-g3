@@ -31,7 +31,7 @@ export function WebGLBackground() {
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true })
     renderer.setSize(window.innerWidth, window.innerHeight)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-    renderer.setClearColor(0x0a0e18, 0.6)
+    renderer.setClearColor(0x090b10, 0.6)
 
     containerRef.current.innerHTML = ""
     containerRef.current.appendChild(renderer.domElement)
@@ -213,20 +213,8 @@ export function WebGLBackground() {
       },
       {
         pivot: new THREE.Vector3(0, 0, 0),
-        offset: new THREE.Vector3(0, 20, 40),
-      },
-      {
-        pivot: new THREE.Vector3(0, 0, 0),
         offset: new THREE.Vector3(5, 15, 10),
         subdued: true,
-      },
-      {
-        pivot: new THREE.Vector3(0, 0, 0),
-        offset: new THREE.Vector3(20, 10, -40),
-      },
-      {
-        pivot: new THREE.Vector3(-39, 0, -10),
-        offset: new THREE.Vector3(45, 10, -65),
       },
     ]
 

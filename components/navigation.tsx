@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { Github } from "lucide-react"
 
 const navLinks = [
   { label: "About", href: "#about" },
@@ -47,6 +48,15 @@ export function Navigation() {
               {link.label}
             </a>
           ))}
+          <a
+            href="https://github.com/dominicjtaylor"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-foreground/70 transition-colors duration-300 hover:text-white"
+            aria-label="GitHub"
+          >
+            <Github className="h-5 w-5" />
+          </a>
         </div>
 
         {/* Mobile hamburger */}
@@ -84,6 +94,16 @@ export function Navigation() {
               {link.label}
             </a>
           ))}
+          <a
+            href="https://github.com/dominicjtaylor"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setMobileOpen(false)}
+            className="flex items-center gap-2 rounded-lg py-3 text-base text-foreground/70 transition-colors hover:text-white"
+          >
+            <Github className="h-5 w-5" />
+            GitHub
+          </a>
         </div>
       </div>
     </nav>
