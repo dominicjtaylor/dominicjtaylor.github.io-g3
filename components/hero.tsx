@@ -24,25 +24,15 @@ export function Hero() {
   return (
     <section
       ref={containerRef}
-      className="relative flex min-h-svh items-center justify-center overflow-hidden"
+      className="relative z-10 flex min-h-svh items-center justify-center overflow-hidden"
       style={{
         ["--mouse-x" as string]: "0px",
         ["--mouse-y" as string]: "0px",
       }}
     >
-      {/* Background image with parallax */}
-      <div
-        className="absolute inset-[-20px] bg-cover bg-center transition-transform duration-700 ease-out"
-        style={{
-          backgroundImage: "url(/images/hero-space.jpg)",
-          transform:
-            "translate(var(--mouse-x), var(--mouse-y)) scale(1.05)",
-        }}
-      />
-
-      {/* Gradient overlays */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/30 to-background" />
-      <div className="absolute inset-0 bg-gradient-to-r from-background/40 via-transparent to-background/40" />
+      {/* Gradient overlays to blend content over WebGL */}
+      <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background" />
+      <div className="absolute inset-0 bg-gradient-to-r from-background/30 via-transparent to-background/30" />
 
       {/* Content */}
       <div className="relative z-10 mx-auto max-w-5xl px-6 text-center">
@@ -68,7 +58,7 @@ export function Hero() {
           </a>
           <a
             href="#contact"
-            className="inline-flex h-12 min-w-[180px] items-center justify-center rounded-full border border-border px-8 text-sm font-medium text-foreground transition-all duration-300 hover:bg-secondary"
+            className="inline-flex h-12 min-w-[180px] items-center justify-center rounded-full border border-border bg-background/50 px-8 text-sm font-medium text-foreground backdrop-blur-sm transition-all duration-300 hover:bg-secondary"
           >
             Get in Touch
           </a>
