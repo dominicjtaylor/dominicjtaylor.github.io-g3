@@ -17,8 +17,8 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: 'Alex Chen — Researcher & Quant',
-  description: 'Data analytics, astronomy research, and quantitative finance. Exploring the universe through data.',
+  title: 'Dominic J. Taylor — Researcher & Quant',
+  description: 'Astronomy research, quantitative finance, and data analytics. Extracting weak signals from noisy, high-dimensional systems.',
   manifest: '/manifest.json',
   icons: {
     icon: [

@@ -5,8 +5,7 @@ import { useState, useEffect } from "react"
 const navLinks = [
   { label: "About", href: "#about" },
   { label: "Research", href: "#research" },
-  { label: "Experience", href: "#experience" },
-  { label: "Publications", href: "#publications" },
+  { label: "Methodology", href: "#methodology" },
   { label: "Contact", href: "#contact" },
 ]
 
@@ -33,7 +32,7 @@ export function Navigation() {
           href="#"
           className="text-lg font-semibold tracking-tight text-foreground"
         >
-          AC.
+          DJT.
         </a>
 
         {/* Desktop nav */}

@@ -5,22 +5,22 @@ import { BarChart3, Telescope, TrendingUp } from "lucide-react"
 
 const disciplines = [
   {
-    icon: BarChart3,
-    title: "Data Analytics",
-    description:
-      "Building scalable pipelines and ML models that transform raw data into actionable intelligence. Expertise in Python, SQL, and modern data stack.",
-  },
-  {
     icon: Telescope,
     title: "Astronomy Research",
     description:
-      "Investigating exoplanet atmospheres and stellar evolution through computational methods. Published in peer-reviewed astrophysics journals.",
+      "Investigating the gas, dust, and chemical enrichment of galaxies across cosmic time. Published in MNRAS with expertise in multi-signal modelling and population analysis.",
+  },
+  {
+    icon: BarChart3,
+    title: "Data Analytics",
+    description:
+      "Building end-to-end data pipelines and ML tools for signal extraction. From autoencoder-based emission-line detection to production-ready interactive dashboards.",
   },
   {
     icon: TrendingUp,
     title: "Quantitative Finance",
     description:
-      "Designing systematic trading strategies and risk models. Applying statistical arbitrage and stochastic calculus to global markets.",
+      "Designing systematic volatility forecasting models for FX markets. Rigorous backtesting, regime sensitivity analysis, and risk-aware performance evaluation.",
   },
 ]
 
@@ -58,10 +58,11 @@ export function About() {
             Where curiosity meets precision.
           </h2>
           <p className="mt-6 max-w-3xl text-pretty text-lg leading-relaxed text-muted-foreground">
-            I operate at the intersection of three worlds: the vastness of
-            space, the complexity of financial markets, and the rigor of data
-            science. Each discipline sharpens the others, creating a unique lens
-            for pattern recognition and discovery.
+            I work at the intersection of three domains: the vast scales of
+            astrophysics, the complexity of financial markets, and the discipline
+            of rigorous data science. The common thread is extracting weak
+            signals from noisy, high-dimensional systems and treating modelling
+            assumptions as testable components.
           </p>
         </div>
 

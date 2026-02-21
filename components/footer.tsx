@@ -3,7 +3,7 @@ export function Footer() {
     <footer className="border-t border-border py-8">
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 md:flex-row">
         <p className="text-sm text-muted-foreground">
-          &copy; {new Date().getFullYear()} Alex Chen. All rights reserved.
+          &copy; {new Date().getFullYear()} Dominic J. Taylor. All rights reserved.
         </p>
         <p className="text-sm text-muted-foreground">
           Built with precision and curiosity.

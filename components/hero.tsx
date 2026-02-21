@@ -47,16 +47,17 @@ export function Hero() {
       {/* Content */}
       <div className="relative z-10 mx-auto max-w-5xl px-6 text-center">
         <p className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-primary md:text-base">
-          Data Analytics &middot; Astronomy &middot; Quantitative Finance
+          Astronomy &middot; Data Analytics &middot; Quantitative Finance
         </p>
         <h1 className="text-balance text-5xl font-bold leading-[1.08] tracking-tight text-foreground md:text-7xl lg:text-8xl">
-          Decoding the universe,
+          Extracting signal
           <br />
-          <span className="text-primary">one dataset at a time.</span>
+          <span className="text-primary">from the noise.</span>
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground md:text-xl">
-          Researcher blending astrophysics, quantitative modeling, and data
-          science to uncover patterns across markets and galaxies.
+          Dominic J. Taylor. Researcher bridging astrophysics, quantitative
+          modelling, and data science to uncover structure in noisy,
+          high-dimensional systems.
         </p>
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <a

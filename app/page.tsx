@@ -2,8 +2,7 @@ import { Navigation } from "@/components/navigation"
 import { Hero } from "@/components/hero"
 import { About } from "@/components/about"
 import { Research } from "@/components/research"
-import { Experience } from "@/components/experience"
-import { Publications } from "@/components/publications"
+import { Methodology } from "@/components/methodology"
 import { Contact } from "@/components/contact"
 import { Footer } from "@/components/footer"
 
@@ -14,8 +13,7 @@ export default function Home() {
       <Hero />
       <About />
       <Research />
-      <Experience />
-      <Publications />
+      <Methodology />
       <Contact />
       <Footer />
     </main>

@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from "react"
 import { Github, Linkedin, Mail } from "lucide-react"
 
 const socialLinks = [
-  { icon: Github, label: "GitHub", href: "https://github.com" },
-  { icon: Linkedin, label: "LinkedIn", href: "https://linkedin.com" },
-  { icon: Mail, label: "Email", href: "mailto:alex@example.com" },
+  { icon: Github, label: "GitHub", href: "https://github.com/dominicjtaylor" },
+  { icon: Linkedin, label: "LinkedIn", href: "https://linkedin.com/in/dominicjtaylor" },
+  { icon: Mail, label: "Email", href: "mailto:dominic@example.com" },
 ]
 
 export function Contact() {
@@ -46,12 +46,12 @@ export function Contact() {
           </h2>
           <p className="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground">
             Open to collaborations in research, quantitative finance, and
-            data-driven projects. Always happy to chat about the cosmos or
-            markets.
+            data-driven projects. Always interested in discussing galaxies,
+            markets, or methodology.
           </p>
 
           <a
-            href="mailto:alex@example.com"
+            href="mailto:dominic@example.com"
             className="mt-10 inline-flex h-12 min-w-[200px] items-center justify-center rounded-full bg-primary px-8 text-sm font-medium text-primary-foreground transition-all duration-300 hover:brightness-110"
           >
             Send a Message
