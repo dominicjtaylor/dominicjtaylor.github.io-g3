@@ -218,11 +218,11 @@ export function WebGLBackground() {
       const fadeStart = 0.2
       const fadeEnd = 1.5
       if (sectionIndex <= fadeStart) {
-        targetOpacity = 0.6
+        targetOpacity = 0.9
       } else if (sectionIndex >= fadeEnd) {
         targetOpacity = 0.08
       } else {
-        targetOpacity = 0.6 - ((sectionIndex - fadeStart) / (fadeEnd - fadeStart)) * 0.52
+        targetOpacity = 0.9 - ((sectionIndex - fadeStart) / (fadeEnd - fadeStart)) * 0.52
       }
     }
 
@@ -231,7 +231,7 @@ export function WebGLBackground() {
     // --- Animation Loop ---
     const clock = new THREE.Clock()
     let animationId: number
-    let currentOpacity = 0.6
+    let currentOpacity = 0.9
 
     function animate() {
       animationId = requestAnimationFrame(animate)
