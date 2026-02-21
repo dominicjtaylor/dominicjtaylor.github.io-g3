@@ -30,21 +30,21 @@ export function Hero() {
         ["--mouse-y" as string]: "0px",
       }}
     >
-      {/* Gradient overlays to blend content over WebGL */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background" />
-      <div className="absolute inset-0 bg-gradient-to-r from-background/30 via-transparent to-background/30" />
+      {/* Gradient overlays for text readability */}
+      <div className="absolute inset-0 bg-background/60" />
+      <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/30 to-background/80" />
 
       {/* Content */}
       <div className="relative z-10 mx-auto max-w-5xl px-6 text-center">
-        <p className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-primary md:text-base">
+        <p className="mb-4 text-sm font-semibold uppercase tracking-[0.3em] text-primary drop-shadow-lg md:text-base">
           Astronomy &middot; Data Analytics &middot; Quantitative Finance
         </p>
-        <h1 className="text-balance text-5xl font-bold leading-[1.08] tracking-tight text-foreground md:text-7xl lg:text-8xl">
+        <h1 className="text-balance text-5xl font-bold leading-[1.08] tracking-tight text-white drop-shadow-lg md:text-7xl lg:text-8xl">
           Extracting signal
           <br />
-          <span className="text-primary">from the noise.</span>
+          <span className="text-primary brightness-125">from the noise.</span>
         </h1>
-        <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground md:text-xl">
+        <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg font-medium leading-relaxed text-foreground/90 drop-shadow-md md:text-xl">
           Dominic J. Taylor. Researcher bridging astrophysics, quantitative
           modelling, and data science to uncover structure in noisy,
           high-dimensional systems.

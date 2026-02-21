@@ -31,7 +31,7 @@ export function WebGLBackground() {
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true })
     renderer.setSize(window.innerWidth, window.innerHeight)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-    renderer.setClearColor(0x0d1117, 0.5)
+    renderer.setClearColor(0x0d1117, 0.3)
 
     containerRef.current.innerHTML = ""
     containerRef.current.appendChild(renderer.domElement)
@@ -41,9 +41,9 @@ export function WebGLBackground() {
     composer.addPass(new RenderPass(scene, camera))
     const bloomPass = new UnrealBloomPass(
       new THREE.Vector2(window.innerWidth, window.innerHeight),
-      0.8,
+      0.5,
       0.3,
-      0.65
+      0.75
     )
     composer.addPass(bloomPass)
 
@@ -77,7 +77,7 @@ export function WebGLBackground() {
       color: 0xffffff,
       side: THREE.DoubleSide,
       transparent: true,
-      opacity: 0.8,
+      opacity: 0.4,
     })
     const orbitalArc = new THREE.Mesh(ringGeo, ringMat)
     orbitalArc.rotation.x = Math.PI / 4
@@ -87,6 +87,7 @@ export function WebGLBackground() {
     const nodeMaterial = new THREE.MeshStandardMaterial({
       color: 0xcfe6fa,
       emissive: 0xcfe6fa,
+      emissiveIntensity: 0.4,
     })
     const nodeGeometry = new THREE.SphereGeometry(0.15, 6, 6)
 
@@ -101,7 +102,7 @@ export function WebGLBackground() {
     for (let c = 0; c < numClusters; c++) {
       const clusterCenter = randomOnSphere(radius)
       const clusterMaterial = nodeMaterial.clone()
-      clusterMaterial.emissive.setHSL(c / numClusters, 0.6, 0.6)
+      clusterMaterial.emissive.setHSL(c / numClusters, 0.4, 0.4)
 
       for (let i = 0; i < nodesPerCluster; i++) {
         const jitterRatio = Math.random() * 0.2
@@ -125,7 +126,7 @@ export function WebGLBackground() {
     const edges = new THREE.Group()
     const edgeMaterial = new THREE.LineBasicMaterial({
       transparent: true,
-      opacity: 0.2,
+      opacity: 0.1,
       color: 0x88bbff,
     })
 
@@ -171,8 +172,8 @@ export function WebGLBackground() {
     scene.add(group)
 
     // --- Lighting ---
-    scene.add(new THREE.AmbientLight(0xffffff, 0.9))
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.5)
+    scene.add(new THREE.AmbientLight(0xffffff, 0.5))
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8)
     dirLight.position.set(50, 100, 100)
     scene.add(dirLight)
 
@@ -202,7 +203,7 @@ export function WebGLBackground() {
     ]
 
     let currentSection = 0
-    let targetOpacity = 1
+    let targetOpacity = 0.6
 
     const handleScroll = () => {
       const scrollY = window.scrollY
@@ -214,15 +215,14 @@ export function WebGLBackground() {
       )
 
       // Fade WebGL out as user scrolls deep into content sections
-      // Full opacity in hero, fade starts after first screen
-      const fadeStart = 0.3
-      const fadeEnd = 2.5
+      const fadeStart = 0.2
+      const fadeEnd = 1.5
       if (sectionIndex <= fadeStart) {
-        targetOpacity = 1
+        targetOpacity = 0.6
       } else if (sectionIndex >= fadeEnd) {
-        targetOpacity = 0.15
+        targetOpacity = 0.08
       } else {
-        targetOpacity = 1 - ((sectionIndex - fadeStart) / (fadeEnd - fadeStart)) * 0.85
+        targetOpacity = 0.6 - ((sectionIndex - fadeStart) / (fadeEnd - fadeStart)) * 0.52
       }
     }
 
@@ -231,7 +231,7 @@ export function WebGLBackground() {
     // --- Animation Loop ---
     const clock = new THREE.Clock()
     let animationId: number
-    let currentOpacity = 1
+    let currentOpacity = 0.6
 
     function animate() {
       animationId = requestAnimationFrame(animate)
