@@ -21,18 +21,17 @@ export function Navigation() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled
           ? "bg-background/80 backdrop-blur-xl border-b border-border"
           : "bg-transparent"
-      }`}
+        }`}
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <a
           href="#"
           className="text-lg font-semibold tracking-tight text-foreground"
         >
-          DJT.
+          DT.
         </a>
 
         {/* Desktop nav */}
@@ -56,14 +55,12 @@ export function Navigation() {
         >
           <div className="flex flex-col gap-1.5">
             <span
-              className={`block h-px w-5 bg-foreground transition-all duration-300 ${
-                mobileOpen ? "translate-y-[3.5px] rotate-45" : ""
-              }`}
+              className={`block h-px w-5 bg-foreground transition-all duration-300 ${mobileOpen ? "translate-y-[3.5px] rotate-45" : ""
+                }`}
             />
             <span
-              className={`block h-px w-5 bg-foreground transition-all duration-300 ${
-                mobileOpen ? "-translate-y-[3.5px] -rotate-45" : ""
-              }`}
+              className={`block h-px w-5 bg-foreground transition-all duration-300 ${mobileOpen ? "-translate-y-[3.5px] -rotate-45" : ""
+                }`}
             />
           </div>
         </button>
@@ -71,9 +68,8 @@ export function Navigation() {
 
       {/* Mobile menu */}
       <div
-        className={`overflow-hidden transition-all duration-500 md:hidden ${
-          mobileOpen ? "max-h-80" : "max-h-0"
-        }`}
+        className={`overflow-hidden transition-all duration-500 md:hidden ${mobileOpen ? "max-h-80" : "max-h-0"
+          }`}
       >
         <div className="flex flex-col gap-1 border-t border-border bg-background/95 px-6 py-4 backdrop-blur-xl">
           {navLinks.map((link) => (
