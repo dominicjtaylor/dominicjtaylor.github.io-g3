@@ -74,10 +74,10 @@ export function Methodology() {
           <p className="text-sm font-medium uppercase tracking-[0.3em] text-primary">
             Methodology
           </p>
-          <h2 className="mt-4 text-balance text-3xl font-bold tracking-tight text-foreground md:text-5xl">
+          <h2 className="mt-4 text-balance text-3xl font-bold tracking-tight text-white md:text-5xl">
             How I work.
           </h2>
-          <p className="mt-6 max-w-3xl text-pretty text-lg leading-relaxed text-muted-foreground">
+          <p className="mt-6 max-w-3xl text-pretty text-lg leading-relaxed text-foreground/70">
             Across astronomy and quantitative finance, I apply a consistent
             analytical philosophy. The domain changes; the rigour does not.
           </p>
@@ -97,10 +97,10 @@ export function Methodology() {
               <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10">
                 <item.icon className="h-5 w-5 text-primary" />
               </div>
-              <h3 className="text-lg font-semibold tracking-tight text-foreground">
+              <h3 className="text-lg font-semibold tracking-tight text-white">
                 {item.title}
               </h3>
-              <p className="mt-3 text-base leading-relaxed text-muted-foreground">
+              <p className="mt-3 text-base leading-relaxed text-foreground/70">
                 {item.description}
               </p>
             </div>

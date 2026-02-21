@@ -54,10 +54,10 @@ export function About() {
           <p className="text-sm font-medium uppercase tracking-[0.3em] text-primary">
             About
           </p>
-          <h2 className="mt-4 text-balance text-3xl font-bold tracking-tight text-foreground md:text-5xl">
+          <h2 className="mt-4 text-balance text-3xl font-bold tracking-tight text-white md:text-5xl">
             Where curiosity meets precision.
           </h2>
-          <p className="mt-6 max-w-3xl text-pretty text-lg leading-relaxed text-muted-foreground">
+          <p className="mt-6 max-w-3xl text-pretty text-lg leading-relaxed text-foreground/70">
             I work at the intersection of three domains: the vast scales of
             astrophysics, the complexity of financial markets, and the discipline
             of rigorous data science. The common thread is extracting weak
@@ -80,10 +80,10 @@ export function About() {
               <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
                 <item.icon className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold tracking-tight text-foreground">
+              <h3 className="text-xl font-semibold tracking-tight text-white">
                 {item.title}
               </h3>
-              <p className="mt-3 text-base leading-relaxed text-muted-foreground">
+              <p className="mt-3 text-base leading-relaxed text-foreground/70">
                 {item.description}
               </p>
             </div>

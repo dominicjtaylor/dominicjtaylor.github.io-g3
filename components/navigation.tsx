@@ -5,6 +5,8 @@ import { useState, useEffect } from "react"
 const navLinks = [
   { label: "About", href: "#about" },
   { label: "Research", href: "#research" },
+  { label: "Experience", href: "#experience" },
+  { label: "Education", href: "#education" },
   { label: "Methodology", href: "#methodology" },
   { label: "Contact", href: "#contact" },
 ]
@@ -29,9 +31,9 @@ export function Navigation() {
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <a
           href="#"
-          className="text-lg font-semibold tracking-tight text-foreground"
+          className="text-lg font-semibold tracking-tight text-white"
         >
-          DT.
+          Dominic Taylor
         </a>
 
         {/* Desktop nav */}
@@ -40,7 +42,7 @@ export function Navigation() {
             <a
               key={link.href}
               href={link.href}
-              className="text-sm text-muted-foreground transition-colors duration-300 hover:text-foreground"
+              className="text-sm text-foreground/70 transition-colors duration-300 hover:text-white"
             >
               {link.label}
             </a>
@@ -68,7 +70,7 @@ export function Navigation() {
 
       {/* Mobile menu */}
       <div
-        className={`overflow-hidden transition-all duration-500 md:hidden ${mobileOpen ? "max-h-80" : "max-h-0"
+        className={`overflow-hidden transition-all duration-500 md:hidden ${mobileOpen ? "max-h-96" : "max-h-0"
           }`}
       >
         <div className="flex flex-col gap-1 border-t border-border bg-background/95 px-6 py-4 backdrop-blur-xl">
@@ -77,7 +79,7 @@ export function Navigation() {
               key={link.href}
               href={link.href}
               onClick={() => setMobileOpen(false)}
-              className="rounded-lg py-3 text-base text-muted-foreground transition-colors hover:text-foreground"
+              className="rounded-lg py-3 text-base text-foreground/70 transition-colors hover:text-white"
             >
               {link.label}
             </a>

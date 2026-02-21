@@ -5,8 +5,8 @@ import { Github, Linkedin, Mail } from "lucide-react"
 
 const socialLinks = [
   { icon: Github, label: "GitHub", href: "https://github.com/dominicjtaylor" },
-  { icon: Linkedin, label: "LinkedIn", href: "https://linkedin.com/in/dominicjtaylor" },
-  { icon: Mail, label: "Email", href: "mailto:dominic@example.com" },
+  { icon: Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/in/dominic-taylor-004a8b196" },
+  { icon: Mail, label: "Email", href: "mailto:dom.taylor111@gmail.com" },
 ]
 
 export function Contact() {
@@ -41,17 +41,17 @@ export function Contact() {
           <p className="text-sm font-medium uppercase tracking-[0.3em] text-primary">
             Contact
           </p>
-          <h2 className="mt-4 text-balance text-3xl font-bold tracking-tight text-foreground md:text-5xl">
+          <h2 className="mt-4 text-balance text-3xl font-bold tracking-tight text-white md:text-5xl">
             {"Let's connect."}
           </h2>
-          <p className="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground">
+          <p className="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-foreground/70">
             Open to collaborations in research, quantitative finance, and
             data-driven projects. Always interested in discussing galaxies,
             markets, or methodology.
           </p>
 
           <a
-            href="mailto:dominic@example.com"
+            href="mailto:dom.taylor111@gmail.com"
             className="mt-10 inline-flex h-12 min-w-[200px] items-center justify-center rounded-full bg-primary px-8 text-sm font-medium text-primary-foreground transition-all duration-300 hover:brightness-110"
           >
             Send a Message
@@ -65,7 +65,7 @@ export function Contact() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={link.label}
-                className="flex h-12 w-12 items-center justify-center rounded-full border border-border text-muted-foreground transition-all duration-300 hover:border-primary/30 hover:text-foreground"
+                className="flex h-12 w-12 items-center justify-center rounded-full border border-border text-foreground/60 transition-all duration-300 hover:border-primary/30 hover:text-white"
               >
                 <link.icon className="h-5 w-5" />
               </a>

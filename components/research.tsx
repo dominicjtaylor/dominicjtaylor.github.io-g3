@@ -5,14 +5,14 @@ import { ArrowUpRight } from "lucide-react"
 
 const projects = [
   {
-    category: "Astrophysics",
-    title: "Terzan 5 and the Formation of the Milky Way Bulge",
+    category: "Astrophysics + ML",
+    title: "KAOSS: Gas, Metals, Dust \u2014 and ML Signal Extraction",
     description:
-      "Investigated whether Terzan 5 is a primordial building block of the Milky Way bulge. Integrated heterogeneous stellar catalogues, standardised metallicity measurements across surveys, and compared full population distributions to evaluate competing formation scenarios.",
-    tags: ["Cross-source Data Harmonisation", "Bias Mitigation", "Distribution-level Statistics"],
-    year: "2022",
-    journal: "Taylor et al. \u2014 MNRAS 2022",
-    link: "https://academic.oup.com/mnras/article/513/3/3429/6565286",
+      "Analysed the gas\u2013metallicity\u2013dust cycle in massive star-forming galaxies at z~2. Designed and trained an autoencoder to detect weak emission-line structure in low signal-to-noise 1D spectra, integrating ML outputs into a physically interpretable inference pipeline.",
+    tags: ["Autoencoder", "Representation Learning", "Uncertainty Decomposition", "Bootstrap"],
+    year: "In prep.",
+    journal: "Taylor et al. \u2014 In preparation",
+    link: null,
   },
   {
     category: "Astrophysics",
@@ -25,16 +25,6 @@ const projects = [
     link: "https://academic.oup.com/mnras/article/536/2/1149/7909089",
   },
   {
-    category: "Astrophysics + ML",
-    title: "KAOSS: Gas, Metals, Dust \u2014 and ML Signal Extraction",
-    description:
-      "Analysed the gas\u2013metallicity\u2013dust cycle in massive star-forming galaxies at z~2. Designed and trained an autoencoder to detect weak emission-line structure in low signal-to-noise 1D spectra, integrating ML outputs into a physically interpretable inference pipeline.",
-    tags: ["Autoencoder", "Representation Learning", "Uncertainty Decomposition", "Bootstrap"],
-    year: "In prep.",
-    journal: "Taylor et al. \u2014 In preparation",
-    link: null,
-  },
-  {
     category: "Quantitative Finance",
     title: "FX Machine Learning Volatility Forecasting",
     description:
@@ -45,6 +35,26 @@ const projects = [
     link: "https://github.com/dominicjtaylor/fx-volatility-forecasting",
   },
   {
+    category: "Quantitative Finance",
+    title: "Financial Backtesting Framework",
+    description:
+      "Developed a Python-based financial backtesting framework supporting modular trading strategies, moving average signals, and performance visualisation for systematic strategy evaluation.",
+    tags: ["Backtesting", "Systematic Trading", "Python", "Modular Design"],
+    year: "2024",
+    journal: null,
+    link: "https://github.com/dominicjtaylor/quantlab",
+  },
+  {
+    category: "Astrophysics",
+    title: "Terzan 5 and the Formation of the Milky Way Bulge",
+    description:
+      "Investigated whether Terzan 5 is a primordial building block of the Milky Way bulge. Integrated heterogeneous stellar catalogues, standardised metallicity measurements across surveys, and compared full population distributions to evaluate competing formation scenarios.",
+    tags: ["Cross-source Data Harmonisation", "Bias Mitigation", "Distribution-level Statistics"],
+    year: "2022",
+    journal: "Taylor et al. \u2014 MNRAS 2022",
+    link: "https://academic.oup.com/mnras/article/513/3/3429/6565286",
+  },
+  {
     category: "Data Engineering",
     title: "COVID-19 Data Analysis Web Application",
     description:
@@ -52,7 +62,7 @@ const projects = [
     tags: ["Data Pipeline", "Streamlit", "Time-series", "Visualisation"],
     year: "2020",
     journal: null,
-    link: "https://github.com/dominicjtaylor/COVID19",
+    link: "https://covid19-data.streamlit.app",
   },
 ]
 
@@ -89,7 +99,7 @@ export function Research() {
           <p className="text-sm font-medium uppercase tracking-[0.3em] text-primary">
             Research
           </p>
-          <h2 className="mt-4 text-balance text-3xl font-bold tracking-tight text-foreground md:text-5xl">
+          <h2 className="mt-4 text-balance text-3xl font-bold tracking-tight text-white md:text-5xl">
             Selected projects.
           </h2>
         </div>
@@ -123,26 +133,26 @@ export function Research() {
                       <span className="text-xs font-medium uppercase tracking-widest text-primary">
                         {project.category}
                       </span>
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-xs text-foreground/50">
                         {project.year}
                       </span>
                     </div>
-                    <h3 className="mt-3 text-xl font-semibold tracking-tight text-foreground md:text-2xl">
+                    <h3 className="mt-3 text-xl font-semibold tracking-tight text-white md:text-2xl">
                       {project.title}
                     </h3>
                     {project.journal && (
-                      <p className="mt-1 text-sm font-medium text-primary/70">
+                      <p className="mt-1 text-sm font-medium text-primary/80">
                         {project.journal}
                       </p>
                     )}
-                    <p className="mt-2 max-w-2xl text-base leading-relaxed text-muted-foreground">
+                    <p className="mt-2 max-w-2xl text-base leading-relaxed text-foreground/70">
                       {project.description}
                     </p>
                     <div className="mt-4 flex flex-wrap gap-2">
                       {project.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground"
+                          className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-foreground/80"
                         >
                           {tag}
                         </span>
@@ -150,7 +160,7 @@ export function Research() {
                     </div>
                   </div>
                   {project.link && (
-                    <ArrowUpRight className="mt-2 h-5 w-5 shrink-0 text-muted-foreground transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary md:mt-0" />
+                    <ArrowUpRight className="mt-2 h-5 w-5 shrink-0 text-foreground/50 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary md:mt-0" />
                   )}
                 </div>
               </Wrapper>

@@ -68,7 +68,7 @@ export function Hero() {
       {/* Scroll indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
         <div className="flex flex-col items-center gap-2">
-          <span className="text-xs uppercase tracking-widest text-muted-foreground">
+          <span className="text-xs uppercase tracking-widest text-foreground/50">
             Scroll
           </span>
           <div className="h-8 w-px animate-pulse bg-gradient-to-b from-primary to-transparent" />
