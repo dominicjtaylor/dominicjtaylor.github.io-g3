@@ -32,7 +32,7 @@ export function Hero() {
     >
       {/* Gradient overlays for text readability */}
       <div className="absolute inset-0 bg-background/15" />
-      <div className="absolute inset-0 bg-gradient-to-b from-background/15 via-background/75 to-background/95" />
+      <div className="absolute inset-0 bg-gradient-to-b from-background/15 via-background/25 to-background/5" />
 
       {/* Content */}
       <div className="relative z-10 mx-auto max-w-5xl px-6 text-center">
