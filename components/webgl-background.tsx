@@ -203,7 +203,7 @@ export function WebGLBackground() {
     ]
 
     let currentSection = 0
-    let targetOpacity = 0.6
+    let targetOpacity = 0.9
 
     const handleScroll = () => {
       const scrollY = window.scrollY
