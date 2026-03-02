@@ -9,6 +9,8 @@ export function WebGLBackground() {
   const initScene = useCallback(async () => {
     if (!containerRef.current) return
 
+    try {
+
     const THREE = await import("three")
     const { EffectComposer } = await import(
       "three/examples/jsm/postprocessing/EffectComposer.js"
@@ -322,6 +324,10 @@ export function WebGLBackground() {
       if (containerRef.current) {
         containerRef.current.innerHTML = ""
       }
+    }
+
+    } catch (e) {
+      console.warn("WebGL initialization failed:", e)
     }
   }, [])
 
