@@ -17,7 +17,7 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: 'Dominic J. Taylor — Researcher & Quant',
+  title: 'Dominic Taylor',
   description: 'Astronomy research, quantitative finance, and data analytics. Extracting weak signals from noisy, high-dimensional systems.',
   manifest: '/manifest.json',
   icons: {
