@@ -1,4 +1,3 @@
-import dynamic from "next/dynamic"
 import { Navigation } from "@/components/navigation"
 import { Hero } from "@/components/hero"
 import { About } from "@/components/about"
@@ -8,17 +7,12 @@ import { Education } from "@/components/education"
 import { Methodology } from "@/components/methodology"
 import { Contact } from "@/components/contact"
 import { Footer } from "@/components/footer"
-
-const WebGLBackground = dynamic(
-  () =>
-    import("@/components/webgl-background").then((mod) => mod.WebGLBackground),
-  { ssr: false }
-)
+import { WebGLWrapper } from "@/components/webgl-wrapper"
 
 export default function Home() {
   return (
     <main className="relative min-h-svh text-foreground">
-      <WebGLBackground />
+      <WebGLWrapper />
       <div className="relative z-10">
         <Navigation />
         <Hero />
