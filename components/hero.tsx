@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef } from "react"
+import { GlassSurface } from "@/components/glass-surface"
 
 export function Hero() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -49,17 +50,35 @@ export function Hero() {
           science to uncover structure in noisy, high-dimensional systems.
         </p>
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-          <a
-            href="#research"
-            className="glass-btn-primary h-12 min-w-[180px] px-8"
-          >
-            View Research
+          <a href="#research" className="block">
+            <GlassSurface
+              width={180}
+              height={48}
+              borderRadius={9999}
+              brightness={55}
+              opacity={0.95}
+              blur={12}
+              className="cursor-pointer transition-transform duration-200 hover:-translate-y-0.5 active:scale-[0.98]"
+            >
+              <span className="text-sm font-medium text-white">
+                View Research
+              </span>
+            </GlassSurface>
           </a>
-          <a
-            href="#contact"
-            className="glass-btn-secondary h-12 min-w-[180px] px-8"
-          >
-            Get in Touch
+          <a href="#contact" className="block">
+            <GlassSurface
+              width={180}
+              height={48}
+              borderRadius={9999}
+              brightness={45}
+              opacity={0.9}
+              blur={12}
+              className="cursor-pointer transition-transform duration-200 hover:-translate-y-0.5 active:scale-[0.98]"
+            >
+              <span className="text-sm font-medium text-white/80">
+                Get in Touch
+              </span>
+            </GlassSurface>
           </a>
         </div>
       </div>
