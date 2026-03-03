@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { Github } from "lucide-react"
-import { GlassSurface } from "@/components/glass-surface"
 
 const navLinks = [
   { label: "About", href: "#about" },
@@ -41,21 +40,12 @@ export function Navigation() {
         {/* Desktop nav */}
         <div className="hidden items-center gap-2 md:flex">
           {navLinks.map((link) => (
-            <a key={link.href} href={link.href} className="block">
-              <GlassSurface
-                width="auto"
-                height={32}
-                borderRadius={9999}
-                brightness={45}
-                opacity={0.9}
-                blur={10}
-                className="cursor-pointer px-3 transition-transform duration-200 hover:-translate-y-px active:scale-[0.97]"
-                style={{ width: "auto" }}
-              >
-                <span className="text-sm text-white/75 transition-colors hover:text-white">
-                  {link.label}
-                </span>
-              </GlassSurface>
+            <a
+              key={link.href}
+              href={link.href}
+              className="glass inline-flex items-center rounded-full px-3.5 py-1.5 text-sm text-white/75"
+            >
+              {link.label}
             </a>
           ))}
           <a
@@ -63,19 +53,9 @@ export function Navigation() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="GitHub"
-            className="block"
+            className="glass inline-flex h-8 w-8 items-center justify-center rounded-full"
           >
-            <GlassSurface
-              width={32}
-              height={32}
-              borderRadius={9999}
-              brightness={45}
-              opacity={0.9}
-              blur={10}
-              className="cursor-pointer transition-transform duration-200 hover:-translate-y-px active:scale-[0.97]"
-            >
-              <Github className="h-4 w-4 text-white/75" />
-            </GlassSurface>
+            <Github className="h-4 w-4 text-white/75" />
           </a>
         </div>
 

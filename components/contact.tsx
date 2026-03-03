@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react"
 import { Github, Linkedin, Mail } from "lucide-react"
-import { GlassSurface } from "@/components/glass-surface"
 
 const socialLinks = [
   { icon: Github, label: "GitHub", href: "https://github.com/dominicjtaylor" },
@@ -51,20 +50,11 @@ export function Contact() {
             markets, or methodology.
           </p>
 
-          <a href="mailto:dom.taylor111@gmail.com" className="mt-10 block">
-            <GlassSurface
-              width={200}
-              height={48}
-              borderRadius={9999}
-              brightness={55}
-              opacity={0.95}
-              blur={12}
-              className="cursor-pointer transition-transform duration-200 hover:-translate-y-0.5 active:scale-[0.98]"
-            >
-              <span className="text-sm font-medium text-white">
-                Send a Message
-              </span>
-            </GlassSurface>
+          <a
+            href="mailto:dom.taylor111@gmail.com"
+            className="glass-accent mt-10 inline-flex h-12 min-w-[200px] items-center justify-center rounded-full px-8 text-sm font-medium text-white"
+          >
+            Send a Message
           </a>
 
           <div className="mt-12 flex items-center gap-6">
@@ -75,19 +65,9 @@ export function Contact() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={link.label}
-                className="block"
+                className="glass flex h-12 w-12 items-center justify-center rounded-full"
               >
-                <GlassSurface
-                  width={48}
-                  height={48}
-                  borderRadius={9999}
-                  brightness={45}
-                  opacity={0.9}
-                  blur={10}
-                  className="cursor-pointer transition-transform duration-200 hover:-translate-y-0.5 active:scale-[0.97]"
-                >
-                  <link.icon className="h-5 w-5 text-white/70 transition-colors group-hover:text-white" />
-                </GlassSurface>
+                <link.icon className="h-5 w-5 text-white/70" />
               </a>
             ))}
           </div>
