@@ -53,7 +53,7 @@ export function Hero() {
             href="#research"
             className="glass-accent inline-flex h-12 min-w-[180px] items-center justify-center rounded-full px-8"
           >
-            <span className="glass-edge" aria-hidden="true" />
+            <span className="glass-refract" aria-hidden="true" />
             <span className="relative z-10 text-sm font-medium text-white">
               View Research
             </span>
@@ -62,7 +62,7 @@ export function Hero() {
             href="#contact"
             className="glass inline-flex h-12 min-w-[180px] items-center justify-center rounded-full px-8"
           >
-            <span className="glass-edge" aria-hidden="true" />
+            <span className="glass-refract" aria-hidden="true" />
             <span className="relative z-10 text-sm font-medium text-white/85">
               Get in Touch
             </span>

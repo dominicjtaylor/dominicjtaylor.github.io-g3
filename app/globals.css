@@ -95,14 +95,10 @@
 /* ══════════════════════════════════════════════════════════
    Refraction-glass buttons
    ─────────────────────────────────────────────────────────
-   Architecture:
-     <a class="glass …">
-       <span class="glass-edge" aria-hidden="true"/>  ← real DOM, edge-only blur
-       <span class="relative z-10">label text</span>
-     </a>
-   ::before on button = specular highlight (top-edge white gradient)
-   .glass-edge <div>  = backdrop-filter: blur(3px) masked to outer ~20%
-   Button itself      = background: rgba(255,255,255,0.06), NO blur
+   Uses an SVG displacement filter (filter: url(#refraction))
+   on a real child <span class="glass-refract"> to distort
+   the button edges. Works over WebGL canvas (unlike
+   backdrop-filter which cannot sample canvas pixels).
    ══════════════════════════════════════════════════════════ */
 
 /* ---- button scaffolding ---- */
@@ -113,7 +109,7 @@
   isolation: isolate;
 }
 
-/* ::before — specular highlight along top edge, 2-3px tall streak */
+/* ::before — specular highlight along top edge */
 .glass::before,
 .glass-accent::before {
   content: "";
@@ -130,24 +126,21 @@
   );
 }
 
-/* .glass-edge — real child <div> with edge-only backdrop blur */
-.glass-edge {
+/* .glass-refract — real child element with SVG displacement filter
+   masked to edges only so center stays crystal clear */
+.glass-refract {
   position: absolute;
-  inset: 0;
+  inset: -4px;            /* extend slightly past border for filter overflow */
   border-radius: inherit;
   pointer-events: none;
   z-index: 0;
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
-  mask-image: radial-gradient(
+  filter: url(#refraction);
+  /* edge-only: show distortion on outer ~20%, clear center */
+  background: radial-gradient(
     ellipse at center,
-    transparent 60%,
-    black 85%
-  );
-  -webkit-mask-image: radial-gradient(
-    ellipse at center,
-    transparent 60%,
-    black 85%
+    transparent 55%,
+    rgba(255, 255, 255, 0.06) 80%,
+    rgba(255, 255, 255, 0.10) 100%
   );
 }
 
@@ -158,13 +151,9 @@
   background: rgba(255, 255, 255, 0.06) !important;
   border: 1px solid rgba(255, 255, 255, 0.22) !important;
   box-shadow:
-    /* chromatic aberration — cyan inset top-left */
     inset -2px -2px 6px rgba(100, 220, 255, 0.15),
-    /* chromatic aberration — magenta inset bottom-right */
     inset 2px 2px 6px rgba(255, 100, 200, 0.15),
-    /* inner rim for glass thickness */
     inset 0 0 0 0.5px rgba(255, 255, 255, 0.10),
-    /* depth shadow */
     0 8px 32px rgba(0, 0, 0, 0.30);
   transition: background 0.24s, border-color 0.24s, box-shadow 0.24s, transform 0.24s;
   transition-timing-function: ease-out;

@@ -47,6 +47,37 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} bg-background`}>
       <body className="font-sans antialiased">
+        {/* Hidden SVG filter for glass refraction displacement */}
+        <svg
+          width="0"
+          height="0"
+          style={{ position: "absolute" }}
+          aria-hidden="true"
+        >
+          <defs>
+            <filter
+              id="refraction"
+              x="-10%"
+              y="-10%"
+              width="120%"
+              height="120%"
+            >
+              <feTurbulence
+                type="fractalNoise"
+                baseFrequency="0.065"
+                numOctaves="1"
+                result="noise"
+              />
+              <feDisplacementMap
+                in="SourceGraphic"
+                in2="noise"
+                scale="6"
+                xChannelSelector="R"
+                yChannelSelector="G"
+              />
+            </filter>
+          </defs>
+        </svg>
         {children}
         <Analytics />
       </body>
