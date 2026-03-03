@@ -93,15 +93,19 @@
 }
 
 /* ══════════════════════════════════════════════════════════
-   Refraction-glass surfaces
+   Refraction-glass buttons
    ─────────────────────────────────────────────────────────
-   Goal: clear glass lens effect — NOT frosted/blurred.
-   Center is crystal clear; edges show distortion via
-   edge-only blur, chromatic-aberration shadows, specular
-   highlight, and micro-noise texture.
+   Architecture:
+     <a class="glass …">
+       <span class="glass-edge" aria-hidden="true"/>  ← real DOM, edge-only blur
+       <span class="relative z-10">label text</span>
+     </a>
+   ::before on button = specular highlight (top-edge white gradient)
+   .glass-edge <div>  = backdrop-filter: blur(3px) masked to outer ~20%
+   Button itself      = background: rgba(255,255,255,0.06), NO blur
    ══════════════════════════════════════════════════════════ */
 
-/* ---- shared scaffolding ---- */
+/* ---- button scaffolding ---- */
 .glass,
 .glass-accent {
   position: relative !important;
@@ -109,113 +113,81 @@
   isolation: isolate;
 }
 
-/* Three pseudo-layers per button:
-   ::before  — edge-only backdrop blur (masked to outer ~18%)
-   ::after   — specular highlight + noise grain              */
-.glass::before,  .glass::after,
-.glass-accent::before, .glass-accent::after {
+/* ::before — specular highlight along top edge, 2-3px tall streak */
+.glass::before,
+.glass-accent::before {
   content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
+  z-index: 2;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0.08) 3px,
+    transparent 6px
+  );
 }
 
-/* ::before — EDGE-ONLY blur via radial mask.
-   The center is fully transparent (no blur), outer ring blurs. */
-.glass::before,
-.glass-accent::before {
+/* .glass-edge — real child <div> with edge-only backdrop blur */
+.glass-edge {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
   z-index: 0;
   backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(3px);
-  /* mask: center = transparent (no blur), edges = opaque (full blur) */
   mask-image: radial-gradient(
-    ellipse 70% 70% at 50% 50%,
-    transparent 55%,
-    black 90%
+    ellipse at center,
+    transparent 60%,
+    black 85%
   );
   -webkit-mask-image: radial-gradient(
-    ellipse 70% 70% at 50% 50%,
-    transparent 55%,
-    black 90%
+    ellipse at center,
+    transparent 60%,
+    black 85%
   );
-}
-
-/* ::after — specular highlight streak + micro-noise grain */
-.glass::after,
-.glass-accent::after {
-  z-index: 2;
-  background:
-    /* specular highlight — bright streak along top edge */
-    linear-gradient(
-      170deg,
-      rgba(255, 255, 255, 0.20) 0%,
-      rgba(255, 255, 255, 0.05) 25%,
-      transparent 50%
-    ),
-    /* micro-noise texture to break up flatness */
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  background-size: 100% 100%, 150px 150px;
 }
 
 /* ================================================================
    .glass  —  neutral variant
    ================================================================ */
 .glass {
-  /* NO backdrop-filter on main element — center stays crystal clear */
-  /* Radial fill: nearly invisible center, slightly denser edges */
-  background: radial-gradient(
-    ellipse at 50% 50%,
-    rgba(255, 255, 255, 0.03) 0%,
-    rgba(255, 255, 255, 0.10) 100%
-  ) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
   border: 1px solid rgba(255, 255, 255, 0.22) !important;
   box-shadow:
-    /* inner rim — glass thickness */
-    inset 0 0 0 0.5px rgba(255, 255, 255, 0.12),
-    /* top specular line */
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.22),
-    /* bottom edge */
-    inset 0 -1px 0 0 rgba(255, 255, 255, 0.06),
-    /* chromatic aberration — cyan top-left */
-    -0.5px -0.5px 2px rgba(0, 220, 255, 0.08),
-    /* chromatic aberration — magenta bottom-right */
-    0.5px 0.5px 2px rgba(255, 0, 180, 0.06),
+    /* chromatic aberration — cyan inset top-left */
+    inset -2px -2px 6px rgba(100, 220, 255, 0.15),
+    /* chromatic aberration — magenta inset bottom-right */
+    inset 2px 2px 6px rgba(255, 100, 200, 0.15),
+    /* inner rim for glass thickness */
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.10),
     /* depth shadow */
-    0 4px 12px rgba(0, 0, 0, 0.20);
+    0 8px 32px rgba(0, 0, 0, 0.30);
   transition: background 0.24s, border-color 0.24s, box-shadow 0.24s, transform 0.24s;
   transition-timing-function: ease-out;
 }
 .glass:hover {
-  background: radial-gradient(
-    ellipse at 50% 50%,
-    rgba(255, 255, 255, 0.05) 0%,
-    rgba(255, 255, 255, 0.14) 100%
-  ) !important;
+  background: rgba(255, 255, 255, 0.10) !important;
   border-color: rgba(255, 255, 255, 0.32) !important;
   box-shadow:
-    inset 0 0 0 0.5px rgba(255, 255, 255, 0.18),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.30),
-    inset 0 -1px 0 0 rgba(255, 255, 255, 0.10),
-    -1px -1px 4px rgba(0, 220, 255, 0.10),
-    1px 1px 4px rgba(255, 0, 180, 0.08),
-    0 8px 24px rgba(0, 0, 0, 0.25);
+    inset -2px -2px 8px rgba(100, 220, 255, 0.18),
+    inset 2px 2px 8px rgba(255, 100, 200, 0.18),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.16),
+    0 12px 40px rgba(0, 0, 0, 0.35);
   transform: translateY(-2px);
 }
 .glass:active {
-  background: radial-gradient(
-    ellipse at 50% 50%,
-    rgba(255, 255, 255, 0.02) 0%,
-    rgba(255, 255, 255, 0.08) 100%
-  ) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
   border-color: rgba(255, 255, 255, 0.18) !important;
   transform: translateY(0);
   box-shadow:
+    inset -1px -1px 4px rgba(100, 220, 255, 0.10),
+    inset 1px 1px 4px rgba(255, 100, 200, 0.10),
     inset 0 0 0 0.5px rgba(255, 255, 255, 0.08),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.14),
-    -0.5px -0.5px 1px rgba(0, 220, 255, 0.05),
-    0.5px 0.5px 1px rgba(255, 0, 180, 0.04),
-    0 2px 6px rgba(0, 0, 0, 0.15);
+    0 4px 16px rgba(0, 0, 0, 0.22);
 }
 .glass:focus-visible {
   outline: 2px solid oklch(0.75 0.1 195);
@@ -223,57 +195,40 @@
 }
 
 /* ================================================================
-   .glass-accent  —  primary-tinted refraction variant
+   .glass-accent  —  primary-tinted variant
    ================================================================ */
 .glass-accent {
-  background: radial-gradient(
-    ellipse at 50% 50%,
-    oklch(0.75 0.1 195 / 0.04) 0%,
-    oklch(0.75 0.1 195 / 0.13) 100%
-  ) !important;
-  border: 1px solid oklch(0.75 0.1 195 / 0.30) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid oklch(0.75 0.1 195 / 0.35) !important;
   box-shadow:
-    inset 0 0 0 0.5px oklch(0.75 0.1 195 / 0.14),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.24),
-    inset 0 -1px 0 0 rgba(255, 255, 255, 0.06),
-    -0.5px -0.5px 2px rgba(0, 220, 255, 0.10),
-    0.5px 0.5px 2px rgba(255, 0, 180, 0.07),
-    0 0 10px oklch(0.75 0.1 195 / 0.06),
-    0 4px 12px rgba(0, 0, 0, 0.20);
+    inset -2px -2px 6px rgba(100, 220, 255, 0.15),
+    inset 2px 2px 6px rgba(255, 100, 200, 0.15),
+    inset 0 0 0 0.5px oklch(0.75 0.1 195 / 0.12),
+    0 0 12px oklch(0.75 0.1 195 / 0.08),
+    0 8px 32px rgba(0, 0, 0, 0.30);
   transition: background 0.24s, border-color 0.24s, box-shadow 0.24s, transform 0.24s;
   transition-timing-function: ease-out;
 }
 .glass-accent:hover {
-  background: radial-gradient(
-    ellipse at 50% 50%,
-    oklch(0.75 0.1 195 / 0.07) 0%,
-    oklch(0.75 0.1 195 / 0.18) 100%
-  ) !important;
-  border-color: oklch(0.75 0.1 195 / 0.42) !important;
+  background: rgba(255, 255, 255, 0.10) !important;
+  border-color: oklch(0.75 0.1 195 / 0.48) !important;
   box-shadow:
-    inset 0 0 0 0.5px oklch(0.75 0.1 195 / 0.22),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.30),
-    inset 0 -1px 0 0 rgba(255, 255, 255, 0.10),
-    -1px -1px 4px rgba(0, 220, 255, 0.12),
-    1px 1px 4px rgba(255, 0, 180, 0.09),
-    0 0 16px oklch(0.75 0.1 195 / 0.10),
-    0 8px 24px rgba(0, 0, 0, 0.25);
+    inset -2px -2px 8px rgba(100, 220, 255, 0.18),
+    inset 2px 2px 8px rgba(255, 100, 200, 0.18),
+    inset 0 0 0 0.5px oklch(0.75 0.1 195 / 0.18),
+    0 0 18px oklch(0.75 0.1 195 / 0.12),
+    0 12px 40px rgba(0, 0, 0, 0.35);
   transform: translateY(-2px);
 }
 .glass-accent:active {
-  background: radial-gradient(
-    ellipse at 50% 50%,
-    oklch(0.75 0.1 195 / 0.02) 0%,
-    oklch(0.75 0.1 195 / 0.10) 100%
-  ) !important;
-  border-color: oklch(0.75 0.1 195 / 0.22) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: oklch(0.75 0.1 195 / 0.25) !important;
   transform: translateY(0);
   box-shadow:
-    inset 0 0 0 0.5px oklch(0.75 0.1 195 / 0.10),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.14),
-    -0.5px -0.5px 1px rgba(0, 220, 255, 0.06),
-    0.5px 0.5px 1px rgba(255, 0, 180, 0.04),
-    0 2px 6px rgba(0, 0, 0, 0.15);
+    inset -1px -1px 4px rgba(100, 220, 255, 0.10),
+    inset 1px 1px 4px rgba(255, 100, 200, 0.10),
+    inset 0 0 0 0.5px oklch(0.75 0.1 195 / 0.08),
+    0 4px 16px rgba(0, 0, 0, 0.22);
 }
 .glass-accent:focus-visible {
   outline: 2px solid oklch(0.75 0.1 195);
