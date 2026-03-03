@@ -38,12 +38,12 @@ export function Navigation() {
         </a>
 
         {/* Desktop nav */}
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="hidden items-center gap-2 md:flex">
           {navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="text-sm text-foreground/70 transition-colors duration-300 hover:text-white"
+              className="glass-nav-link"
             >
               {link.label}
             </a>
@@ -52,10 +52,10 @@ export function Navigation() {
             href="https://github.com/dominicjtaylor"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-foreground/70 transition-colors duration-300 hover:text-white"
+            className="glass-nav-link"
             aria-label="GitHub"
           >
-            <Github className="h-5 w-5" />
+            <Github className="h-4 w-4" />
           </a>
         </div>
 
