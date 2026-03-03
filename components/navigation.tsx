@@ -43,12 +43,9 @@ export function Navigation() {
             <a
               key={link.href}
               href={link.href}
-              className="glass inline-flex items-center rounded-full px-3.5 py-1.5"
+              className="glass inline-flex items-center rounded-full px-3.5 py-1.5 text-sm text-white/75"
             >
-              <span className="glass-refract" aria-hidden="true" />
-              <span className="relative z-10 text-sm text-white/75">
-                {link.label}
-              </span>
+              {link.label}
             </a>
           ))}
           <a
@@ -58,8 +55,7 @@ export function Navigation() {
             aria-label="GitHub"
             className="glass inline-flex h-8 w-8 items-center justify-center rounded-full"
           >
-            <span className="glass-refract" aria-hidden="true" />
-            <Github className="relative z-10 h-4 w-4 text-white/75" />
+            <Github className="h-4 w-4 text-white/75" />
           </a>
         </div>
 

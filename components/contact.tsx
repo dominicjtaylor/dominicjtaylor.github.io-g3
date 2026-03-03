@@ -52,12 +52,9 @@ export function Contact() {
 
           <a
             href="mailto:dom.taylor111@gmail.com"
-            className="glass-accent mt-10 inline-flex h-12 min-w-[200px] items-center justify-center rounded-full px-8"
+            className="glass-accent mt-10 inline-flex h-12 min-w-[200px] items-center justify-center rounded-full px-8 text-sm font-medium text-white"
           >
-            <span className="glass-refract" aria-hidden="true" />
-            <span className="relative z-10 text-sm font-medium text-white">
-              Send a Message
-            </span>
+            Send a Message
           </a>
 
           <div className="mt-12 flex items-center gap-6">
@@ -70,8 +67,7 @@ export function Contact() {
                 aria-label={link.label}
                 className="glass flex h-12 w-12 items-center justify-center rounded-full"
               >
-                <span className="glass-refract" aria-hidden="true" />
-                <link.icon className="relative z-10 h-5 w-5 text-white/70" />
+                <link.icon className="h-5 w-5 text-white/70" />
               </a>
             ))}
           </div>

@@ -95,18 +95,18 @@
 /* ══════════════════════════════════════════════════════════
    Refraction-glass buttons
    ─────────────────────────────────────────────────────────
-   Uses an SVG displacement filter (filter: url(#refraction))
-   on a real child <span class="glass-refract"> to distort
-   the button edges. Works over WebGL canvas (unlike
-   backdrop-filter which cannot sample canvas pixels).
+   SVG displacement filter applied directly on the button.
+   Gives subtle organic distortion (numOctaves=2, scale=4)
+   that works over WebGL canvas. Text gets a very slight
+   wobble which adds to the lens feel without hurting
+   legibility.
    ══════════════════════════════════════════════════════════ */
 
-/* ---- button scaffolding ---- */
+/* ---- shared base ---- */
 .glass,
 .glass-accent {
   position: relative !important;
-  overflow: hidden !important;
-  isolation: isolate;
+  filter: url(#refraction);
 }
 
 /* ::before — specular highlight along top edge */
@@ -117,30 +117,12 @@
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  z-index: 2;
+  z-index: 1;
   background: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0.25) 0%,
     rgba(255, 255, 255, 0.08) 3px,
     transparent 6px
-  );
-}
-
-/* .glass-refract — real child element with SVG displacement filter
-   masked to edges only so center stays crystal clear */
-.glass-refract {
-  position: absolute;
-  inset: -4px;            /* extend slightly past border for filter overflow */
-  border-radius: inherit;
-  pointer-events: none;
-  z-index: 0;
-  filter: url(#refraction);
-  /* edge-only: show distortion on outer ~20%, clear center */
-  background: radial-gradient(
-    ellipse at center,
-    transparent 55%,
-    rgba(255, 255, 255, 0.06) 80%,
-    rgba(255, 255, 255, 0.10) 100%
   );
 }
 

@@ -49,6 +49,7 @@ export default function RootLayout({
       <body className="font-sans antialiased">
         {/* Hidden SVG filter for glass refraction displacement */}
         <svg
+          xmlns="http://www.w3.org/2000/svg"
           width="0"
           height="0"
           style={{ position: "absolute" }}
@@ -61,17 +62,18 @@ export default function RootLayout({
               y="-10%"
               width="120%"
               height="120%"
+              colorInterpolationFilters="sRGB"
             >
               <feTurbulence
                 type="fractalNoise"
                 baseFrequency="0.065"
-                numOctaves="1"
+                numOctaves={2}
                 result="noise"
               />
               <feDisplacementMap
                 in="SourceGraphic"
                 in2="noise"
-                scale="6"
+                scale={4}
                 xChannelSelector="R"
                 yChannelSelector="G"
               />

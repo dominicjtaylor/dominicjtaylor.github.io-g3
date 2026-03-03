@@ -51,21 +51,15 @@ export function Hero() {
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <a
             href="#research"
-            className="glass-accent inline-flex h-12 min-w-[180px] items-center justify-center rounded-full px-8"
+            className="glass-accent inline-flex h-12 min-w-[180px] items-center justify-center rounded-full px-8 text-sm font-medium text-white"
           >
-            <span className="glass-refract" aria-hidden="true" />
-            <span className="relative z-10 text-sm font-medium text-white">
-              View Research
-            </span>
+            View Research
           </a>
           <a
             href="#contact"
-            className="glass inline-flex h-12 min-w-[180px] items-center justify-center rounded-full px-8"
+            className="glass inline-flex h-12 min-w-[180px] items-center justify-center rounded-full px-8 text-sm font-medium text-white/85"
           >
-            <span className="glass-refract" aria-hidden="true" />
-            <span className="relative z-10 text-sm font-medium text-white/85">
-              Get in Touch
-            </span>
+            Get in Touch
           </a>
         </div>
       </div>
