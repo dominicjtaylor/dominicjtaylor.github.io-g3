@@ -93,21 +93,19 @@
 }
 
 /* ── Glassmorphism surfaces ────────────────────────────── */
-/* !important beats Tailwind v4 border/bg resets                */
-/* ::before = specular highlight streak (top-left → center)     */
-/* ::after  = inner-edge vignette + micro-noise texture         */
+/* No heavy blur — the WebGL must remain clearly visible.       */
+/* "Glass" is conveyed by: edge-weighted radial fill, bright    */
+/* inner rim, specular streak (::before), noise grain (::after) */
 
-/* ---- shared pseudo scaffolding ---- */
+/* ---- shared scaffolding ---- */
 .glass,
 .glass-accent {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;          /* own stacking context */
+  position: relative !important;
+  overflow: hidden !important;
+  isolation: isolate;
 }
-.glass::before,
-.glass::after,
-.glass-accent::before,
-.glass-accent::after {
+.glass::before,  .glass::after,
+.glass-accent::before, .glass-accent::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -115,121 +113,137 @@
   pointer-events: none;
 }
 
-/* ::before — specular highlight gradient (top-left streak) */
+/* ::before — specular highlight streak (top-left) */
 .glass::before,
 .glass-accent::before {
+  z-index: 1;
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.22) 0%,
-    rgba(255, 255, 255, 0.06) 40%,
-    transparent 70%
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.04) 35%,
+    transparent 65%
   );
-  z-index: 1;
-  transition: opacity 0.24s ease-out;
-}
-.glass:hover::before,
-.glass-accent:hover::before {
-  opacity: 1.3;
 }
 
-/* ::after — vignette (edges darker) + micro-noise texture */
+/* ::after — micro-noise texture overlay (very faint grain) */
 .glass::after,
 .glass-accent::after {
-  background:
-    radial-gradient(
-      ellipse at center,
-      transparent 45%,
-      rgba(0, 0, 0, 0.18) 100%
-    );
-  /* 1px noise via SVG data-URI – very subtle grain */
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
   z-index: 2;
-  opacity: 0.6;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 128px 128px;
 }
 
-/* ---- .glass (neutral) ---- */
+/* ================================================================
+   .glass  —  neutral variant
+   ================================================================ */
 .glass {
-  background-color: rgba(20, 20, 20, 0.18) !important;
-  border: 1px solid rgba(255, 255, 255, 0.20) !important;
-  backdrop-filter: blur(14px) saturate(1.5);
-  -webkit-backdrop-filter: blur(14px) saturate(1.5);
+  /* radial fill: near-transparent center, slightly denser edges */
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(20, 20, 20, 0.04) 0%,
+    rgba(20, 20, 20, 0.14) 100%
+  ) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  /* minimal blur — see-through, not frosted */
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
   box-shadow:
-    /* inner ring – thicker bright edge */
-    inset 0 0 0 0.5px rgba(255, 255, 255, 0.12),
-    /* top specular line */
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.18),
-    /* bottom edge definition */
+    /* inner rim — sells "glass thickness" */
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.14),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.20),
     inset 0 -1px 0 0 rgba(255, 255, 255, 0.06),
-    /* outer glow so edges pop on the WebGL */
-    0 0 12px rgba(255, 255, 255, 0.04),
-    0 2px 10px rgba(0, 0, 0, 0.18);
-  transition: background-color 0.24s, border-color 0.24s, box-shadow 0.24s, transform 0.24s;
+    /* outer border glow */
+    0 0 10px rgba(255, 255, 255, 0.05),
+    0 2px 8px rgba(0, 0, 0, 0.14);
+  transition: background 0.24s, border-color 0.24s, box-shadow 0.24s, transform 0.24s;
   transition-timing-function: ease-out;
 }
 .glass:hover {
-  background-color: rgba(20, 20, 20, 0.22) !important;
-  border-color: rgba(255, 255, 255, 0.30) !important;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(20, 20, 20, 0.07) 0%,
+    rgba(20, 20, 20, 0.18) 100%
+  ) !important;
+  border-color: rgba(255, 255, 255, 0.32) !important;
   box-shadow:
-    inset 0 0 0 0.5px rgba(255, 255, 255, 0.18),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.25),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.20),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.28),
     inset 0 -1px 0 0 rgba(255, 255, 255, 0.10),
-    0 0 18px rgba(255, 255, 255, 0.06),
-    0 8px 24px rgba(0, 0, 0, 0.24);
+    0 0 16px rgba(255, 255, 255, 0.07),
+    0 6px 20px rgba(0, 0, 0, 0.20);
   transform: translateY(-2px);
 }
 .glass:active {
-  background-color: rgba(20, 20, 20, 0.14) !important;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(20, 20, 20, 0.03) 0%,
+    rgba(20, 20, 20, 0.10) 100%
+  ) !important;
   border-color: rgba(255, 255, 255, 0.18) !important;
-  backdrop-filter: blur(10px) saturate(1.3);
-  -webkit-backdrop-filter: blur(10px) saturate(1.3);
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
   transform: translateY(0);
   box-shadow:
-    inset 0 0 0 0.5px rgba(255, 255, 255, 0.08),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.10),
-    0 1px 4px rgba(0, 0, 0, 0.12);
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.10),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.12),
+    0 1px 4px rgba(0, 0, 0, 0.10);
 }
 .glass:focus-visible {
   outline: 2px solid oklch(0.75 0.1 195);
   outline-offset: 3px;
 }
 
-/* ---- .glass-accent (primary-tinted) ---- */
+/* ================================================================
+   .glass-accent  —  primary-tinted variant
+   ================================================================ */
 .glass-accent {
-  background-color: oklch(0.75 0.1 195 / 0.16) !important;
-  border: 1px solid oklch(0.75 0.1 195 / 0.30) !important;
-  backdrop-filter: blur(14px) saturate(1.5);
-  -webkit-backdrop-filter: blur(14px) saturate(1.5);
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    oklch(0.75 0.1 195 / 0.05) 0%,
+    oklch(0.75 0.1 195 / 0.16) 100%
+  ) !important;
+  border: 1px solid oklch(0.75 0.1 195 / 0.32) !important;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
   box-shadow:
-    inset 0 0 0 0.5px oklch(0.75 0.1 195 / 0.15),
+    inset 0 0 0 0.5px oklch(0.75 0.1 195 / 0.16),
     inset 0 1px 0 0 rgba(255, 255, 255, 0.22),
-    inset 0 -1px 0 0 rgba(255, 255, 255, 0.08),
-    0 0 14px oklch(0.75 0.1 195 / 0.08),
-    0 2px 10px rgba(0, 0, 0, 0.18);
-  transition: background-color 0.24s, border-color 0.24s, box-shadow 0.24s, transform 0.24s;
+    inset 0 -1px 0 0 rgba(255, 255, 255, 0.06),
+    0 0 12px oklch(0.75 0.1 195 / 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.14);
+  transition: background 0.24s, border-color 0.24s, box-shadow 0.24s, transform 0.24s;
   transition-timing-function: ease-out;
 }
 .glass-accent:hover {
-  background-color: oklch(0.75 0.1 195 / 0.24) !important;
-  border-color: oklch(0.75 0.1 195 / 0.40) !important;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    oklch(0.75 0.1 195 / 0.08) 0%,
+    oklch(0.75 0.1 195 / 0.22) 100%
+  ) !important;
+  border-color: oklch(0.75 0.1 195 / 0.42) !important;
   box-shadow:
-    inset 0 0 0 0.5px oklch(0.75 0.1 195 / 0.22),
+    inset 0 0 0 0.5px oklch(0.75 0.1 195 / 0.24),
     inset 0 1px 0 0 rgba(255, 255, 255, 0.28),
-    inset 0 -1px 0 0 rgba(255, 255, 255, 0.12),
-    0 0 22px oklch(0.75 0.1 195 / 0.12),
-    0 8px 24px rgba(0, 0, 0, 0.24);
+    inset 0 -1px 0 0 rgba(255, 255, 255, 0.10),
+    0 0 20px oklch(0.75 0.1 195 / 0.12),
+    0 6px 20px rgba(0, 0, 0, 0.20);
   transform: translateY(-2px);
 }
 .glass-accent:active {
-  background-color: oklch(0.75 0.1 195 / 0.12) !important;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    oklch(0.75 0.1 195 / 0.03) 0%,
+    oklch(0.75 0.1 195 / 0.12) 100%
+  ) !important;
   border-color: oklch(0.75 0.1 195 / 0.22) !important;
-  backdrop-filter: blur(10px) saturate(1.3);
-  -webkit-backdrop-filter: blur(10px) saturate(1.3);
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
   transform: translateY(0);
   box-shadow:
     inset 0 0 0 0.5px oklch(0.75 0.1 195 / 0.10),
     inset 0 1px 0 0 rgba(255, 255, 255, 0.12),
-    0 1px 4px rgba(0, 0, 0, 0.12);
+    0 1px 4px rgba(0, 0, 0, 0.10);
 }
 .glass-accent:focus-visible {
   outline: 2px solid oklch(0.75 0.1 195);
