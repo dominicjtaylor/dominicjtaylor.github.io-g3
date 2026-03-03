@@ -51,13 +51,13 @@ export function Hero() {
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <a
             href="#research"
-            className="inline-flex h-12 min-w-[180px] items-center justify-center rounded-full bg-primary px-8 text-sm font-medium text-primary-foreground transition-all duration-300 hover:brightness-110"
+            className="glass-btn-primary h-12 min-w-[180px] px-8"
           >
             View Research
           </a>
           <a
             href="#contact"
-            className="inline-flex h-12 min-w-[180px] items-center justify-center rounded-full border border-border bg-background/50 px-8 text-sm font-medium text-foreground backdrop-blur-sm transition-all duration-300 hover:bg-secondary"
+            className="glass-btn-secondary h-12 min-w-[180px] px-8"
           >
             Get in Touch
           </a>

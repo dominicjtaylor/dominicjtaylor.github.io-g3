@@ -52,7 +52,7 @@ export function Contact() {
 
           <a
             href="mailto:dom.taylor111@gmail.com"
-            className="mt-10 inline-flex h-12 min-w-[200px] items-center justify-center rounded-full bg-primary px-8 text-sm font-medium text-primary-foreground transition-all duration-300 hover:brightness-110"
+            className="glass-btn-primary mt-10 h-12 min-w-[200px] px-8"
           >
             Send a Message
           </a>
@@ -65,7 +65,7 @@ export function Contact() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={link.label}
-                className="flex h-12 w-12 items-center justify-center rounded-full border border-border text-foreground/60 transition-all duration-300 hover:border-primary/30 hover:text-white"
+                className="glass-icon h-12 w-12"
               >
                 <link.icon className="h-5 w-5" />
               </a>
