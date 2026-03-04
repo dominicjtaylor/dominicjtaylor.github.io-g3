@@ -102,6 +102,11 @@ export function Research() {
           <h2 className="mt-4 text-balance text-3xl font-bold tracking-tight text-white md:text-5xl">
             Selected projects.
           </h2>
+          <p className="mt-4 max-w-2xl text-pretty text-lg leading-relaxed text-foreground/70">
+            Spanning <span className="highlight">astrophysics</span> and{" "}
+            <span className="highlight">quantitative finance</span>, each built
+            on reproducible pipelines and rigorous evaluation.
+          </p>
         </div>
 
         <div className="mt-16 flex flex-col gap-6">

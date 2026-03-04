@@ -95,6 +95,10 @@ export function Experience() {
           <h2 className="mt-4 text-balance text-3xl font-bold tracking-tight text-white md:text-5xl">
             Career timeline.
           </h2>
+          <p className="mt-4 max-w-2xl text-pretty text-lg leading-relaxed text-foreground/70">
+            From <span className="highlight">international research</span> to
+            building <span className="highlight">scalable systems</span>.
+          </p>
         </div>
 
         {/* Timeline */}
