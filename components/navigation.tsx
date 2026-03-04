@@ -43,7 +43,7 @@ export function Navigation() {
             <a
               key={link.href}
               href={link.href}
-              className="btn inline-flex items-center rounded-full px-3.5 py-1.5 text-sm text-white/75"
+              className="inline-flex items-center rounded-full px-3.5 py-1.5 text-sm text-white/70 transition-colors duration-200 hover:text-white"
             >
               {link.label}
             </a>
@@ -53,7 +53,7 @@ export function Navigation() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="GitHub"
-            className="btn inline-flex h-8 w-8 items-center justify-center rounded-full"
+            className="glass inline-flex h-8 w-8 items-center justify-center rounded-full"
           >
             <Github className="h-4 w-4 text-white/75" />
           </a>

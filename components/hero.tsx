@@ -44,20 +44,20 @@ export function Hero() {
           <br />
           <span className="text-primary">from the noise.</span>
         </h1>
-        <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg font-medium leading-relaxed text-foreground/80 drop-shadow-md md:text-xl">
+        <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg font-medium leading-relaxed text-white/90 drop-shadow-md md:text-xl">
           Researcher bridging astrophysics, quantitative modelling, and data
           science to uncover structure in noisy, high-dimensional systems.
         </p>
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <a
             href="#research"
-            className="btn-accent inline-flex h-12 min-w-[180px] items-center justify-center rounded-full px-8 text-sm font-medium text-white"
+            className="glass-accent inline-flex h-12 min-w-[180px] items-center justify-center rounded-full px-8 text-sm font-medium text-white"
           >
             View Research
           </a>
           <a
             href="#contact"
-            className="btn inline-flex h-12 min-w-[180px] items-center justify-center rounded-full px-8 text-sm font-medium text-white/85"
+            className="glass inline-flex h-12 min-w-[180px] items-center justify-center rounded-full px-8 text-sm font-medium text-white/85"
           >
             Get in Touch
           </a>
