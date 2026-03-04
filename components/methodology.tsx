@@ -78,8 +78,9 @@ export function Methodology() {
             How I work.
           </h2>
           <p className="mt-6 max-w-3xl text-pretty text-lg leading-relaxed text-foreground/70">
-            Across astronomy and quantitative finance, I apply a consistent
-            analytical philosophy. The domain changes; the rigour does not.
+            Across astronomy and quantitative finance, I apply a{" "}
+            <span className="highlight">consistent analytical philosophy</span>.
+            The domain changes; the rigour does not.
           </p>
         </div>
 
@@ -87,7 +88,7 @@ export function Methodology() {
           {principles.map((item, i) => (
             <div
               key={item.title}
-              className={`group rounded-2xl border border-border bg-card p-8 transition-all duration-700 hover:border-primary/30 hover:bg-secondary ${
+              className={`group rounded-2xl border border-border bg-card p-8 transition-all duration-150 hover:border-primary/30 hover:bg-secondary ${
                 visible
                   ? "translate-y-0 opacity-100"
                   : "translate-y-8 opacity-0"

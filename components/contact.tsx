@@ -45,16 +45,19 @@ export function Contact() {
             {"Let's connect."}
           </h2>
           <p className="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-foreground/70">
-            Open to collaborations in research, quantitative finance, and
+            Open to collaborations in{" "}
+            <span className="highlight">research</span>,{" "}
+            <span className="highlight">quantitative finance</span>, and
             data-driven projects. Always interested in discussing galaxies,
             markets, or methodology.
           </p>
 
           <a
             href="mailto:dom.taylor111@gmail.com"
-            className="mt-10 inline-flex h-12 min-w-[200px] items-center justify-center rounded-full bg-primary px-8 text-sm font-medium text-primary-foreground transition-all duration-300 hover:brightness-110"
+            className="glass-accent mt-10 inline-flex h-12 min-w-[200px] items-center justify-center rounded-full px-8"
           >
-            Send a Message
+            <span className="glass-edge" aria-hidden="true" />
+            <span className="relative z-10 text-sm font-medium text-white">Send a Message</span>
           </a>
 
           <div className="mt-12 flex items-center gap-6">
@@ -65,9 +68,10 @@ export function Contact() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={link.label}
-                className="flex h-12 w-12 items-center justify-center rounded-full border border-border text-foreground/60 transition-all duration-300 hover:border-primary/30 hover:text-white"
+                className="glass flex h-12 w-12 items-center justify-center rounded-full"
               >
-                <link.icon className="h-5 w-5" />
+                <span className="glass-edge" aria-hidden="true" />
+                <link.icon className="relative z-10 h-5 w-5 text-white/70" />
               </a>
             ))}
           </div>

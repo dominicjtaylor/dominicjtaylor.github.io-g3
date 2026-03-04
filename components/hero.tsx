@@ -42,24 +42,26 @@ export function Hero() {
         <h1 className="text-balance text-5xl font-bold leading-[1.08] tracking-tight text-white drop-shadow-lg md:text-7xl lg:text-8xl">
           Extracting signal
           <br />
-          <span className="text-primary brightness-125">from the noise.</span>
+          <span className="text-primary">from the noise.</span>
         </h1>
-        <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg font-medium leading-relaxed text-foreground/90 drop-shadow-md md:text-xl">
+        <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg font-medium leading-relaxed text-white/90 drop-shadow-md md:text-xl">
           Researcher bridging astrophysics, quantitative modelling, and data
           science to uncover structure in noisy, high-dimensional systems.
         </p>
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <a
             href="#research"
-            className="inline-flex h-12 min-w-[180px] items-center justify-center rounded-full bg-primary px-8 text-sm font-medium text-primary-foreground transition-all duration-300 hover:brightness-110"
+            className="glass-accent inline-flex h-12 min-w-[180px] items-center justify-center rounded-full px-8"
           >
-            View Research
+            <span className="glass-edge" aria-hidden="true" />
+            <span className="relative z-10 text-sm font-medium text-white">View Research</span>
           </a>
           <a
             href="#contact"
-            className="inline-flex h-12 min-w-[180px] items-center justify-center rounded-full border border-border bg-background/50 px-8 text-sm font-medium text-foreground backdrop-blur-sm transition-all duration-300 hover:bg-secondary"
+            className="glass inline-flex h-12 min-w-[180px] items-center justify-center rounded-full px-8"
           >
-            Get in Touch
+            <span className="glass-edge" aria-hidden="true" />
+            <span className="relative z-10 text-sm font-medium text-white/85">Get in Touch</span>
           </a>
         </div>
       </div>

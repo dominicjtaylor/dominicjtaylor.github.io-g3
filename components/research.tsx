@@ -118,7 +118,7 @@ export function Research() {
               <Wrapper
                 key={project.title}
                 {...linkProps}
-                className={`group rounded-2xl border border-border bg-card p-6 transition-all duration-700 hover:border-primary/30 hover:bg-secondary md:p-8 ${
+                className={`group rounded-2xl border border-border bg-card p-6 transition-all duration-150 hover:border-primary/30 hover:bg-secondary md:p-8 ${
                   project.link ? "cursor-pointer" : ""
                 } ${
                   visible

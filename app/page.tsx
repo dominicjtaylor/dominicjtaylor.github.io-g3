@@ -7,12 +7,12 @@ import { Education } from "@/components/education"
 import { Methodology } from "@/components/methodology"
 import { Contact } from "@/components/contact"
 import { Footer } from "@/components/footer"
-import { WebGLBackground } from "@/components/webgl-background"
+import { WebGLWrapper } from "@/components/webgl-wrapper"
 
 export default function Home() {
   return (
     <main className="relative min-h-svh text-foreground">
-      <WebGLBackground />
+      <WebGLWrapper />
       <div className="relative z-10">
         <Navigation />
         <Hero />
