@@ -109,7 +109,9 @@
   filter: url(#refraction);
 }
 
-/* ::before — specular highlight along top edge */
+/* ::before — radial gradient fill: transparent center, more opaque
+   edges. Gives the SVG displacement filter visible pixels to
+   distort along the rim while keeping the center see-through. */
 .glass::before,
 .glass-accent::before {
   content: "";
@@ -117,12 +119,11 @@
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  z-index: 1;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.25) 0%,
-    rgba(255, 255, 255, 0.08) 3px,
-    transparent 6px
+  z-index: -1;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.15) 100%
   );
 }
 
@@ -130,7 +131,7 @@
    .glass  —  neutral variant
    ================================================================ */
 .glass {
-  background: rgba(255, 255, 255, 0.06) !important;
+  background: rgba(255, 255, 255, 0.25) !important;
   border: 1px solid rgba(255, 255, 255, 0.22) !important;
   box-shadow:
     inset -2px -2px 6px rgba(100, 220, 255, 0.15),
@@ -141,7 +142,7 @@
   transition-timing-function: ease-out;
 }
 .glass:hover {
-  background: rgba(255, 255, 255, 0.10) !important;
+  background: rgba(255, 255, 255, 0.30) !important;
   border-color: rgba(255, 255, 255, 0.32) !important;
   box-shadow:
     inset -2px -2px 8px rgba(100, 220, 255, 0.18),
@@ -151,7 +152,7 @@
   transform: translateY(-2px);
 }
 .glass:active {
-  background: rgba(255, 255, 255, 0.04) !important;
+  background: rgba(255, 255, 255, 0.20) !important;
   border-color: rgba(255, 255, 255, 0.18) !important;
   transform: translateY(0);
   box-shadow:
@@ -169,7 +170,7 @@
    .glass-accent  —  primary-tinted variant
    ================================================================ */
 .glass-accent {
-  background: rgba(255, 255, 255, 0.06) !important;
+  background: rgba(255, 255, 255, 0.25) !important;
   border: 1px solid oklch(0.75 0.1 195 / 0.35) !important;
   box-shadow:
     inset -2px -2px 6px rgba(100, 220, 255, 0.15),
@@ -181,7 +182,7 @@
   transition-timing-function: ease-out;
 }
 .glass-accent:hover {
-  background: rgba(255, 255, 255, 0.10) !important;
+  background: rgba(255, 255, 255, 0.30) !important;
   border-color: oklch(0.75 0.1 195 / 0.48) !important;
   box-shadow:
     inset -2px -2px 8px rgba(100, 220, 255, 0.18),
@@ -192,7 +193,7 @@
   transform: translateY(-2px);
 }
 .glass-accent:active {
-  background: rgba(255, 255, 255, 0.04) !important;
+  background: rgba(255, 255, 255, 0.20) !important;
   border-color: oklch(0.75 0.1 195 / 0.25) !important;
   transform: translateY(0);
   box-shadow:

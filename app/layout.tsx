@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
-import { SvgFilterDebug } from '@/components/svg-filter-debug'
 import './globals.css'
 
 const inter = Inter({
@@ -81,7 +80,6 @@ export default function RootLayout({
             </defs>
           </svg>
         </div>
-        <SvgFilterDebug />
         {children}
         <Analytics />
       </body>
