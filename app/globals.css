@@ -132,114 +132,17 @@
   outline-offset: 2px;
 }
 
-/* ── Highlight text utility ─────────────────────────────── */
+/* ── Highlight text utility (Fixa-inspired) ─────────────── */
+/* Soft inline emphasis for key phrases in body text.         */
 
 .highlight {
-  background: oklch(0.72 0.05 160 / 0.12);
-  padding: 0.1em 0.45em;
-  border-radius: 0.3em;
+  background: oklch(0.72 0.05 160 / 0.10);
+  padding: 0.05em 0.4em;
+  border-radius: 0.25em;
   font-weight: 500;
-  color: oklch(0.82 0.04 160);
+  color: oklch(0.85 0.035 160);
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
-}
-
-/* ::before — radial gradient fill: transparent center, more opaque
-   edges. Gives the SVG displacement filter visible pixels to
-   distort along the rim while keeping the center see-through. */
-.glass::before,
-.glass-accent::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  z-index: -1;
-  background: radial-gradient(
-    ellipse at 50% 50%,
-    rgba(255, 255, 255, 0.05) 0%,
-    rgba(255, 255, 255, 0.15) 100%
-  );
-}
-
-/* ================================================================
-   .glass  —  neutral variant
-   ================================================================ */
-.glass {
-  background: rgba(255, 255, 255, 0.25) !important;
-  border: 1px solid rgba(255, 255, 255, 0.22) !important;
-  box-shadow:
-    inset -2px -2px 6px rgba(100, 220, 255, 0.15),
-    inset 2px 2px 6px rgba(255, 100, 200, 0.15),
-    inset 0 0 0 0.5px rgba(255, 255, 255, 0.10),
-    0 8px 32px rgba(0, 0, 0, 0.30);
-  transition: background 0.24s, border-color 0.24s, box-shadow 0.24s, transform 0.24s;
-  transition-timing-function: ease-out;
-}
-.glass:hover {
-  background: rgba(255, 255, 255, 0.30) !important;
-  border-color: rgba(255, 255, 255, 0.32) !important;
-  box-shadow:
-    inset -2px -2px 8px rgba(100, 220, 255, 0.18),
-    inset 2px 2px 8px rgba(255, 100, 200, 0.18),
-    inset 0 0 0 0.5px rgba(255, 255, 255, 0.16),
-    0 12px 40px rgba(0, 0, 0, 0.35);
-  transform: translateY(-2px);
-}
-.glass:active {
-  background: rgba(255, 255, 255, 0.20) !important;
-  border-color: rgba(255, 255, 255, 0.18) !important;
-  transform: translateY(0);
-  box-shadow:
-    inset -1px -1px 4px rgba(100, 220, 255, 0.10),
-    inset 1px 1px 4px rgba(255, 100, 200, 0.10),
-    inset 0 0 0 0.5px rgba(255, 255, 255, 0.08),
-    0 4px 16px rgba(0, 0, 0, 0.22);
-}
-.glass:focus-visible {
-  outline: 2px solid oklch(0.75 0.1 195);
-  outline-offset: 3px;
-}
-
-/* ================================================================
-   .glass-accent  —  primary-tinted variant
-   ================================================================ */
-.glass-accent {
-  background: rgba(255, 255, 255, 0.25) !important;
-  border: 1px solid oklch(0.75 0.1 195 / 0.35) !important;
-  box-shadow:
-    inset -2px -2px 6px rgba(100, 220, 255, 0.15),
-    inset 2px 2px 6px rgba(255, 100, 200, 0.15),
-    inset 0 0 0 0.5px oklch(0.75 0.1 195 / 0.12),
-    0 0 12px oklch(0.75 0.1 195 / 0.08),
-    0 8px 32px rgba(0, 0, 0, 0.30);
-  transition: background 0.24s, border-color 0.24s, box-shadow 0.24s, transform 0.24s;
-  transition-timing-function: ease-out;
-}
-.glass-accent:hover {
-  background: rgba(255, 255, 255, 0.30) !important;
-  border-color: oklch(0.75 0.1 195 / 0.48) !important;
-  box-shadow:
-    inset -2px -2px 8px rgba(100, 220, 255, 0.18),
-    inset 2px 2px 8px rgba(255, 100, 200, 0.18),
-    inset 0 0 0 0.5px oklch(0.75 0.1 195 / 0.18),
-    0 0 18px oklch(0.75 0.1 195 / 0.12),
-    0 12px 40px rgba(0, 0, 0, 0.35);
-  transform: translateY(-2px);
-}
-.glass-accent:active {
-  background: rgba(255, 255, 255, 0.20) !important;
-  border-color: oklch(0.75 0.1 195 / 0.25) !important;
-  transform: translateY(0);
-  box-shadow:
-    inset -1px -1px 4px rgba(100, 220, 255, 0.10),
-    inset 1px 1px 4px rgba(255, 100, 200, 0.10),
-    inset 0 0 0 0.5px oklch(0.75 0.1 195 / 0.08),
-    0 4px 16px rgba(0, 0, 0, 0.22);
-}
-.glass-accent:focus-visible {
-  outline: 2px solid oklch(0.75 0.1 195);
-  outline-offset: 3px;
 }
 
 

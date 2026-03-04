@@ -60,9 +60,11 @@ export function About() {
           <p className="mt-6 max-w-3xl text-pretty text-lg leading-relaxed text-foreground/70">
             I work at the intersection of three domains: the vast scales of
             astrophysics, the complexity of financial markets, and the discipline
-            of rigorous data science. The common thread is extracting weak
-            signals from noisy, high-dimensional systems and treating modelling
-            assumptions as testable components.
+            of rigorous data science. The common thread is extracting{" "}
+            <span className="highlight">weak signals</span> from noisy,
+            high-dimensional systems and treating{" "}
+            <span className="highlight">modelling assumptions</span> as testable
+            components.
           </p>
         </div>
 

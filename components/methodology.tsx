@@ -78,8 +78,9 @@ export function Methodology() {
             How I work.
           </h2>
           <p className="mt-6 max-w-3xl text-pretty text-lg leading-relaxed text-foreground/70">
-            Across astronomy and quantitative finance, I apply a consistent
-            analytical philosophy. The domain changes; the rigour does not.
+            Across astronomy and quantitative finance, I apply a{" "}
+            <span className="highlight">consistent analytical philosophy</span>.
+            The domain changes; the rigour does not.
           </p>
         </div>
 

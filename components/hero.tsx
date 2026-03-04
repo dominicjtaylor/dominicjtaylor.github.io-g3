@@ -40,13 +40,12 @@ export function Hero() {
           Astronomy &middot; Data Analytics &middot; Quantitative Finance
         </p>
         <h1 className="text-balance text-5xl font-bold leading-[1.08] tracking-tight text-white drop-shadow-lg md:text-7xl lg:text-8xl">
-          Extracting <span className="highlight">signal</span>
+          Extracting signal
           <br />
-          from the noise.
+          <span className="text-primary">from the noise.</span>
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg font-medium leading-relaxed text-foreground/80 drop-shadow-md md:text-xl">
-          Researcher bridging <span className="highlight">astrophysics</span>,{" "}
-          <span className="highlight">quantitative modelling</span>, and data
+          Researcher bridging astrophysics, quantitative modelling, and data
           science to uncover structure in noisy, high-dimensional systems.
         </p>
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">

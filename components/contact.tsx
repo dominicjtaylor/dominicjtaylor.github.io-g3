@@ -45,7 +45,9 @@ export function Contact() {
             {"Let's connect."}
           </h2>
           <p className="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-foreground/70">
-            Open to collaborations in research, quantitative finance, and
+            Open to collaborations in{" "}
+            <span className="highlight">research</span>,{" "}
+            <span className="highlight">quantitative finance</span>, and
             data-driven projects. Always interested in discussing galaxies,
             markets, or methodology.
           </p>
