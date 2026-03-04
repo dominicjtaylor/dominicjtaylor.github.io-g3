@@ -40,24 +40,25 @@ export function Hero() {
           Astronomy &middot; Data Analytics &middot; Quantitative Finance
         </p>
         <h1 className="text-balance text-5xl font-bold leading-[1.08] tracking-tight text-white drop-shadow-lg md:text-7xl lg:text-8xl">
-          Extracting signal
+          Extracting <span className="highlight">signal</span>
           <br />
-          <span className="text-primary brightness-125">from the noise.</span>
+          from the noise.
         </h1>
-        <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg font-medium leading-relaxed text-foreground/90 drop-shadow-md md:text-xl">
-          Researcher bridging astrophysics, quantitative modelling, and data
+        <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg font-medium leading-relaxed text-foreground/80 drop-shadow-md md:text-xl">
+          Researcher bridging <span className="highlight">astrophysics</span>,{" "}
+          <span className="highlight">quantitative modelling</span>, and data
           science to uncover structure in noisy, high-dimensional systems.
         </p>
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <a
             href="#research"
-            className="glass-accent inline-flex h-12 min-w-[180px] items-center justify-center rounded-full px-8 text-sm font-medium text-white"
+            className="btn-accent inline-flex h-12 min-w-[180px] items-center justify-center rounded-full px-8 text-sm font-medium text-white"
           >
             View Research
           </a>
           <a
             href="#contact"
-            className="glass inline-flex h-12 min-w-[180px] items-center justify-center rounded-full px-8 text-sm font-medium text-white/85"
+            className="btn inline-flex h-12 min-w-[180px] items-center justify-center rounded-full px-8 text-sm font-medium text-white/85"
           >
             Get in Touch
           </a>
