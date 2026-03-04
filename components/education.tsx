@@ -61,6 +61,11 @@ export function Education() {
           <h2 className="mt-4 text-balance text-3xl font-bold tracking-tight text-white md:text-5xl">
             Academic background.
           </h2>
+          <p className="mt-4 max-w-2xl text-pretty text-lg leading-relaxed text-foreground/70">
+            Trained in <span className="highlight">physics</span> and{" "}
+            <span className="highlight">data-driven research</span> from
+            undergraduate through doctoral level.
+          </p>
         </div>
 
         <div className="mt-16 grid gap-6 md:grid-cols-2">

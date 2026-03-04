@@ -226,7 +226,7 @@
 }
 
 /* ── Highlight text utility (Fixa-inspired) ─────────────── */
-/* Soft inline emphasis for key phrases in body text.         */
+/* Soft inline emphasis for key phrases in body text. */
 
 .highlight {
   background: oklch(0.72 0.05 160 / 0.10);
