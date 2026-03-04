@@ -72,7 +72,7 @@ export function About() {
           {disciplines.map((item, i) => (
             <div
               key={item.title}
-              className={`group rounded-2xl border border-border bg-card p-8 transition-all duration-700 hover:border-primary/30 hover:bg-secondary ${
+              className={`group rounded-2xl border border-border bg-card p-8 transition-all duration-150 hover:border-primary/30 hover:bg-secondary ${
                 visible
                   ? "translate-y-0 opacity-100"
                   : "translate-y-8 opacity-0"

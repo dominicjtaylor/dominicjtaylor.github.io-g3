@@ -102,7 +102,7 @@ export function Experience() {
           {experiences.map((exp, i) => (
             <div
               key={`${exp.role}-${exp.org}`}
-              className={`group rounded-2xl border border-border bg-card p-6 transition-all duration-700 hover:border-primary/30 hover:bg-secondary md:p-8 ${
+              className={`group rounded-2xl border border-border bg-card p-6 transition-all duration-150 hover:border-primary/30 hover:bg-secondary md:p-8 ${
                 visible
                   ? "translate-y-0 opacity-100"
                   : "translate-y-8 opacity-0"
