@@ -324,7 +324,7 @@ export function Research() {
                   }}
                 >
                   {/* Image area */}
-                  <div className={`relative flex aspect-[16/9] items-center justify-center ${project.image ? "p-5 md:p-6" : ""} overflow-hidden`} style={{ backgroundColor: "#222222" }}>
+                  <div className={`relative flex aspect-[16/10] items-center justify-center ${project.image ? "p-5 md:p-6" : ""} overflow-hidden`} style={{ backgroundColor: "#222222" }}>
                     {project.image ? (
                       <img
                         src={project.image}
