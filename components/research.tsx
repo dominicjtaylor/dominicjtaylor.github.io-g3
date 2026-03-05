@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState, useCallback } from "react"
+import { motion, useMotionValue, useSpring, animate } from "framer-motion"
 import { ArrowUpRight } from "lucide-react"
 
 const projects = [
@@ -66,132 +67,141 @@ const projects = [
   },
 ]
 
-/* Number of clones prepended/appended for infinite loop */
-const CLONE_COUNT = 2
-const REAL_COUNT = projects.length
-const extendedProjects = [
-  ...projects.slice(-CLONE_COUNT),         // last 2 as head clones
-  ...projects,                              // real slides
-  ...projects.slice(0, CLONE_COUNT),        // first 2 as tail clones
-]
+const COUNT = projects.length
+
+/* Wrap index into [0, COUNT) */
+function wrap(i: number): number {
+  return ((i % COUNT) + COUNT) % COUNT
+}
+
+/* Card width constants */
+const CARD_W_MOBILE = 0.85 // 85vw
+const CARD_W_DESKTOP = 440  // px
+const GAP = 20              // px
 
 export function Research() {
   const sectionRef = useRef<HTMLElement>(null)
-  const scrollRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
-  const [centerIndex, setCenterIndex] = useState(CLONE_COUNT) // start on first real
-  const isResettingRef = useRef(false)
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [cardWidth, setCardWidth] = useState(CARD_W_DESKTOP)
+
+  /* Motion values for the track translateX */
+  const rawX = useMotionValue(0)
+  const x = useSpring(rawX, { stiffness: 300, damping: 35, mass: 0.8 })
+
+  /* Wheel throttle */
+  const wheelCooldownRef = useRef(false)
+  const lastWheelTimeRef = useRef(0)
+
+  /* ── Measure card width ──────────────────────────────────── */
+  const measureCard = useCallback(() => {
+    if (typeof window === "undefined") return CARD_W_DESKTOP
+    const vw = window.innerWidth
+    const w = vw < 768 ? vw * CARD_W_MOBILE : Math.min(CARD_W_DESKTOP, vw * 0.4)
+    setCardWidth(w)
+    return w
+  }, [])
+
+  useEffect(() => {
+    measureCard()
+    const handleResize = () => measureCard()
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [measureCard])
 
   /* ── Section entrance observer ──────────────────────────── */
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setVisible(true)
-      },
+      ([entry]) => { if (entry.isIntersecting) setVisible(true) },
       { threshold: 0.05 }
     )
     if (sectionRef.current) observer.observe(sectionRef.current)
     return () => observer.disconnect()
   }, [])
 
-  /* ── Helper: get slide width + gap from DOM ─────────────── */
-  const getSlideMetrics = useCallback(() => {
-    const el = scrollRef.current
-    if (!el) return { slideWidth: 0, gap: 0, stride: 0 }
-    const slides = el.querySelectorAll<HTMLElement>("[data-slide]")
-    if (slides.length < 2) return { slideWidth: 0, gap: 0, stride: 0 }
-    const slideWidth = slides[0].offsetWidth
-    const gap = slides[1].offsetLeft - (slides[0].offsetLeft + slides[0].offsetWidth)
-    return { slideWidth, gap, stride: slideWidth + gap }
+  /* ── Compute track offset to center activeIndex ─────────── */
+  const stride = cardWidth + GAP
+  const getOffset = useCallback(
+    (idx: number) => -idx * stride,
+    [stride]
+  )
+
+  /* ── Snap to activeIndex ─────────────────────────────────── */
+  useEffect(() => {
+    rawX.set(getOffset(activeIndex))
+  }, [activeIndex, getOffset, rawX])
+
+  /* ── Navigate ────────────────────────────────────────────── */
+  const goTo = useCallback((direction: number) => {
+    setActiveIndex((prev) => prev + direction)
   }, [])
 
-  /* ── On mount: scroll to first real slide instantly ──────── */
-  useEffect(() => {
-    const el = scrollRef.current
-    if (!el) return
-    // Small delay to let layout settle
-    const raf = requestAnimationFrame(() => {
-      const { stride } = getSlideMetrics()
-      if (stride > 0) {
-        const targetScroll = CLONE_COUNT * stride
-        el.scrollLeft = targetScroll
+  /* ── Drag end handler ────────────────────────────────────── */
+  const handleDragEnd = useCallback(
+    (_: never, info: { offset: { x: number }; velocity: { x: number } }) => {
+      const swipeThreshold = stride * 0.15
+      const velocityThreshold = 200
+      if (
+        info.offset.x < -swipeThreshold ||
+        info.velocity.x < -velocityThreshold
+      ) {
+        goTo(1)
+      } else if (
+        info.offset.x > swipeThreshold ||
+        info.velocity.x > velocityThreshold
+      ) {
+        goTo(-1)
+      } else {
+        // Snap back
+        rawX.set(getOffset(activeIndex))
       }
-    })
-    return () => cancelAnimationFrame(raf)
-  }, [getSlideMetrics])
+    },
+    [stride, goTo, rawX, getOffset, activeIndex]
+  )
 
-  /* ── Scroll handler: detect center slide + loop reset ───── */
-  const handleScroll = useCallback(() => {
-    const el = scrollRef.current
-    if (!el || isResettingRef.current) return
-
-    const { stride } = getSlideMetrics()
-    if (stride === 0) return
-
-    const scrollCenter = el.scrollLeft + el.clientWidth / 2
-    const slides = el.querySelectorAll<HTMLElement>("[data-slide]")
-
-    // Find closest slide to center
-    let closestIdx = 0
-    let closestDist = Infinity
-    slides.forEach((slide, i) => {
-      const slideCenter = slide.offsetLeft + slide.offsetWidth / 2
-      const dist = Math.abs(scrollCenter - slideCenter)
-      if (dist < closestDist) {
-        closestDist = dist
-        closestIdx = i
-      }
-    })
-    setCenterIndex(closestIdx)
-
-    // Loop reset: if user has scrolled into clone territory
-    const firstRealLeft = CLONE_COUNT * stride
-    const lastRealLeft = (CLONE_COUNT + REAL_COUNT - 1) * stride
-
-    // Scrolled past tail clones (past last real slide)
-    if (el.scrollLeft > lastRealLeft + stride * 0.5) {
-      isResettingRef.current = true
-      const overshoot = el.scrollLeft - lastRealLeft
-      el.style.scrollBehavior = "auto"
-      el.scrollLeft = firstRealLeft + overshoot - stride * REAL_COUNT
-      el.style.scrollBehavior = ""
-      requestAnimationFrame(() => {
-        isResettingRef.current = false
-      })
-    }
-    // Scrolled before head clones (before first real slide)
-    else if (el.scrollLeft < firstRealLeft - stride * 0.5) {
-      isResettingRef.current = true
-      const undershoot = firstRealLeft - el.scrollLeft
-      el.style.scrollBehavior = "auto"
-      el.scrollLeft = lastRealLeft - undershoot + stride * REAL_COUNT
-      el.style.scrollBehavior = ""
-      requestAnimationFrame(() => {
-        isResettingRef.current = false
-      })
-    }
-  }, [getSlideMetrics])
-
+  /* ── Wheel / trackpad ────────────────────────────────────── */
   useEffect(() => {
-    const el = scrollRef.current
+    const el = containerRef.current
     if (!el) return
-    el.addEventListener("scroll", handleScroll, { passive: true })
-    return () => el.removeEventListener("scroll", handleScroll)
-  }, [handleScroll])
 
-  /* ── Map extended index back to real index for visual state ─ */
-  const getRealIndex = (extIdx: number) => {
-    if (extIdx < CLONE_COUNT) return extIdx + REAL_COUNT - CLONE_COUNT
-    if (extIdx >= CLONE_COUNT + REAL_COUNT) return extIdx - CLONE_COUNT - REAL_COUNT
-    return extIdx - CLONE_COUNT
+    const handleWheel = (e: WheelEvent) => {
+      // Determine primary scroll axis
+      const absX = Math.abs(e.deltaX)
+      const absY = Math.abs(e.deltaY)
+      const delta = absX > absY ? e.deltaX : e.deltaY
+
+      if (Math.abs(delta) < 15) return
+
+      const now = Date.now()
+      if (now - lastWheelTimeRef.current < 350) return
+      lastWheelTimeRef.current = now
+
+      e.preventDefault()
+
+      if (delta > 0) {
+        goTo(1)
+      } else {
+        goTo(-1)
+      }
+    }
+
+    el.addEventListener("wheel", handleWheel, { passive: false })
+    return () => el.removeEventListener("wheel", handleWheel)
+  }, [goTo])
+
+  /* ── Render slides: we render a window of slides around activeIndex ─ */
+  const RENDER_RANGE = 3 // render -3..+3 around active = 7 slides visible
+  const slides: { realIndex: number; offset: number }[] = []
+  for (let i = -RENDER_RANGE; i <= RENDER_RANGE; i++) {
+    slides.push({
+      realIndex: wrap(activeIndex + i),
+      offset: activeIndex + i,
+    })
   }
 
   return (
-    <section
-      ref={sectionRef}
-      id="research"
-      className="relative py-24 md:py-32"
-    >
+    <section ref={sectionRef} id="research" className="relative py-24 md:py-32">
       <div className="absolute top-0 left-1/2 h-px w-1/2 -translate-x-1/2 bg-gradient-to-r from-transparent via-border to-transparent" />
 
       <div className="mx-auto max-w-6xl px-6">
@@ -214,21 +224,32 @@ export function Research() {
         </div>
       </div>
 
-      {/* Carousel — infinite loop, edge fade, snap centering */}
+      {/* Carousel viewport */}
       <div
-        className={`carousel-edge-fade mt-12 transition-all duration-1000 ${
+        ref={containerRef}
+        className={`carousel-edge-fade relative mt-12 overflow-hidden transition-all duration-1000 ${
           visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
         }`}
-        style={{ transitionDelay: "200ms" }}
+        style={{ transitionDelay: "200ms", cursor: "grab" }}
       >
-        <div
-          ref={scrollRef}
-          className="scrollbar-hide flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth px-[8vw] pb-4 md:px-[max(1.5rem,calc((100vw-440px)/2))]"
-          style={{ WebkitOverflowScrolling: "touch" }}
+        <motion.div
+          className="flex items-start justify-center"
+          style={{ x }}
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.12}
+          onDragEnd={handleDragEnd}
+          whileDrag={{ cursor: "grabbing" }}
         >
-          {extendedProjects.map((project, i) => {
-            const isCenter = i === centerIndex
-            const realIdx = getRealIndex(i)
+          {slides.map(({ realIndex, offset }) => {
+            const project = projects[realIndex]
+            const distance = Math.abs(offset - activeIndex)
+            const isCenter = distance === 0
+            const scale = isCenter ? 1 : Math.max(0.88, 1 - distance * 0.04)
+            const opacity = isCenter ? 1 : Math.max(0.35, 1 - distance * 0.25)
+
+            const translateX = offset * stride
+
             const Wrapper = project.link ? "a" : "div"
             const linkProps = project.link
               ? {
@@ -237,63 +258,83 @@ export function Research() {
                   rel: "noopener noreferrer",
                 }
               : {}
-            return (
-              <Wrapper
-                key={`${realIdx}-${i}`}
-                data-slide
-                {...linkProps}
-                className={`group flex w-[85vw] max-w-[440px] shrink-0 snap-center flex-col overflow-hidden rounded-3xl border bg-card transition-all duration-500 ease-out ${
-                  isCenter
-                    ? "scale-100 opacity-100 border-primary/25 shadow-lg shadow-primary/5"
-                    : "scale-[0.92] opacity-50 border-border"
-                } ${project.link ? "cursor-pointer" : ""}`}
-              >
-                {/* Image placeholder */}
-                <div className="relative flex aspect-[16/10] items-center justify-center bg-secondary/50">
-                  <div className="flex flex-col items-center gap-2.5 text-foreground/25">
-                    <div className="h-10 w-10 rounded-xl border border-foreground/10 bg-foreground/5" />
-                    <span className="text-[11px] tracking-wide">
-                      {"[Project graphic placeholder]"}
-                    </span>
-                  </div>
-                  {project.link && (
-                    <div className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-background/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                      <ArrowUpRight className="h-3.5 w-3.5 text-foreground/60" />
-                    </div>
-                  )}
-                </div>
 
-                {/* Content */}
-                <div className="flex flex-1 flex-col p-5 md:p-6">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <span className="text-xs font-medium uppercase tracking-widest text-primary">
-                      {project.category}
-                    </span>
-                    <span className="text-xs text-foreground/40">
-                      {project.year}
-                    </span>
+            return (
+              <motion.div
+                key={`${realIndex}-${offset}`}
+                className="shrink-0"
+                style={{
+                  width: cardWidth,
+                  position: offset === activeIndex ? "relative" : "absolute",
+                  left: "50%",
+                  x: translateX - cardWidth / 2,
+                  scale,
+                  opacity,
+                }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              >
+                <Wrapper
+                  {...linkProps}
+                  className={`group flex flex-col overflow-hidden rounded-3xl border bg-card transition-colors duration-300 ${
+                    isCenter
+                      ? "border-primary/25 shadow-lg shadow-primary/5"
+                      : "border-border"
+                  } ${project.link ? "cursor-pointer" : ""}`}
+                  onClick={(e: React.MouseEvent) => {
+                    // Prevent link navigation if clicking a non-center card
+                    if (!isCenter) {
+                      e.preventDefault()
+                      setActiveIndex(offset)
+                    }
+                  }}
+                >
+                  {/* Image placeholder */}
+                  <div className="relative flex aspect-[16/10] items-center justify-center bg-secondary/50">
+                    <div className="flex flex-col items-center gap-2.5 text-foreground/25">
+                      <div className="h-10 w-10 rounded-xl border border-foreground/10 bg-foreground/5" />
+                      <span className="text-[11px] tracking-wide">
+                        {"[Project graphic placeholder]"}
+                      </span>
+                    </div>
+                    {project.link && (
+                      <div className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-background/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                        <ArrowUpRight className="h-3.5 w-3.5 text-foreground/60" />
+                      </div>
+                    )}
                   </div>
-                  <h3 className="mt-2.5 text-base font-semibold leading-snug tracking-tight text-white md:text-lg">
-                    {project.title}
-                  </h3>
-                  {project.journal && (
-                    <p className="mt-1 text-sm font-medium text-primary/70">
-                      {project.journal}
+
+                  {/* Content */}
+                  <div className="flex flex-1 flex-col p-5 md:p-6">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className="text-xs font-medium uppercase tracking-widest text-primary">
+                        {project.category}
+                      </span>
+                      <span className="text-xs text-foreground/40">
+                        {project.year}
+                      </span>
+                    </div>
+                    <h3 className="mt-2.5 text-base font-semibold leading-snug tracking-tight text-white md:text-lg">
+                      {project.title}
+                    </h3>
+                    {project.journal && (
+                      <p className="mt-1 text-sm font-medium text-primary/70">
+                        {project.journal}
+                      </p>
+                    )}
+                    <p className="mt-2 text-sm leading-relaxed text-foreground/60">
+                      {project.description}
                     </p>
-                  )}
-                  <p className="mt-2 text-sm leading-relaxed text-foreground/60">
-                    {project.description}
-                  </p>
-                  <div className="mt-auto pt-4">
-                    <p className="text-xs leading-relaxed text-foreground/50">
-                      {project.tags.join(" \u2022 ")}
-                    </p>
+                    <div className="mt-auto pt-4">
+                      <p className="text-xs leading-relaxed text-foreground/50">
+                        {project.tags.join(" \u2022 ")}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </Wrapper>
+                </Wrapper>
+              </motion.div>
             )
           })}
-        </div>
+        </motion.div>
       </div>
     </section>
   )
