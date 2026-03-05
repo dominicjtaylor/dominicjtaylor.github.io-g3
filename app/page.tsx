@@ -2,8 +2,7 @@ import { Navigation } from "@/components/navigation"
 import { Hero } from "@/components/hero"
 import { About } from "@/components/about"
 import { Research } from "@/components/research"
-import { Experience } from "@/components/experience"
-import { Education } from "@/components/education"
+import { Timeline } from "@/components/timeline"
 import { Methodology } from "@/components/methodology"
 import { Contact } from "@/components/contact"
 import { Footer } from "@/components/footer"
@@ -19,8 +18,7 @@ export default function Home() {
         <div className="relative bg-background/90 backdrop-blur-sm">
           <About />
           <Research />
-          <Experience />
-          <Education />
+          <Timeline />
           <Methodology />
           <Contact />
           <Footer />

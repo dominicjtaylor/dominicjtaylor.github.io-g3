@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState, useCallback } from "react"
-import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react"
+import { ArrowUpRight } from "lucide-react"
 
 const projects = [
   {
@@ -70,8 +70,7 @@ export function Research() {
   const sectionRef = useRef<HTMLElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
-  const [canScrollLeft, setCanScrollLeft] = useState(false)
-  const [canScrollRight, setCanScrollRight] = useState(true)
+  const [centerIndex, setCenterIndex] = useState(0)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -84,30 +83,31 @@ export function Research() {
     return () => observer.disconnect()
   }, [])
 
-  const updateScrollState = useCallback(() => {
+  const updateCenterSlide = useCallback(() => {
     const el = scrollRef.current
     if (!el) return
-    setCanScrollLeft(el.scrollLeft > 10)
-    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10)
+    const scrollCenter = el.scrollLeft + el.clientWidth / 2
+    const slides = el.querySelectorAll<HTMLElement>("[data-slide]")
+    let closestIdx = 0
+    let closestDist = Infinity
+    slides.forEach((slide, i) => {
+      const slideCenter = slide.offsetLeft + slide.offsetWidth / 2
+      const dist = Math.abs(scrollCenter - slideCenter)
+      if (dist < closestDist) {
+        closestDist = dist
+        closestIdx = i
+      }
+    })
+    setCenterIndex(closestIdx)
   }, [])
 
   useEffect(() => {
     const el = scrollRef.current
     if (!el) return
-    el.addEventListener("scroll", updateScrollState, { passive: true })
-    updateScrollState()
-    return () => el.removeEventListener("scroll", updateScrollState)
-  }, [updateScrollState])
-
-  const scroll = (direction: "left" | "right") => {
-    const el = scrollRef.current
-    if (!el) return
-    const slideWidth = el.querySelector("[data-slide]")?.clientWidth ?? 400
-    el.scrollBy({
-      left: direction === "left" ? -slideWidth - 24 : slideWidth + 24,
-      behavior: "smooth",
-    })
-  }
+    el.addEventListener("scroll", updateCenterSlide, { passive: true })
+    updateCenterSlide()
+    return () => el.removeEventListener("scroll", updateCenterSlide)
+  }, [updateCenterSlide])
 
   return (
     <section
@@ -119,58 +119,39 @@ export function Research() {
 
       <div className="mx-auto max-w-6xl px-6">
         <div
-          className={`flex items-end justify-between transition-all duration-1000 ${
+          className={`transition-all duration-1000 ${
             visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
           }`}
         >
-          <div>
-            <p className="text-sm font-medium uppercase tracking-[0.3em] text-primary">
-              Research
-            </p>
-            <h2 className="mt-4 text-balance text-3xl font-bold tracking-tight text-white md:text-5xl">
-              Selected projects.
-            </h2>
-            <p className="mt-4 max-w-2xl text-pretty text-lg leading-relaxed text-foreground/70">
-              Spanning <span className="highlight">astrophysics</span> and{" "}
-              <span className="highlight">quantitative finance</span>, each built
-              on reproducible pipelines and rigorous evaluation.
-            </p>
-          </div>
-
-          {/* Navigation arrows */}
-          <div className="hidden items-center gap-2 md:flex">
-            <button
-              onClick={() => scroll("left")}
-              disabled={!canScrollLeft}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card transition-all duration-150 hover:border-primary/30 hover:bg-secondary disabled:opacity-30 disabled:cursor-not-allowed"
-              aria-label="Scroll left"
-            >
-              <ChevronLeft className="h-4 w-4 text-foreground/70" />
-            </button>
-            <button
-              onClick={() => scroll("right")}
-              disabled={!canScrollRight}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card transition-all duration-150 hover:border-primary/30 hover:bg-secondary disabled:opacity-30 disabled:cursor-not-allowed"
-              aria-label="Scroll right"
-            >
-              <ChevronRight className="h-4 w-4 text-foreground/70" />
-            </button>
-          </div>
+          <p className="text-sm font-medium uppercase tracking-[0.3em] text-primary">
+            Research
+          </p>
+          <h2 className="mt-4 text-balance text-3xl font-bold tracking-tight text-white md:text-5xl">
+            Selected projects.
+          </h2>
+          <p className="mt-4 max-w-2xl text-pretty text-lg leading-relaxed text-foreground/70">
+            Spanning <span className="highlight">astrophysics</span> and{" "}
+            <span className="highlight">quantitative finance</span>, each built
+            on reproducible pipelines and rigorous evaluation.
+          </p>
         </div>
       </div>
 
-      {/* Carousel */}
+      {/* Carousel -- no arrows, no dots, trackpad/swipe/wheel scroll */}
       <div
         ref={scrollRef}
-        className={`scrollbar-hide mt-12 flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth px-6 pb-4 md:px-[max(1.5rem,calc((100vw-72rem)/2+1.5rem))] transition-all duration-1000 ${
+        className={`scrollbar-hide mt-12 flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth pb-4 transition-all duration-1000 ${
           visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
         }`}
         style={{
           WebkitOverflowScrolling: "touch",
           transitionDelay: "200ms",
+          paddingLeft: "max(1.5rem, calc((100vw - 440px) / 2))",
+          paddingRight: "max(1.5rem, calc((100vw - 440px) / 2))",
         }}
       >
-        {projects.map((project) => {
+        {projects.map((project, i) => {
+          const isCenter = i === centerIndex
           const Wrapper = project.link ? "a" : "div"
           const linkProps = project.link
             ? {
@@ -184,46 +165,50 @@ export function Research() {
               key={project.title}
               data-slide
               {...linkProps}
-              className={`group flex w-[85vw] max-w-[480px] shrink-0 snap-center flex-col overflow-hidden rounded-3xl border border-border bg-card transition-all duration-250 hover:border-primary/30 hover:scale-[1.02] ${
-                project.link ? "cursor-pointer" : ""
-              }`}
+              className={`group flex w-[82vw] max-w-[440px] shrink-0 snap-center flex-col overflow-hidden rounded-3xl border bg-card transition-all duration-500 ease-out ${
+                isCenter
+                  ? "scale-100 opacity-100 border-primary/25 shadow-lg shadow-primary/5"
+                  : "scale-[0.92] opacity-70 border-border"
+              } ${project.link ? "cursor-pointer" : ""}`}
             >
-              {/* Visual placeholder area */}
-              <div className="relative flex h-52 items-center justify-center bg-secondary/60 md:h-64">
-                <div className="flex flex-col items-center gap-2 text-foreground/30">
-                  <div className="h-12 w-12 rounded-xl bg-foreground/5" />
-                  <span className="text-xs">{"[Insert research plot or diagram]"}</span>
+              {/* Image placeholder */}
+              <div className="relative flex aspect-[16/10] items-center justify-center bg-secondary/50">
+                <div className="flex flex-col items-center gap-2.5 text-foreground/25">
+                  <div className="h-10 w-10 rounded-xl border border-foreground/10 bg-foreground/5" />
+                  <span className="text-[11px] tracking-wide">
+                    {"[Project graphic placeholder]"}
+                  </span>
                 </div>
                 {project.link && (
-                  <div className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-background/60 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                    <ArrowUpRight className="h-4 w-4 text-foreground/70" />
+                  <div className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-background/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                    <ArrowUpRight className="h-3.5 w-3.5 text-foreground/60" />
                   </div>
                 )}
               </div>
 
-              {/* Content area */}
-              <div className="flex flex-1 flex-col p-6">
+              {/* Content */}
+              <div className="flex flex-1 flex-col p-5 md:p-6">
                 <div className="flex flex-wrap items-center gap-3">
                   <span className="text-xs font-medium uppercase tracking-widest text-primary">
                     {project.category}
                   </span>
-                  <span className="text-xs text-foreground/50">
+                  <span className="text-xs text-foreground/40">
                     {project.year}
                   </span>
                 </div>
-                <h3 className="mt-3 text-lg font-semibold tracking-tight text-white md:text-xl">
+                <h3 className="mt-2.5 text-base font-semibold tracking-tight text-white leading-snug md:text-lg">
                   {project.title}
                 </h3>
                 {project.journal && (
-                  <p className="mt-1 text-sm font-medium text-primary/80">
+                  <p className="mt-1 text-sm font-medium text-primary/70">
                     {project.journal}
                   </p>
                 )}
-                <p className="mt-2 text-sm leading-relaxed text-foreground/70">
+                <p className="mt-2 text-sm leading-relaxed text-foreground/60">
                   {project.description}
                 </p>
-                <div className="mt-auto pt-5">
-                  <p className="text-xs leading-relaxed text-foreground/60">
+                <div className="mt-auto pt-4">
+                  <p className="text-xs leading-relaxed text-foreground/50">
                     {project.tags.join(" \u2022 ")}
                   </p>
                 </div>
@@ -232,7 +217,6 @@ export function Research() {
           )
         })}
       </div>
-
     </section>
   )
 }
