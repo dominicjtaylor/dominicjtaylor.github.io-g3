@@ -14,13 +14,13 @@ interface TimelineEntry {
 
 const entries: TimelineEntry[] = [
   {
-    type: "career",
-    title: "PhD Researcher",
+    type: "education",
+    title: "PhD Astrophysics",
     org: "Durham University",
-    period: "Oct 2022 \u2013 Mar 2026",
+    period: "2022 \u2013 2026",
     summary:
-      "Led international research projects, built scalable Python pipelines for terabyte-scale data, and applied ML autoencoders for signal extraction in noisy datasets.",
-    sortKey: 2022.10,
+      "Physical Properties of Submillimetre Galaxies from Integrated Gas Kinematics.",
+    sortKey: 2026,
   },
   {
     type: "career",
@@ -29,56 +29,47 @@ const entries: TimelineEntry[] = [
     period: "2024",
     summary:
       "Designed and launched a responsive website contributing to a 200% increase in client acquisition.",
-    sortKey: 2024.0,
-  },
-  {
-    type: "career",
-    title: "Research Intern",
-    org: "Leibniz-Institute for Astrophysics Potsdam, Germany",
-    period: "Summer 2021",
-    summary:
-      "Engineered classification pipelines to identify under-represented stellar populations. Published findings in MNRAS.",
-    sortKey: 2021.06,
-  },
-  {
-    type: "career",
-    title: "Research Intern, SDSS-IV APOGEE-2",
-    org: "Liverpool John Moores University ARI",
-    period: "Summer 2020",
-    summary:
-      "Applied random sampling methods for comparative statistical analysis on large astronomical datasets.",
-    sortKey: 2020.06,
-  },
-  {
-    type: "career",
-    title: "Research Intern, LUX-ZEPLIN Collaboration",
-    org: "University of Liverpool",
-    period: "Summer 2019",
-    summary:
-      "Built an interactive Streamlit application translating complex physics results into accessible formats.",
-    sortKey: 2019.06,
-  },
-  {
-    type: "education",
-    title: "PhD Astrophysics",
-    org: "Durham University",
-    period: "Oct 2022 \u2013 Mar 2026",
-    summary:
-      "Physical Properties of Submillimetre Galaxies from Integrated Gas Kinematics.",
-    sortKey: 2022.10,
+    sortKey: 2024,
   },
   {
     type: "education",
     title: "MPhys Astrophysics",
     org: "University of Liverpool",
-    period: "Oct 2017 \u2013 Jun 2021",
+    period: "2017 \u2013 2021",
     summary:
       "First Class Honours. What influences the efficiency of galaxy formation?",
-    sortKey: 2017.10,
+    sortKey: 2021,
+  },
+  {
+    type: "career",
+    title: "Research Intern",
+    org: "Leibniz-Institute for Astrophysics Potsdam, Germany",
+    period: "2021",
+    summary:
+      "Engineered classification pipelines to identify under-represented stellar populations. Published findings in MNRAS.",
+    sortKey: 2021,
+  },
+  {
+    type: "career",
+    title: "Research Intern, SDSS-IV APOGEE-2",
+    org: "Liverpool John Moores University ARI",
+    period: "2020",
+    summary:
+      "Applied random sampling methods for comparative statistical analysis on large astronomical datasets.",
+    sortKey: 2020,
+  },
+  {
+    type: "career",
+    title: "Research Intern, LUX-ZEPLIN Collaboration",
+    org: "University of Liverpool",
+    period: "2019",
+    summary:
+      "Built an interactive Streamlit application translating complex physics results into accessible formats.",
+    sortKey: 2019,
   },
 ]
 
-// Sort newest first
+// Sort newest first by end year
 const sorted = [...entries].sort((a, b) => b.sortKey - a.sortKey)
 
 export function Timeline() {

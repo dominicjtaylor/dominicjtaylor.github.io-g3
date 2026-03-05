@@ -317,7 +317,7 @@ export function Research() {
                   }}
                 >
                   {/* Image placeholder */}
-                  <div className="relative flex aspect-[16/10] items-center justify-center bg-secondary/50">
+                  <div className="relative flex aspect-[16/7] items-center justify-center bg-secondary/50">
                     <div className="flex flex-col items-center gap-2.5 text-foreground/25">
                       <div className="h-10 w-10 rounded-xl border border-foreground/10 bg-foreground/5" />
                       <span className="text-[11px] tracking-wide">
