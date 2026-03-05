@@ -15,6 +15,7 @@ const projects = [
     year: "2026",
     journal: null,
     link: "https://github.com/dominicjtaylor/fx-volatility-forecasting",
+    image: "/images/applied_model_dark.png",
   },
   {
     category: "Astrophysics + ML",
@@ -25,6 +26,7 @@ const projects = [
     year: "In prep.",
     journal: "Taylor et al. \u2014 In preparation",
     link: null,
+    image: null,
   },
   {
     category: "Astrophysics",
@@ -35,6 +37,7 @@ const projects = [
     year: "2025",
     journal: "Taylor et al. \u2014 MNRAS 2025",
     link: "https://academic.oup.com/mnras/article/536/2/1149/7909089",
+    image: null,
   },
   {
     category: "Quantitative Finance",
@@ -45,6 +48,7 @@ const projects = [
     year: "2025",
     journal: null,
     link: "https://github.com/dominicjtaylor/quantlab",
+    image: null,
   },
   {
     category: "Astrophysics",
@@ -55,6 +59,7 @@ const projects = [
     year: "2022",
     journal: "Taylor et al. \u2014 MNRAS 2022",
     link: "https://academic.oup.com/mnras/article/513/3/3429/6565286",
+    image: null,
   },
   {
     category: "Data Engineering",
@@ -65,6 +70,7 @@ const projects = [
     year: "2020",
     journal: null,
     link: "https://covid19-data.streamlit.app",
+    image: null,
   },
 ]
 
@@ -316,14 +322,23 @@ export function Research() {
                     }
                   }}
                 >
-                  {/* Image placeholder */}
-                  <div className="relative flex aspect-[16/7] items-center justify-center bg-secondary/50">
-                    <div className="flex flex-col items-center gap-2.5 text-foreground/25">
-                      <div className="h-10 w-10 rounded-xl border border-foreground/10 bg-foreground/5" />
-                      <span className="text-[11px] tracking-wide">
-                        {"[Project graphic placeholder]"}
-                      </span>
-                    </div>
+                  {/* Image area */}
+                  <div className="relative flex aspect-[16/7] items-center justify-center overflow-hidden bg-secondary/50">
+                    {project.image ? (
+                      <img
+                        src={project.image}
+                        alt={`${project.title} visualization`}
+                        className="h-full w-full object-cover"
+                        crossOrigin="anonymous"
+                      />
+                    ) : (
+                      <div className="flex flex-col items-center gap-2.5 text-foreground/25">
+                        <div className="h-10 w-10 rounded-xl border border-foreground/10 bg-foreground/5" />
+                        <span className="text-[11px] tracking-wide">
+                          {"[Project graphic placeholder]"}
+                        </span>
+                      </div>
+                    )}
                     {project.link && (
                       <div className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-background/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
                         <ArrowUpRight className="h-3.5 w-3.5 text-foreground/60" />
