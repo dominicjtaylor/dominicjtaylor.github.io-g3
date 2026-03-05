@@ -71,19 +71,23 @@ const projects = [
 const N = projects.length
 const COPIES = 3
 const TOTAL = N * COPIES
-const CENTER_START = N // first index of center copy
-
+const MID_START = N // first index of center copy
 const GAP = 24
 
-/* ── Spring config: quick & clean, no overshoot ──────────── */
-const SNAP_SPRING = { type: "spring" as const, stiffness: 350, damping: 35, mass: 0.9 }
+/* ── Spring: critically-damped, no overshoot ──────────────── */
+const SNAP_SPRING = {
+  type: "spring" as const,
+  stiffness: 320,
+  damping: 38,
+  mass: 1,
+}
 
 export function Research() {
   const sectionRef = useRef<HTMLElement>(null)
   const viewportRef = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
   const [cardW, setCardW] = useState(440)
-  const [activeIndex, setActiveIndex] = useState(CENTER_START)
+  const [activeIndex, setActiveIndex] = useState(MID_START)
 
   const x = useMotionValue(0)
   const isDragging = useRef(false)
@@ -105,7 +109,7 @@ export function Research() {
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([e]) => { if (e.isIntersecting) setVisible(true) },
-      { threshold: 0.05 }
+      { threshold: 0.05 },
     )
     if (sectionRef.current) observer.observe(sectionRef.current)
     return () => observer.disconnect()
@@ -113,16 +117,18 @@ export function Research() {
 
   const stride = cardW + GAP
 
-  /* ── Compute track x to center a given index ─────────────── */
+  /* ── Compute track x to center a given slide index ───────── */
   const centerX = useCallback(
     (idx: number) => {
-      const vw = viewportRef.current?.offsetWidth ?? (typeof window !== "undefined" ? window.innerWidth : 1200)
+      const vw =
+        viewportRef.current?.offsetWidth ??
+        (typeof window !== "undefined" ? window.innerWidth : 1200)
       return vw / 2 - idx * stride - cardW / 2
     },
-    [stride, cardW]
+    [stride, cardW],
   )
 
-  /* ── Snap to index: clean spring, no overshoot ───────────── */
+  /* ── Snap: clean spring, guard against overlapping anims ─── */
   const snapTo = useCallback(
     (idx: number, instant = false) => {
       const target = centerX(idx)
@@ -133,10 +139,12 @@ export function Research() {
       isAnimating.current = true
       animate(x, target, {
         ...SNAP_SPRING,
-        onComplete: () => { isAnimating.current = false },
+        onComplete: () => {
+          isAnimating.current = false
+        },
       })
     },
-    [centerX, x]
+    [centerX, x],
   )
 
   /* ── On mount + resize: center immediately ───────────────── */
@@ -145,10 +153,11 @@ export function Research() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cardW])
 
-  /* ── When activeIndex changes: animate, then loop-check ──── */
+  /* ── When activeIndex changes: animate, then loop-recenter ─ */
   useEffect(() => {
     snapTo(activeIndex)
 
+    // After spring settles, silently recenter into the middle copy
     const timeout = setTimeout(() => {
       let newIdx = activeIndex
       if (activeIndex < N) {
@@ -157,22 +166,23 @@ export function Research() {
         newIdx = activeIndex - N
       }
       if (newIdx !== activeIndex) {
+        // Jump instantly: update x position THEN state in same frame
         x.jump(centerX(newIdx))
         setActiveIndex(newIdx)
       }
-    }, 350)
+    }, 400)
 
     return () => clearTimeout(timeout)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeIndex])
 
-  /* ── Navigate: exactly +-1 slide, guarded against spam ───── */
+  /* ── Navigate exactly +-1 slide ──────────────────────────── */
   const go = useCallback((dir: number) => {
     if (isAnimating.current) return
     setActiveIndex((prev) => prev + dir)
   }, [])
 
-  /* ── Drag end: advance +-1 or snap back. No momentum. ───── */
+  /* ── Drag end: max +-1 slide per gesture ─────────────────── */
   const handleDragEnd = useCallback(
     (_: unknown, info: { offset: { x: number }; velocity: { x: number } }) => {
       isDragging.current = false
@@ -183,14 +193,13 @@ export function Research() {
       } else if (info.offset.x > threshold || info.velocity.x > velThresh) {
         go(-1)
       } else {
-        // snap back to current
         snapTo(activeIndex)
       }
     },
-    [stride, go, snapTo, activeIndex]
+    [stride, go, snapTo, activeIndex],
   )
 
-  /* ── Wheel / trackpad: horizontal only, +-1 per gesture ─── */
+  /* ── Wheel: horizontal-only, +-1 per gesture ────────────── */
   useEffect(() => {
     const el = viewportRef.current
     if (!el) return
@@ -213,7 +222,7 @@ export function Research() {
     return () => el.removeEventListener("wheel", handler)
   }, [go])
 
-  /* ── Tripled slides ──────────────────────────────────────── */
+  /* ── Tripled slide list ──────────────────────────────────── */
   const slides = Array.from({ length: TOTAL }, (_, i) => ({
     slideIndex: i,
     project: projects[i % N],
@@ -256,10 +265,12 @@ export function Research() {
           className="flex"
           style={{ x, gap: GAP, cursor: "grab" }}
           drag="x"
-          dragConstraints={{ left: 0, right: 0 }}
+          dragConstraints={{ left: -stride, right: stride }}
           dragElastic={0.12}
           dragMomentum={false}
-          onDragStart={() => { isDragging.current = true }}
+          onDragStart={() => {
+            isDragging.current = true
+          }}
           onDragEnd={handleDragEnd}
           whileDrag={{ cursor: "grabbing" }}
         >
@@ -272,7 +283,11 @@ export function Research() {
 
             const Wrapper = project.link ? "a" : "div"
             const linkProps = project.link
-              ? { href: project.link, target: "_blank" as const, rel: "noopener noreferrer" }
+              ? {
+                  href: project.link,
+                  target: "_blank" as const,
+                  rel: "noopener noreferrer",
+                }
               : {}
 
             return (
@@ -291,7 +306,10 @@ export function Research() {
                       : "border-border"
                   } ${project.link ? "cursor-pointer" : ""}`}
                   onClick={(e: React.MouseEvent) => {
-                    if (isDragging.current) { e.preventDefault(); return }
+                    if (isDragging.current) {
+                      e.preventDefault()
+                      return
+                    }
                     if (!isActive) {
                       e.preventDefault()
                       setActiveIndex(slideIndex)
@@ -345,13 +363,15 @@ export function Research() {
             )
           })}
         </motion.div>
+      </div>
 
-        {/* Navigation buttons */}
+      {/* Grouped navigation buttons — centered below carousel */}
+      <div className="mt-6 flex items-center justify-center gap-3">
         <button
           type="button"
           onClick={() => go(-1)}
           aria-label="Previous project"
-          className="glass absolute left-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full md:left-5 md:h-11 md:w-11"
+          className="glass flex h-11 w-11 items-center justify-center rounded-full"
         >
           <span className="glass-edge" aria-hidden="true" />
           <ChevronLeft className="relative z-10 h-5 w-5 text-white/80" />
@@ -360,7 +380,7 @@ export function Research() {
           type="button"
           onClick={() => go(1)}
           aria-label="Next project"
-          className="glass absolute right-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full md:right-5 md:h-11 md:w-11"
+          className="glass flex h-11 w-11 items-center justify-center rounded-full"
         >
           <span className="glass-edge" aria-hidden="true" />
           <ChevronRight className="relative z-10 h-5 w-5 text-white/80" />
