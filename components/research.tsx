@@ -128,6 +128,9 @@ export function Research() {
     [stride, cardW],
   )
 
+  /* ── Ref to skip animation on silent recenter ─────────────── */
+  const skipAnim = useRef(false)
+
   /* ── Snap: clean spring, guard against overlapping anims ─── */
   const snapTo = useCallback(
     (idx: number, instant = false) => {
@@ -141,6 +144,16 @@ export function Research() {
         ...SNAP_SPRING,
         onComplete: () => {
           isAnimating.current = false
+
+          // After spring settles, silently recenter into middle copy
+          let newIdx = idx
+          if (idx < N) newIdx = idx + N
+          else if (idx >= N * 2) newIdx = idx - N
+          if (newIdx !== idx) {
+            skipAnim.current = true
+            x.jump(centerX(newIdx))
+            setActiveIndex(newIdx)
+          }
         },
       })
     },
@@ -153,26 +166,13 @@ export function Research() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cardW])
 
-  /* ── When activeIndex changes: animate, then loop-recenter ─ */
+  /* ── When activeIndex changes: animate (unless silent jump) ─ */
   useEffect(() => {
+    if (skipAnim.current) {
+      skipAnim.current = false
+      return
+    }
     snapTo(activeIndex)
-
-    // After spring settles, silently recenter into the middle copy
-    const timeout = setTimeout(() => {
-      let newIdx = activeIndex
-      if (activeIndex < N) {
-        newIdx = activeIndex + N
-      } else if (activeIndex >= N * 2) {
-        newIdx = activeIndex - N
-      }
-      if (newIdx !== activeIndex) {
-        // Jump instantly: update x position THEN state in same frame
-        x.jump(centerX(newIdx))
-        setActiveIndex(newIdx)
-      }
-    }, 400)
-
-    return () => clearTimeout(timeout)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeIndex])
 
