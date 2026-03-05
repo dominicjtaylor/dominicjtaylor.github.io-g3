@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react"
 import { motion, useMotionValue, animate } from "framer-motion"
-import { ArrowUpRight } from "lucide-react"
+import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react"
 
 /* ── Project data ───────────────────────────────────────────── */
 const projects = [
@@ -124,14 +124,39 @@ export function Research() {
     [stride, cardW]
   )
 
-  /* ── Animate to active index ─────────────────────────────── */
+  /* ── Track last index for overshoot direction ────────────── */
+  const prevIndex = useRef(activeIndex)
+
+  /* ── Animate to active index with elastic overshoot ──────── */
   const snapTo = useCallback(
     (idx: number, instant = false) => {
       const target = centerX(idx)
       if (instant) {
         x.jump(target)
+        return
+      }
+      // Determine overshoot direction from navigation direction
+      const dir = idx > prevIndex.current ? -1 : idx < prevIndex.current ? 1 : 0
+      const overshoot = dir * 14 // 14px past target
+      prevIndex.current = idx
+
+      if (overshoot !== 0) {
+        // Animate past, then settle back
+        animate(x, target + overshoot, {
+          type: "spring",
+          stiffness: 400,
+          damping: 28,
+          mass: 0.7,
+        }).then(() => {
+          animate(x, target, {
+            type: "spring",
+            stiffness: 300,
+            damping: 26,
+            mass: 0.8,
+          })
+        })
       } else {
-        animate(x, target, { type: "spring", stiffness: 280, damping: 32, mass: 0.9 })
+        animate(x, target, { type: "spring", stiffness: 300, damping: 30, mass: 0.8 })
       }
     },
     [centerX, x]
@@ -256,7 +281,7 @@ export function Research() {
           style={{ x, gap: GAP }}
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={0.08}
+          dragElastic={0.12}
           onDragStart={() => { isDragging.current = true }}
           onDragEnd={handleDragEnd}
           whileDrag={{ cursor: "grabbing" }}
@@ -343,6 +368,26 @@ export function Research() {
             )
           })}
         </motion.div>
+
+        {/* Navigation buttons */}
+        <button
+          type="button"
+          onClick={() => go(-1)}
+          aria-label="Previous project"
+          className="glass absolute left-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full md:left-5 md:h-11 md:w-11"
+        >
+          <span className="glass-edge" aria-hidden="true" />
+          <ChevronLeft className="relative z-10 h-5 w-5 text-white/80" />
+        </button>
+        <button
+          type="button"
+          onClick={() => go(1)}
+          aria-label="Next project"
+          className="glass absolute right-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full md:right-5 md:h-11 md:w-11"
+        >
+          <span className="glass-edge" aria-hidden="true" />
+          <ChevronRight className="relative z-10 h-5 w-5 text-white/80" />
+        </button>
       </div>
     </section>
   )
