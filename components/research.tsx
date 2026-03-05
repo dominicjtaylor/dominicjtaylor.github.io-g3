@@ -59,7 +59,7 @@ const projects = [
     year: "2022",
     journal: "Taylor et al. \u2014 MNRAS 2022",
     link: "https://academic.oup.com/mnras/article/513/3/3429/6565286",
-    image: null,
+    image: "/images/terzan.png",
   },
   {
     category: "Data Engineering",
@@ -70,7 +70,7 @@ const projects = [
     year: "2020",
     journal: null,
     link: "https://covid19-data.streamlit.app",
-    image: null,
+    image: "/images/covid_app.png",
   },
 ]
 
@@ -283,7 +283,7 @@ export function Research() {
           {slides.map(({ slideIndex, project }) => {
             const dist = Math.abs(slideIndex - activeIndex)
             const isActive = dist === 0
-            const scale = isActive ? 1 : dist === 1 ? 0.92 : 0.88
+            const scale = isActive ? 1 : dist === 1 ? 0.80 : 0.70
             const opacity = isActive ? 1 : dist === 1 ? 0.30 : 0.10
             const zIndex = 10 - dist
 
@@ -306,11 +306,12 @@ export function Research() {
               >
                 <Wrapper
                   {...linkProps}
-                  className={`group flex h-full flex-col overflow-hidden rounded-3xl border bg-card transition-colors duration-150 ${
+                  className={`group flex h-full flex-col overflow-hidden rounded-3xl border transition-colors duration-150 ${
                     isActive
                       ? "border-primary/25 shadow-lg shadow-primary/5"
                       : "border-border"
                   } ${project.link ? "cursor-pointer" : ""}`}
+                  style={{ backgroundColor: "#222222" }}
                   onClick={(e: React.MouseEvent) => {
                     if (isDragging.current) {
                       e.preventDefault()
@@ -323,7 +324,7 @@ export function Research() {
                   }}
                 >
                   {/* Image area */}
-                  <div className={`relative flex aspect-[16/10] items-center justify-center ${project.image ? "p-5 md:p-6" : ""} overflow-hidden bg-secondary/50`}>
+                  <div className={`relative flex aspect-[16/9] items-center justify-center ${project.image ? "p-5 md:p-6" : ""} overflow-hidden`} style={{ backgroundColor: "#222222" }}>
                     {project.image ? (
                       <img
                         src={project.image}
@@ -352,7 +353,7 @@ export function Research() {
                       <span className="text-xs font-medium uppercase tracking-widest text-primary">
                         {project.category}
                       </span>
-                      <span className="text-xs text-foreground/40">
+                      <span className="text-xs text-foreground/60">
                         {project.year}
                       </span>
                     </div>
@@ -360,15 +361,15 @@ export function Research() {
                       {project.title}
                     </h3>
                     {project.journal && (
-                      <p className="mt-1 text-sm font-medium text-primary/70">
+                      <p className="mt-1 text-sm font-medium text-primary/80">
                         {project.journal}
                       </p>
                     )}
-                    <p className="mt-2 text-sm leading-relaxed text-foreground/60">
+                    <p className="mt-2 text-sm leading-relaxed text-foreground/80">
                       {project.description}
                     </p>
                     <div className="mt-auto pt-4">
-                      <p className="text-xs leading-relaxed text-foreground/50">
+                      <p className="text-xs leading-relaxed text-foreground/65">
                         {project.tags.join(" \u2022 ")}
                       </p>
                     </div>
