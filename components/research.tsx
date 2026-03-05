@@ -1,9 +1,10 @@
 "use client"
 
 import { useEffect, useRef, useState, useCallback } from "react"
-import { motion, useMotionValue, useSpring, animate } from "framer-motion"
+import { motion, useMotionValue, animate } from "framer-motion"
 import { ArrowUpRight } from "lucide-react"
 
+/* ── Project data ───────────────────────────────────────────── */
 const projects = [
   {
     category: "Quantitative Finance",
@@ -67,143 +68,155 @@ const projects = [
   },
 ]
 
-const COUNT = projects.length
+const N = projects.length
+const COPIES = 3 // render 3 full copies: [copy0][copy1=center][copy2]
+const TOTAL = N * COPIES
+const CENTER_START = N // first index of the center copy
 
-/* Wrap index into [0, COUNT) */
-function wrap(i: number): number {
-  return ((i % COUNT) + COUNT) % COUNT
-}
-
-/* Card width constants */
-const CARD_W_MOBILE = 0.85 // 85vw
-const CARD_W_DESKTOP = 440  // px
-const GAP = 20              // px
+const GAP = 24
 
 export function Research() {
   const sectionRef = useRef<HTMLElement>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
+  const viewportRef = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
-  const [activeIndex, setActiveIndex] = useState(0)
-  const [cardWidth, setCardWidth] = useState(CARD_W_DESKTOP)
+  const [cardW, setCardW] = useState(440)
+  const [activeIndex, setActiveIndex] = useState(CENTER_START) // start on first card of center copy
 
-  /* Motion values for the track translateX */
-  const rawX = useMotionValue(0)
-  const x = useSpring(rawX, { stiffness: 300, damping: 35, mass: 0.8 })
-
-  /* Wheel throttle */
-  const wheelCooldownRef = useRef(false)
-  const lastWheelTimeRef = useRef(0)
+  const x = useMotionValue(0)
+  const isDragging = useRef(false)
+  const lastWheelTime = useRef(0)
 
   /* ── Measure card width ──────────────────────────────────── */
-  const measureCard = useCallback(() => {
-    if (typeof window === "undefined") return CARD_W_DESKTOP
-    const vw = window.innerWidth
-    const w = vw < 768 ? vw * CARD_W_MOBILE : Math.min(CARD_W_DESKTOP, vw * 0.4)
-    setCardWidth(w)
-    return w
+  useEffect(() => {
+    const measure = () => {
+      const vw = window.innerWidth
+      setCardW(vw < 768 ? vw * 0.85 : Math.min(440, vw * 0.38))
+    }
+    measure()
+    window.addEventListener("resize", measure)
+    return () => window.removeEventListener("resize", measure)
   }, [])
 
-  useEffect(() => {
-    measureCard()
-    const handleResize = () => measureCard()
-    window.addEventListener("resize", handleResize)
-    return () => window.removeEventListener("resize", handleResize)
-  }, [measureCard])
-
-  /* ── Section entrance observer ──────────────────────────── */
+  /* ── Section entrance ────────────────────────────────────── */
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true) },
+      ([e]) => { if (e.isIntersecting) setVisible(true) },
       { threshold: 0.05 }
     )
     if (sectionRef.current) observer.observe(sectionRef.current)
     return () => observer.disconnect()
   }, [])
 
-  /* ── Compute track offset to center activeIndex ─────────── */
-  const stride = cardWidth + GAP
-  const getOffset = useCallback(
-    (idx: number) => -idx * stride,
-    [stride]
+  /* ── Stride (card + gap) ─────────────────────────────────── */
+  const stride = cardW + GAP
+
+  /* ── Compute track x to center a given index ─────────────── */
+  const centerX = useCallback(
+    (idx: number) => {
+      // The track is a flex row. The left edge of card[i] = i * stride.
+      // The center of card[i] = i * stride + cardW / 2.
+      // We want that to be at viewport center, so:
+      //   trackX + i * stride + cardW / 2 = viewportW / 2
+      //   trackX = viewportW / 2 - i * stride - cardW / 2
+      const vw = viewportRef.current?.offsetWidth ?? (typeof window !== "undefined" ? window.innerWidth : 1200)
+      return vw / 2 - idx * stride - cardW / 2
+    },
+    [stride, cardW]
   )
 
-  /* ── Snap to activeIndex ─────────────────────────────────── */
-  useEffect(() => {
-    rawX.set(getOffset(activeIndex))
-  }, [activeIndex, getOffset, rawX])
+  /* ── Animate to active index ─────────────────────────────── */
+  const snapTo = useCallback(
+    (idx: number, instant = false) => {
+      const target = centerX(idx)
+      if (instant) {
+        x.jump(target)
+      } else {
+        animate(x, target, { type: "spring", stiffness: 280, damping: 32, mass: 0.9 })
+      }
+    },
+    [centerX, x]
+  )
 
-  /* ── Navigate ────────────────────────────────────────────── */
-  const goTo = useCallback((direction: number) => {
-    setActiveIndex((prev) => prev + direction)
+  /* ── On mount + resize: center immediately ───────────────── */
+  useEffect(() => {
+    snapTo(activeIndex, true)
+  }, [cardW]) // re-center when card width changes (resize)
+
+  /* ── When activeIndex changes: animate to it, then check bounds ── */
+  useEffect(() => {
+    snapTo(activeIndex)
+
+    // After animation, check if we need to jump to the center copy
+    const timeout = setTimeout(() => {
+      let newIdx = activeIndex
+      if (activeIndex < N) {
+        // In left clone region -> jump to center copy
+        newIdx = activeIndex + N
+      } else if (activeIndex >= N * 2) {
+        // In right clone region -> jump to center copy
+        newIdx = activeIndex - N
+      }
+      if (newIdx !== activeIndex) {
+        x.jump(centerX(newIdx))
+        setActiveIndex(newIdx)
+      }
+    }, 400)
+
+    return () => clearTimeout(timeout)
+  }, [activeIndex, snapTo, centerX, x])
+
+  /* ── Navigate helper ─────────────────────────────────────── */
+  const go = useCallback((dir: number) => {
+    setActiveIndex((prev) => prev + dir)
   }, [])
 
   /* ── Drag end handler ────────────────────────────────────── */
   const handleDragEnd = useCallback(
-    (_: never, info: { offset: { x: number }; velocity: { x: number } }) => {
-      const swipeThreshold = stride * 0.15
-      const velocityThreshold = 200
-      if (
-        info.offset.x < -swipeThreshold ||
-        info.velocity.x < -velocityThreshold
-      ) {
-        goTo(1)
-      } else if (
-        info.offset.x > swipeThreshold ||
-        info.velocity.x > velocityThreshold
-      ) {
-        goTo(-1)
+    (_: unknown, info: { offset: { x: number }; velocity: { x: number } }) => {
+      isDragging.current = false
+      const swipeThresh = stride * 0.12
+      const velThresh = 150
+      if (info.offset.x < -swipeThresh || info.velocity.x < -velThresh) {
+        go(1)
+      } else if (info.offset.x > swipeThresh || info.velocity.x > velThresh) {
+        go(-1)
       } else {
-        // Snap back
-        rawX.set(getOffset(activeIndex))
+        snapTo(activeIndex)
       }
     },
-    [stride, goTo, rawX, getOffset, activeIndex]
+    [stride, go, snapTo, activeIndex]
   )
 
   /* ── Wheel / trackpad ────────────────────────────────────── */
   useEffect(() => {
-    const el = containerRef.current
+    const el = viewportRef.current
     if (!el) return
-
-    const handleWheel = (e: WheelEvent) => {
-      // Determine primary scroll axis
+    const handler = (e: WheelEvent) => {
       const absX = Math.abs(e.deltaX)
       const absY = Math.abs(e.deltaY)
       const delta = absX > absY ? e.deltaX : e.deltaY
-
-      if (Math.abs(delta) < 15) return
-
+      if (Math.abs(delta) < 12) return
       const now = Date.now()
-      if (now - lastWheelTimeRef.current < 350) return
-      lastWheelTimeRef.current = now
-
+      if (now - lastWheelTime.current < 400) return
+      lastWheelTime.current = now
       e.preventDefault()
-
-      if (delta > 0) {
-        goTo(1)
-      } else {
-        goTo(-1)
-      }
+      go(delta > 0 ? 1 : -1)
     }
+    el.addEventListener("wheel", handler, { passive: false })
+    return () => el.removeEventListener("wheel", handler)
+  }, [go])
 
-    el.addEventListener("wheel", handleWheel, { passive: false })
-    return () => el.removeEventListener("wheel", handleWheel)
-  }, [goTo])
-
-  /* ── Render slides: we render a window of slides around activeIndex ─ */
-  const RENDER_RANGE = 3 // render -3..+3 around active = 7 slides visible
-  const slides: { realIndex: number; offset: number }[] = []
-  for (let i = -RENDER_RANGE; i <= RENDER_RANGE; i++) {
-    slides.push({
-      realIndex: wrap(activeIndex + i),
-      offset: activeIndex + i,
-    })
-  }
+  /* ── Build the tripled slide array ───────────────────────── */
+  const slides = Array.from({ length: TOTAL }, (_, i) => ({
+    slideIndex: i,
+    project: projects[i % N],
+  }))
 
   return (
     <section ref={sectionRef} id="research" className="relative py-24 md:py-32">
       <div className="absolute top-0 left-1/2 h-px w-1/2 -translate-x-1/2 bg-gradient-to-r from-transparent via-border to-transparent" />
 
+      {/* Header */}
       <div className="mx-auto max-w-6xl px-6">
         <div
           className={`transition-all duration-1000 ${
@@ -226,65 +239,54 @@ export function Research() {
 
       {/* Carousel viewport */}
       <div
-        ref={containerRef}
+        ref={viewportRef}
         className={`carousel-edge-fade relative mt-12 overflow-hidden transition-all duration-1000 ${
           visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
         }`}
-        style={{ transitionDelay: "200ms", cursor: "grab" }}
+        style={{ transitionDelay: "200ms", cursor: "grab", touchAction: "pan-y" }}
       >
         <motion.div
-          className="flex items-start justify-center"
-          style={{ x }}
+          className="flex"
+          style={{ x, gap: GAP }}
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={0.12}
+          dragElastic={0.08}
+          onDragStart={() => { isDragging.current = true }}
           onDragEnd={handleDragEnd}
           whileDrag={{ cursor: "grabbing" }}
         >
-          {slides.map(({ realIndex, offset }) => {
-            const project = projects[realIndex]
-            const distance = Math.abs(offset - activeIndex)
-            const isCenter = distance === 0
-            const scale = isCenter ? 1 : Math.max(0.88, 1 - distance * 0.04)
-            const opacity = isCenter ? 1 : Math.max(0.35, 1 - distance * 0.25)
-
-            const translateX = offset * stride
+          {slides.map(({ slideIndex, project }) => {
+            const dist = Math.abs(slideIndex - activeIndex)
+            const isActive = dist === 0
+            const scale = isActive ? 1 : dist === 1 ? 0.92 : 0.88
+            const opacity = isActive ? 1 : dist === 1 ? 0.6 : 0.35
+            const zIndex = 10 - dist
 
             const Wrapper = project.link ? "a" : "div"
             const linkProps = project.link
-              ? {
-                  href: project.link,
-                  target: "_blank" as const,
-                  rel: "noopener noreferrer",
-                }
+              ? { href: project.link, target: "_blank" as const, rel: "noopener noreferrer" }
               : {}
 
             return (
               <motion.div
-                key={`${realIndex}-${offset}`}
+                key={slideIndex}
                 className="shrink-0"
-                style={{
-                  width: cardWidth,
-                  position: offset === activeIndex ? "relative" : "absolute",
-                  left: "50%",
-                  x: translateX - cardWidth / 2,
-                  scale,
-                  opacity,
-                }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                style={{ width: cardW, zIndex }}
+                animate={{ scale, opacity }}
+                transition={{ type: "spring", stiffness: 300, damping: 28, mass: 0.8 }}
               >
                 <Wrapper
                   {...linkProps}
-                  className={`group flex flex-col overflow-hidden rounded-3xl border bg-card transition-colors duration-300 ${
-                    isCenter
+                  className={`group flex h-full flex-col overflow-hidden rounded-3xl border bg-card transition-colors duration-200 ${
+                    isActive
                       ? "border-primary/25 shadow-lg shadow-primary/5"
                       : "border-border"
                   } ${project.link ? "cursor-pointer" : ""}`}
                   onClick={(e: React.MouseEvent) => {
-                    // Prevent link navigation if clicking a non-center card
-                    if (!isCenter) {
+                    if (isDragging.current) { e.preventDefault(); return }
+                    if (!isActive) {
                       e.preventDefault()
-                      setActiveIndex(offset)
+                      setActiveIndex(slideIndex)
                     }
                   }}
                 >
