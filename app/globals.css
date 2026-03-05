@@ -225,6 +225,39 @@
   outline-offset: 3px;
 }
 
+/* ── Carousel edge fade ──────────────────────────────────── */
+
+.carousel-edge-fade {
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 12%,
+    black 88%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 12%,
+    black 88%,
+    transparent 100%
+  );
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-size: 100% 100%;
+  -webkit-mask-size: 100% 100%;
+}
+
+/* ── Scrollbar hide utility ──────────────────────────────── */
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* ── Highlight text utility (Fixa-inspired) ─────────────── */
 /* Soft inline emphasis for key phrases in body text. */
 

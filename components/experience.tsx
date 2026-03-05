@@ -1,64 +1,44 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { FlaskConical, Globe } from "lucide-react"
 
 const experiences = [
   {
-    icon: FlaskConical,
     role: "PhD Researcher",
     org: "Durham University",
-    period: "Oct 2022 -- Mar 2026",
-    highlights: [
-      "Led international projects managing resources equivalent to \u00a31.4M, overseeing design and execution of large-scale data workflows.",
-      "Built scalable Python pipelines to process terabytes of data, cutting manual effort by ~80% and supplying reproducible results across hundreds of datasets.",
-      "Trained and applied a machine learning autoencoder to identify signal in noisy data, increasing identification by ~20%.",
-      "Applied SQL/ADQL queries within automated Python workflows to extract and integrate multi-terabyte astronomical archive datasets, reducing data access time by ~95%.",
-      "Tutorial Demonstrator in undergraduate computational workshops, delivering hands-on guidance in Python programming and data analysis.",
-    ],
+    period: "Oct 2022 \u2013 Mar 2026",
+    summary:
+      "Led international research projects, built scalable Python pipelines for terabyte-scale data, and applied ML autoencoders for signal extraction in noisy datasets.",
   },
   {
-    icon: Globe,
     role: "Startup Web Developer",
     org: "TutorMia",
     period: "2024",
-    highlights: [
+    summary:
       "Designed and launched a responsive website contributing to a 200% increase in client acquisition.",
-      "Maintained and iteratively improved with modern web development practices and Git-based workflows.",
-    ],
   },
   {
-    icon: FlaskConical,
     role: "Research Intern",
     org: "Leibniz-Institute for Astrophysics Potsdam, Germany",
     period: "Summer 2021",
-    highlights: [
-      "Engineered classification pipelines to combine two datasets and identify population members previously under-represented in literature.",
-      "Reported findings in an academic paper published in MNRAS.",
-    ],
+    summary:
+      "Engineered classification pipelines to identify under-represented stellar populations. Published findings in MNRAS.",
   },
   {
-    icon: FlaskConical,
     role: "Research Intern, SDSS-IV APOGEE-2",
     org: "Liverpool John Moores University ARI",
     period: "Summer 2020",
-    highlights: [
-      "Manipulated large datasets using Python, applying random sampling methods for comparative statistical analysis.",
-      "Results reported in a peer-reviewed journal publication.",
-    ],
+    summary:
+      "Applied random sampling methods for comparative statistical analysis on large astronomical datasets.",
   },
   {
-    icon: FlaskConical,
     role: "Research Intern, LUX-ZEPLIN Collaboration",
     org: "University of Liverpool",
     period: "Summer 2019",
-    highlights: [
-      "Designed and implemented an interactive educational webpage using Streamlit to translate complex physics results into clear, user-friendly formats.",
-    ],
+    summary:
+      "Built an interactive Streamlit application translating complex physics results into accessible formats.",
   },
 ]
-
-
 
 export function Experience() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -101,52 +81,61 @@ export function Experience() {
           </p>
         </div>
 
-        {/* Timeline */}
-        <div className="mt-16 flex flex-col gap-8">
-          {experiences.map((exp, i) => (
-            <div
-              key={`${exp.role}-${exp.org}`}
-              className={`group rounded-2xl border border-border bg-card p-6 transition-all duration-150 hover:border-primary/30 hover:bg-secondary md:p-8 ${
-                visible
-                  ? "translate-y-0 opacity-100"
-                  : "translate-y-8 opacity-0"
-              }`}
-              style={{ transitionDelay: `${200 + i * 100}ms` }}
-            >
-              <div className="flex items-start gap-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
-                  <exp.icon className="h-5 w-5 text-primary" />
+        {/* Vertical timeline */}
+        <div className="relative mt-16 ml-4 md:ml-0">
+          {/* Connecting line */}
+          <div className="absolute left-3 top-2 bottom-2 w-px bg-gradient-to-b from-primary/40 via-border to-border md:left-[7.5rem]" />
+
+          <div className="flex flex-col gap-10">
+            {experiences.map((exp, i) => (
+              <div
+                key={`${exp.role}-${exp.org}`}
+                className={`group relative flex flex-col gap-1 pl-10 md:flex-row md:items-start md:gap-8 md:pl-0 transition-all duration-700 ${
+                  visible
+                    ? "translate-y-0 opacity-100"
+                    : "translate-y-6 opacity-0"
+                }`}
+                style={{ transitionDelay: `${300 + i * 120}ms` }}
+              >
+                {/* Period label — desktop only */}
+                <div className="hidden w-24 shrink-0 pt-0.5 text-right md:block">
+                  <span className="text-xs font-medium text-foreground/50">
+                    {exp.period}
+                  </span>
                 </div>
-                <div className="flex-1">
-                  <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                    <h3 className="text-lg font-semibold tracking-tight text-white">
-                      {exp.role}
-                    </h3>
-                    <span className="text-xs font-medium text-foreground/50">
-                      {exp.period}
-                    </span>
+
+                {/* Node dot */}
+                <div className="absolute left-1 top-1.5 md:static md:mt-1.5">
+                  <div className="relative flex h-5 w-5 items-center justify-center">
+                    <div className="h-2.5 w-2.5 rounded-full bg-primary/70 ring-[3px] ring-background transition-all duration-200 group-hover:bg-primary group-hover:scale-110" />
                   </div>
+                </div>
+
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                  {/* Period — mobile only */}
+                  <span className="text-xs font-medium text-foreground/50 md:hidden">
+                    {exp.period}
+                  </span>
+                  <h3 className="text-base font-semibold tracking-tight text-white md:text-lg">
+                    {exp.role}
+                  </h3>
                   <p className="mt-0.5 text-sm font-medium text-primary/80">
                     {exp.org}
                   </p>
-                  <ul className="mt-3 flex flex-col gap-2">
-                    {exp.highlights.map((h, j) => (
-                      <li
-                        key={j}
-                        className="flex items-start gap-2 text-sm leading-relaxed text-foreground/70"
-                      >
-                        <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-primary/60" />
-                        {h}
-                      </li>
-                    ))}
-                  </ul>
+                  <p className="mt-2 max-w-xl text-sm leading-relaxed text-foreground/60">
+                    {exp.summary}
+                  </p>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          {/* Arrow at top indicating "present" */}
+          <div className="absolute left-[7px] -top-2 md:left-[7.12rem]">
+            <div className="h-0 w-0 border-x-4 border-b-[6px] border-x-transparent border-b-primary/60" />
+          </div>
         </div>
-
-
       </div>
     </section>
   )

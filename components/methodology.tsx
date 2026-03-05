@@ -14,31 +14,31 @@ const principles = [
     icon: Signal,
     title: "Signal from Noise",
     description:
-      "Extract weak signals from noisy, high-dimensional systems using rigorous statistical and ML methods.",
+      "Rigorous statistical and ML methods for extracting weak signals from noisy, high-dimensional systems.",
   },
   {
     icon: Settings2,
     title: "Testable Assumptions",
     description:
-      "Treat modelling assumptions as testable components rather than fixed inputs, enabling explicit sensitivity analysis.",
+      "Modelling assumptions treated as testable components with explicit sensitivity analysis.",
   },
   {
     icon: BarChart3,
     title: "Distribution-level Reasoning",
     description:
-      "Compare full distributions, not just summary statistics. Quantify statistical and systematic uncertainty separately.",
+      "Full distribution comparisons with separate quantification of statistical and systematic uncertainty.",
   },
   {
     icon: GitCompare,
     title: "Reproducible Infrastructure",
     description:
-      "Build modular, version-controlled research pipelines with strict in-sample/out-of-sample separation and audit trails.",
+      "Modular, version-controlled pipelines with strict in-sample/out-of-sample separation.",
   },
   {
     icon: Layers,
     title: "Cross-domain Transfer",
     description:
-      "Apply inference techniques honed in astrophysics to financial time-series, and vice versa. The methods are portable; only the data changes.",
+      "Inference techniques portable between astrophysics and financial time-series.",
   },
 ]
 
@@ -95,8 +95,8 @@ export function Methodology() {
               }`}
               style={{ transitionDelay: `${200 + i * 100}ms` }}
             >
-              <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10">
-                <item.icon className="h-5 w-5 text-primary" />
+              <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10">
+                <item.icon className="h-7 w-7 text-primary" />
               </div>
               <h3 className="text-lg font-semibold tracking-tight text-white">
                 {item.title}

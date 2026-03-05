@@ -5,26 +5,22 @@ import { GraduationCap } from "lucide-react"
 
 const education = [
   {
-    icon: GraduationCap,
     degree: "PhD Astrophysics",
     institution: "Durham University",
     location: "Durham, UK",
-    period: "Oct 2022 -- Mar 2026",
+    period: "Oct 2022 \u2013 Mar 2026",
     detail:
-      "Thesis: Physical Properties of Submillimetre Galaxies from Integrated Gas Kinematics.",
+      "Physical Properties of Submillimetre Galaxies from Integrated Gas Kinematics.",
   },
   {
-    icon: GraduationCap,
     degree: "MPhys Astrophysics",
     institution: "University of Liverpool",
     location: "Liverpool, UK",
-    period: "Oct 2017 -- Jun 2021",
+    period: "Oct 2017 \u2013 Jun 2021",
     detail:
-      "First Class Honours. Thesis: What influences the efficiency of galaxy formation?",
+      "First Class Honours. What influences the efficiency of galaxy formation?",
   },
 ]
-
-
 
 export function Education() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -68,37 +64,40 @@ export function Education() {
           </p>
         </div>
 
-        <div className="mt-16 grid gap-6 md:grid-cols-2">
+        <div className="mt-16 flex flex-col gap-8">
           {education.map((item, i) => (
             <div
               key={item.degree}
-              className={`group rounded-2xl border border-border bg-card p-8 transition-all duration-150 hover:border-primary/30 hover:bg-secondary ${
+              className={`group flex flex-col gap-6 rounded-2xl border border-border bg-card p-8 transition-all duration-150 hover:border-primary/30 hover:bg-secondary md:flex-row md:items-start md:gap-10 md:p-10 ${
                 visible
                   ? "translate-y-0 opacity-100"
                   : "translate-y-8 opacity-0"
               }`}
               style={{ transitionDelay: `${200 + i * 150}ms` }}
             >
-              <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10">
-                <item.icon className="h-5 w-5 text-primary" />
+              {/* Icon */}
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10">
+                <GraduationCap className="h-7 w-7 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold tracking-tight text-white">
-                {item.degree}
-              </h3>
-              <p className="mt-1 text-sm font-medium text-primary/80">
-                {item.institution} &middot; {item.location}
-              </p>
-              <p className="mt-0.5 text-xs text-foreground/50">
-                {item.period}
-              </p>
-              <p className="mt-4 text-sm leading-relaxed text-foreground/70">
-                {item.detail}
-              </p>
+
+              {/* Content */}
+              <div className="flex-1 min-w-0">
+                <h3 className="text-2xl font-bold tracking-tight text-white md:text-3xl">
+                  {item.degree}
+                </h3>
+                <p className="mt-2 text-base font-medium text-primary/80">
+                  {item.institution} &middot; {item.location}
+                </p>
+                <p className="mt-1 text-sm text-foreground/50">
+                  {item.period}
+                </p>
+                <p className="mt-4 max-w-2xl text-base leading-relaxed text-foreground/70">
+                  {item.detail}
+                </p>
+              </div>
             </div>
           ))}
         </div>
-
-
       </div>
     </section>
   )
