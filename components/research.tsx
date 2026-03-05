@@ -66,12 +66,23 @@ const projects = [
   },
 ]
 
+/* Number of clones prepended/appended for infinite loop */
+const CLONE_COUNT = 2
+const REAL_COUNT = projects.length
+const extendedProjects = [
+  ...projects.slice(-CLONE_COUNT),         // last 2 as head clones
+  ...projects,                              // real slides
+  ...projects.slice(0, CLONE_COUNT),        // first 2 as tail clones
+]
+
 export function Research() {
   const sectionRef = useRef<HTMLElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
-  const [centerIndex, setCenterIndex] = useState(0)
+  const [centerIndex, setCenterIndex] = useState(CLONE_COUNT) // start on first real
+  const isResettingRef = useRef(false)
 
+  /* ── Section entrance observer ──────────────────────────── */
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -83,11 +94,44 @@ export function Research() {
     return () => observer.disconnect()
   }, [])
 
-  const updateCenterSlide = useCallback(() => {
+  /* ── Helper: get slide width + gap from DOM ─────────────── */
+  const getSlideMetrics = useCallback(() => {
+    const el = scrollRef.current
+    if (!el) return { slideWidth: 0, gap: 0, stride: 0 }
+    const slides = el.querySelectorAll<HTMLElement>("[data-slide]")
+    if (slides.length < 2) return { slideWidth: 0, gap: 0, stride: 0 }
+    const slideWidth = slides[0].offsetWidth
+    const gap = slides[1].offsetLeft - (slides[0].offsetLeft + slides[0].offsetWidth)
+    return { slideWidth, gap, stride: slideWidth + gap }
+  }, [])
+
+  /* ── On mount: scroll to first real slide instantly ──────── */
+  useEffect(() => {
     const el = scrollRef.current
     if (!el) return
+    // Small delay to let layout settle
+    const raf = requestAnimationFrame(() => {
+      const { stride } = getSlideMetrics()
+      if (stride > 0) {
+        const targetScroll = CLONE_COUNT * stride
+        el.scrollLeft = targetScroll
+      }
+    })
+    return () => cancelAnimationFrame(raf)
+  }, [getSlideMetrics])
+
+  /* ── Scroll handler: detect center slide + loop reset ───── */
+  const handleScroll = useCallback(() => {
+    const el = scrollRef.current
+    if (!el || isResettingRef.current) return
+
+    const { stride } = getSlideMetrics()
+    if (stride === 0) return
+
     const scrollCenter = el.scrollLeft + el.clientWidth / 2
     const slides = el.querySelectorAll<HTMLElement>("[data-slide]")
+
+    // Find closest slide to center
     let closestIdx = 0
     let closestDist = Infinity
     slides.forEach((slide, i) => {
@@ -99,15 +143,48 @@ export function Research() {
       }
     })
     setCenterIndex(closestIdx)
-  }, [])
+
+    // Loop reset: if user has scrolled into clone territory
+    const firstRealLeft = CLONE_COUNT * stride
+    const lastRealLeft = (CLONE_COUNT + REAL_COUNT - 1) * stride
+
+    // Scrolled past tail clones (past last real slide)
+    if (el.scrollLeft > lastRealLeft + stride * 0.5) {
+      isResettingRef.current = true
+      const overshoot = el.scrollLeft - lastRealLeft
+      el.style.scrollBehavior = "auto"
+      el.scrollLeft = firstRealLeft + overshoot - stride * REAL_COUNT
+      el.style.scrollBehavior = ""
+      requestAnimationFrame(() => {
+        isResettingRef.current = false
+      })
+    }
+    // Scrolled before head clones (before first real slide)
+    else if (el.scrollLeft < firstRealLeft - stride * 0.5) {
+      isResettingRef.current = true
+      const undershoot = firstRealLeft - el.scrollLeft
+      el.style.scrollBehavior = "auto"
+      el.scrollLeft = lastRealLeft - undershoot + stride * REAL_COUNT
+      el.style.scrollBehavior = ""
+      requestAnimationFrame(() => {
+        isResettingRef.current = false
+      })
+    }
+  }, [getSlideMetrics])
 
   useEffect(() => {
     const el = scrollRef.current
     if (!el) return
-    el.addEventListener("scroll", updateCenterSlide, { passive: true })
-    updateCenterSlide()
-    return () => el.removeEventListener("scroll", updateCenterSlide)
-  }, [updateCenterSlide])
+    el.addEventListener("scroll", handleScroll, { passive: true })
+    return () => el.removeEventListener("scroll", handleScroll)
+  }, [handleScroll])
+
+  /* ── Map extended index back to real index for visual state ─ */
+  const getRealIndex = (extIdx: number) => {
+    if (extIdx < CLONE_COUNT) return extIdx + REAL_COUNT - CLONE_COUNT
+    if (extIdx >= CLONE_COUNT + REAL_COUNT) return extIdx - CLONE_COUNT - REAL_COUNT
+    return extIdx - CLONE_COUNT
+  }
 
   return (
     <section
@@ -137,85 +214,86 @@ export function Research() {
         </div>
       </div>
 
-      {/* Carousel -- no arrows, no dots, trackpad/swipe/wheel scroll */}
+      {/* Carousel — infinite loop, edge fade, snap centering */}
       <div
-        ref={scrollRef}
-        className={`scrollbar-hide mt-12 flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth pb-4 transition-all duration-1000 ${
+        className={`carousel-edge-fade mt-12 transition-all duration-1000 ${
           visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
         }`}
-        style={{
-          WebkitOverflowScrolling: "touch",
-          transitionDelay: "200ms",
-          paddingLeft: "max(1.5rem, calc((100vw - 440px) / 2))",
-          paddingRight: "max(1.5rem, calc((100vw - 440px) / 2))",
-        }}
+        style={{ transitionDelay: "200ms" }}
       >
-        {projects.map((project, i) => {
-          const isCenter = i === centerIndex
-          const Wrapper = project.link ? "a" : "div"
-          const linkProps = project.link
-            ? {
-                href: project.link,
-                target: "_blank" as const,
-                rel: "noopener noreferrer",
-              }
-            : {}
-          return (
-            <Wrapper
-              key={project.title}
-              data-slide
-              {...linkProps}
-              className={`group flex w-[82vw] max-w-[440px] shrink-0 snap-center flex-col overflow-hidden rounded-3xl border bg-card transition-all duration-500 ease-out ${
-                isCenter
-                  ? "scale-100 opacity-100 border-primary/25 shadow-lg shadow-primary/5"
-                  : "scale-[0.92] opacity-70 border-border"
-              } ${project.link ? "cursor-pointer" : ""}`}
-            >
-              {/* Image placeholder */}
-              <div className="relative flex aspect-[16/10] items-center justify-center bg-secondary/50">
-                <div className="flex flex-col items-center gap-2.5 text-foreground/25">
-                  <div className="h-10 w-10 rounded-xl border border-foreground/10 bg-foreground/5" />
-                  <span className="text-[11px] tracking-wide">
-                    {"[Project graphic placeholder]"}
-                  </span>
-                </div>
-                {project.link && (
-                  <div className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-background/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                    <ArrowUpRight className="h-3.5 w-3.5 text-foreground/60" />
+        <div
+          ref={scrollRef}
+          className="scrollbar-hide flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth px-[8vw] pb-4 md:px-[max(1.5rem,calc((100vw-440px)/2))]"
+          style={{ WebkitOverflowScrolling: "touch" }}
+        >
+          {extendedProjects.map((project, i) => {
+            const isCenter = i === centerIndex
+            const realIdx = getRealIndex(i)
+            const Wrapper = project.link ? "a" : "div"
+            const linkProps = project.link
+              ? {
+                  href: project.link,
+                  target: "_blank" as const,
+                  rel: "noopener noreferrer",
+                }
+              : {}
+            return (
+              <Wrapper
+                key={`${realIdx}-${i}`}
+                data-slide
+                {...linkProps}
+                className={`group flex w-[85vw] max-w-[440px] shrink-0 snap-center flex-col overflow-hidden rounded-3xl border bg-card transition-all duration-500 ease-out ${
+                  isCenter
+                    ? "scale-100 opacity-100 border-primary/25 shadow-lg shadow-primary/5"
+                    : "scale-[0.92] opacity-50 border-border"
+                } ${project.link ? "cursor-pointer" : ""}`}
+              >
+                {/* Image placeholder */}
+                <div className="relative flex aspect-[16/10] items-center justify-center bg-secondary/50">
+                  <div className="flex flex-col items-center gap-2.5 text-foreground/25">
+                    <div className="h-10 w-10 rounded-xl border border-foreground/10 bg-foreground/5" />
+                    <span className="text-[11px] tracking-wide">
+                      {"[Project graphic placeholder]"}
+                    </span>
                   </div>
-                )}
-              </div>
+                  {project.link && (
+                    <div className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-background/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                      <ArrowUpRight className="h-3.5 w-3.5 text-foreground/60" />
+                    </div>
+                  )}
+                </div>
 
-              {/* Content */}
-              <div className="flex flex-1 flex-col p-5 md:p-6">
-                <div className="flex flex-wrap items-center gap-3">
-                  <span className="text-xs font-medium uppercase tracking-widest text-primary">
-                    {project.category}
-                  </span>
-                  <span className="text-xs text-foreground/40">
-                    {project.year}
-                  </span>
-                </div>
-                <h3 className="mt-2.5 text-base font-semibold tracking-tight text-white leading-snug md:text-lg">
-                  {project.title}
-                </h3>
-                {project.journal && (
-                  <p className="mt-1 text-sm font-medium text-primary/70">
-                    {project.journal}
+                {/* Content */}
+                <div className="flex flex-1 flex-col p-5 md:p-6">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <span className="text-xs font-medium uppercase tracking-widest text-primary">
+                      {project.category}
+                    </span>
+                    <span className="text-xs text-foreground/40">
+                      {project.year}
+                    </span>
+                  </div>
+                  <h3 className="mt-2.5 text-base font-semibold leading-snug tracking-tight text-white md:text-lg">
+                    {project.title}
+                  </h3>
+                  {project.journal && (
+                    <p className="mt-1 text-sm font-medium text-primary/70">
+                      {project.journal}
+                    </p>
+                  )}
+                  <p className="mt-2 text-sm leading-relaxed text-foreground/60">
+                    {project.description}
                   </p>
-                )}
-                <p className="mt-2 text-sm leading-relaxed text-foreground/60">
-                  {project.description}
-                </p>
-                <div className="mt-auto pt-4">
-                  <p className="text-xs leading-relaxed text-foreground/50">
-                    {project.tags.join(" \u2022 ")}
-                  </p>
+                  <div className="mt-auto pt-4">
+                    <p className="text-xs leading-relaxed text-foreground/50">
+                      {project.tags.join(" \u2022 ")}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </Wrapper>
-          )
-        })}
+              </Wrapper>
+            )
+          })}
+        </div>
       </div>
     </section>
   )

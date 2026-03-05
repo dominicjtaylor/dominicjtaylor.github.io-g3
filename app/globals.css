@@ -225,6 +225,25 @@
   outline-offset: 3px;
 }
 
+/* ── Carousel edge fade ──────────────────────────────────── */
+
+.carousel-edge-fade {
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 6%,
+    black 94%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 6%,
+    black 94%,
+    transparent 100%
+  );
+}
+
 /* ── Scrollbar hide utility ──────────────────────────────── */
 
 .scrollbar-hide {
