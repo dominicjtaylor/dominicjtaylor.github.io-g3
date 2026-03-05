@@ -37,7 +37,7 @@ const projects = [
     year: "2025",
     journal: "Taylor et al. \u2014 MNRAS 2025",
     link: "https://academic.oup.com/mnras/article/536/2/1149/7909089",
-    image: null,
+    image: "/images/radex_conditions_dark.png",
   },
   {
     category: "Quantitative Finance",
@@ -48,7 +48,7 @@ const projects = [
     year: "2025",
     journal: null,
     link: "https://github.com/dominicjtaylor/quantlab",
-    image: null,
+    image: "/images/backtest.png",
   },
   {
     category: "Astrophysics",
@@ -323,7 +323,7 @@ export function Research() {
                   }}
                 >
                   {/* Image area */}
-                  <div className={`relative flex aspect-[16/7] items-center justify-center ${project.image ? "p-5 md:p-6" : ""} overflow-hidden bg-secondary/50`}>
+                  <div className={`relative flex aspect-[16/9] items-center justify-center ${project.image ? "p-5 md:p-6" : ""} overflow-hidden bg-secondary/50`}>
                     {project.image ? (
                       <img
                         src={project.image}
