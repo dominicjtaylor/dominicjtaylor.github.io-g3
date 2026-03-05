@@ -194,12 +194,18 @@ export function Research() {
     const handler = (e: WheelEvent) => {
       const absX = Math.abs(e.deltaX)
       const absY = Math.abs(e.deltaY)
-      const delta = absX > absY ? e.deltaX : e.deltaY
-      if (Math.abs(delta) < 12) return
+
+      // Only handle predominantly horizontal gestures or shift+wheel
+      const isHorizontal = absX > absY && absX > 8
+      const isShiftWheel = e.shiftKey && absY > 8
+      if (!isHorizontal && !isShiftWheel) return // let page scroll normally
+
       const now = Date.now()
       if (now - lastWheelTime.current < 400) return
       lastWheelTime.current = now
+
       e.preventDefault()
+      const delta = isHorizontal ? e.deltaX : e.deltaY
       go(delta > 0 ? 1 : -1)
     }
     el.addEventListener("wheel", handler, { passive: false })
@@ -243,7 +249,7 @@ export function Research() {
         className={`carousel-edge-fade relative mt-12 overflow-hidden transition-all duration-1000 ${
           visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
         }`}
-        style={{ transitionDelay: "200ms", cursor: "grab", touchAction: "pan-y" }}
+        style={{ transitionDelay: "200ms", cursor: "grab", touchAction: "pan-x" }}
       >
         <motion.div
           className="flex"
@@ -259,7 +265,7 @@ export function Research() {
             const dist = Math.abs(slideIndex - activeIndex)
             const isActive = dist === 0
             const scale = isActive ? 1 : dist === 1 ? 0.92 : 0.88
-            const opacity = isActive ? 1 : dist === 1 ? 0.6 : 0.35
+            const opacity = isActive ? 1 : dist === 1 ? 0.30 : 0.10
             const zIndex = 10 - dist
 
             const Wrapper = project.link ? "a" : "div"
