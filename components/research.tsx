@@ -26,7 +26,7 @@ const projects = [
     year: "In prep.",
     journal: "Taylor et al. \u2014 In preparation",
     link: null,
-    image: null,
+    image: "/images/mass_metallicity_dark.png",
   },
   {
     category: "Astrophysics",
@@ -323,12 +323,12 @@ export function Research() {
                   }}
                 >
                   {/* Image area */}
-                  <div className="relative flex aspect-[16/7] items-center justify-center overflow-hidden bg-secondary/50">
+                  <div className={`relative flex aspect-[16/7] items-center justify-center ${project.image ? "p-5 md:p-6" : ""} overflow-hidden bg-secondary/50`}>
                     {project.image ? (
                       <img
                         src={project.image}
                         alt={`${project.title} visualization`}
-                        className="h-full w-full object-cover"
+                        className="h-full w-full rounded-2xl object-cover"
                         crossOrigin="anonymous"
                       />
                     ) : (
