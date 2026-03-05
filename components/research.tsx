@@ -69,22 +69,26 @@ const projects = [
 ]
 
 const N = projects.length
-const COPIES = 3 // render 3 full copies: [copy0][copy1=center][copy2]
+const COPIES = 3
 const TOTAL = N * COPIES
-const CENTER_START = N // first index of the center copy
+const CENTER_START = N // first index of center copy
 
 const GAP = 24
+
+/* ── Spring config: quick & clean, no overshoot ──────────── */
+const SNAP_SPRING = { type: "spring" as const, stiffness: 350, damping: 35, mass: 0.9 }
 
 export function Research() {
   const sectionRef = useRef<HTMLElement>(null)
   const viewportRef = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
   const [cardW, setCardW] = useState(440)
-  const [activeIndex, setActiveIndex] = useState(CENTER_START) // start on first card of center copy
+  const [activeIndex, setActiveIndex] = useState(CENTER_START)
 
   const x = useMotionValue(0)
   const isDragging = useRef(false)
   const lastWheelTime = useRef(0)
+  const isAnimating = useRef(false)
 
   /* ── Measure card width ──────────────────────────────────── */
   useEffect(() => {
@@ -107,27 +111,18 @@ export function Research() {
     return () => observer.disconnect()
   }, [])
 
-  /* ── Stride (card + gap) ─────────────────────────────────── */
   const stride = cardW + GAP
 
   /* ── Compute track x to center a given index ─────────────── */
   const centerX = useCallback(
     (idx: number) => {
-      // The track is a flex row. The left edge of card[i] = i * stride.
-      // The center of card[i] = i * stride + cardW / 2.
-      // We want that to be at viewport center, so:
-      //   trackX + i * stride + cardW / 2 = viewportW / 2
-      //   trackX = viewportW / 2 - i * stride - cardW / 2
       const vw = viewportRef.current?.offsetWidth ?? (typeof window !== "undefined" ? window.innerWidth : 1200)
       return vw / 2 - idx * stride - cardW / 2
     },
     [stride, cardW]
   )
 
-  /* ── Track last index for overshoot direction ────────────── */
-  const prevIndex = useRef(activeIndex)
-
-  /* ── Animate to active index with elastic overshoot ──────── */
+  /* ── Snap to index: clean spring, no overshoot ───────────── */
   const snapTo = useCallback(
     (idx: number, instant = false) => {
       const target = centerX(idx)
@@ -135,29 +130,11 @@ export function Research() {
         x.jump(target)
         return
       }
-      // Determine overshoot direction from navigation direction
-      const dir = idx > prevIndex.current ? -1 : idx < prevIndex.current ? 1 : 0
-      const overshoot = dir * 14 // 14px past target
-      prevIndex.current = idx
-
-      if (overshoot !== 0) {
-        // Animate past, then settle back
-        animate(x, target + overshoot, {
-          type: "spring",
-          stiffness: 400,
-          damping: 28,
-          mass: 0.7,
-        }).then(() => {
-          animate(x, target, {
-            type: "spring",
-            stiffness: 300,
-            damping: 26,
-            mass: 0.8,
-          })
-        })
-      } else {
-        animate(x, target, { type: "spring", stiffness: 300, damping: 30, mass: 0.8 })
-      }
+      isAnimating.current = true
+      animate(x, target, {
+        ...SNAP_SPRING,
+        onComplete: () => { isAnimating.current = false },
+      })
     },
     [centerX, x]
   )
@@ -165,68 +142,67 @@ export function Research() {
   /* ── On mount + resize: center immediately ───────────────── */
   useEffect(() => {
     snapTo(activeIndex, true)
-  }, [cardW]) // re-center when card width changes (resize)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cardW])
 
-  /* ── When activeIndex changes: animate to it, then check bounds ── */
+  /* ── When activeIndex changes: animate, then loop-check ──── */
   useEffect(() => {
     snapTo(activeIndex)
 
-    // After animation, check if we need to jump to the center copy
     const timeout = setTimeout(() => {
       let newIdx = activeIndex
       if (activeIndex < N) {
-        // In left clone region -> jump to center copy
         newIdx = activeIndex + N
       } else if (activeIndex >= N * 2) {
-        // In right clone region -> jump to center copy
         newIdx = activeIndex - N
       }
       if (newIdx !== activeIndex) {
         x.jump(centerX(newIdx))
         setActiveIndex(newIdx)
       }
-    }, 400)
+    }, 350)
 
     return () => clearTimeout(timeout)
-  }, [activeIndex, snapTo, centerX, x])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeIndex])
 
-  /* ── Navigate helper ─────────────────────────────────────── */
+  /* ── Navigate: exactly +-1 slide, guarded against spam ───── */
   const go = useCallback((dir: number) => {
+    if (isAnimating.current) return
     setActiveIndex((prev) => prev + dir)
   }, [])
 
-  /* ── Drag end handler ────────────────────────────────────── */
+  /* ── Drag end: advance +-1 or snap back. No momentum. ───── */
   const handleDragEnd = useCallback(
     (_: unknown, info: { offset: { x: number }; velocity: { x: number } }) => {
       isDragging.current = false
-      const swipeThresh = stride * 0.12
-      const velThresh = 150
-      if (info.offset.x < -swipeThresh || info.velocity.x < -velThresh) {
+      const threshold = stride * 0.15
+      const velThresh = 200
+      if (info.offset.x < -threshold || info.velocity.x < -velThresh) {
         go(1)
-      } else if (info.offset.x > swipeThresh || info.velocity.x > velThresh) {
+      } else if (info.offset.x > threshold || info.velocity.x > velThresh) {
         go(-1)
       } else {
+        // snap back to current
         snapTo(activeIndex)
       }
     },
     [stride, go, snapTo, activeIndex]
   )
 
-  /* ── Wheel / trackpad ────────────────────────────────────── */
+  /* ── Wheel / trackpad: horizontal only, +-1 per gesture ─── */
   useEffect(() => {
     const el = viewportRef.current
     if (!el) return
     const handler = (e: WheelEvent) => {
       const absX = Math.abs(e.deltaX)
       const absY = Math.abs(e.deltaY)
-
-      // Only handle predominantly horizontal gestures or shift+wheel
       const isHorizontal = absX > absY && absX > 8
       const isShiftWheel = e.shiftKey && absY > 8
-      if (!isHorizontal && !isShiftWheel) return // let page scroll normally
+      if (!isHorizontal && !isShiftWheel) return
 
       const now = Date.now()
-      if (now - lastWheelTime.current < 400) return
+      if (now - lastWheelTime.current < 450) return
       lastWheelTime.current = now
 
       e.preventDefault()
@@ -237,7 +213,7 @@ export function Research() {
     return () => el.removeEventListener("wheel", handler)
   }, [go])
 
-  /* ── Build the tripled slide array ───────────────────────── */
+  /* ── Tripled slides ──────────────────────────────────────── */
   const slides = Array.from({ length: TOTAL }, (_, i) => ({
     slideIndex: i,
     project: projects[i % N],
@@ -274,14 +250,15 @@ export function Research() {
         className={`carousel-edge-fade relative mt-12 overflow-hidden transition-all duration-1000 ${
           visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
         }`}
-        style={{ transitionDelay: "200ms", cursor: "grab", touchAction: "pan-x" }}
+        style={{ transitionDelay: "200ms", touchAction: "pan-y pinch-zoom" }}
       >
         <motion.div
           className="flex"
-          style={{ x, gap: GAP }}
+          style={{ x, gap: GAP, cursor: "grab" }}
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
           dragElastic={0.12}
+          dragMomentum={false}
           onDragStart={() => { isDragging.current = true }}
           onDragEnd={handleDragEnd}
           whileDrag={{ cursor: "grabbing" }}
@@ -304,11 +281,11 @@ export function Research() {
                 className="shrink-0"
                 style={{ width: cardW, zIndex }}
                 animate={{ scale, opacity }}
-                transition={{ type: "spring", stiffness: 300, damping: 28, mass: 0.8 }}
+                transition={SNAP_SPRING}
               >
                 <Wrapper
                   {...linkProps}
-                  className={`group flex h-full flex-col overflow-hidden rounded-3xl border bg-card transition-colors duration-200 ${
+                  className={`group flex h-full flex-col overflow-hidden rounded-3xl border bg-card transition-colors duration-150 ${
                     isActive
                       ? "border-primary/25 shadow-lg shadow-primary/5"
                       : "border-border"
