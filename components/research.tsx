@@ -442,13 +442,13 @@ export function Research() {
                     }
                   }}
                 >
-                  {/* Image area - same background as card */}
-                  <div className={`relative flex aspect-[16/9] w-full items-center justify-center ${project.image ? "p-4 md:p-5" : ""} overflow-hidden bg-card`}>
+                  {/* Image area - natural height, no fixed aspect ratio */}
+                  <div className={`relative w-full overflow-hidden bg-card ${project.image ? "px-3 pt-4 md:px-4 md:pt-5" : "flex aspect-[16/9] items-center justify-center"}`}>
                     {project.image ? (
                       <img
                         src={project.image}
                         alt={`${project.title} visualization`}
-                        className="h-full w-full rounded-xl object-contain"
+                        className="w-full h-auto block"
                         crossOrigin="anonymous"
                       />
                     ) : (
