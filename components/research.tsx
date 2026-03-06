@@ -88,8 +88,8 @@ const MID_START = N // first index of center copy
 /* ── Spring settings - slower for smoother transitions ────── */
 const SNAP_SPRING = {
   type: "spring" as const,
-  stiffness: 200,
-  damping: 30,
+  stiffness: 120,
+  damping: 22,
   mass: 1,
 }
 
@@ -110,10 +110,10 @@ export function Research() {
   useEffect(() => {
     const measure = () => {
       const vw = window.innerWidth
-      // Mobile: 68vw cards with 12px gap; Desktop: wider cards (520px) with 24px gap
+      // Mobile: 65vw cards with -20px gap (overlap) to show neighbor content; Desktop: wider cards with normal gap
       if (vw < 768) {
-        setCardW(vw * 0.68)
-        setGap(12)
+        setCardW(vw * 0.65)
+        setGap(-16)
       } else {
         setCardW(Math.min(520, vw * 0.4))
         setGap(24)
@@ -315,8 +315,10 @@ export function Research() {
               }, [])
 
               const isActive = localDist < 0.5
-              const scale = localDist < 0.5 ? 1 : localDist < 1.5 ? 0.85 - (localDist - 0.5) * 0.1 : 0.75
-              const opacity = localDist < 0.5 ? 1 : localDist < 1.5 ? 0.6 - (localDist - 0.5) * 0.4 : 0.2
+              // All cards start small (0.82), only center card scales up to 1.0
+              const scale = localDist < 0.5 ? 1 : 0.82
+              // Faster, more aggressive opacity falloff
+              const opacity = localDist < 0.5 ? 1 : localDist < 1.5 ? 0.35 : 0.15
               const zIndex = Math.round(10 - localDist)
 
               const Wrapper = project.link ? "a" : "div"
@@ -333,7 +335,7 @@ export function Research() {
                   className="shrink-0"
                   style={{ width: cardW, zIndex }}
                   animate={{ scale, opacity }}
-                  transition={{ type: "spring", stiffness: 200, damping: 25 }}
+                  transition={{ type: "spring", stiffness: 150, damping: 20, mass: 0.8 }}
                 >
                   <Wrapper
                     {...linkProps}
