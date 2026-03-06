@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState, useCallback } from "react"
-import { motion, useMotionValue, animate, useTransform } from "framer-motion"
+import { motion, useMotionValue, animate } from "framer-motion"
 import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react"
 
 /* ── Project data ───────────────────────────────────────────── */
@@ -11,7 +11,7 @@ const projects = [
     type: "ML Model",
     title: "Machine Learning Models for FX Volatility Forecasting",
     description:
-      "Designed and evaluated ML models for forecasting FX volatility within a disciplined research pipeline. Built modular architecture for feature engineering, enforced strict in-sample/out-of-sample separation, and evaluated regime sensitivity with risk-adjusted metrics. The framework supports multiple model architectures including gradient boosting and neural networks with configurable hyperparameter search.",
+      "Designed and evaluated ML models for forecasting FX volatility within a disciplined research pipeline. Built modular architecture for feature engineering, enforced strict in-sample/out-of-sample separation, and evaluated regime sensitivity with risk-adjusted metrics.",
     tags: ["Time-series ML", "Backtesting", "Risk Evaluation", "Python"],
     year: "2026",
     journal: null,
@@ -21,12 +21,12 @@ const projects = [
   {
     domain: "Astrophysics",
     type: "Machine Learning",
-    title: "Galaxy Gas–Metal–Dust Cycles and ML Signal Extraction",
+    title: "Galaxy Gas\u2013Metal\u2013Dust Cycles and ML Signal Extraction",
     description:
-      "Analysed the gas–metallicity–dust cycle in massive star-forming galaxies at z~2. Designed and trained an autoencoder to detect weak emission-line structure in low signal-to-noise 1D spectra, integrating ML outputs into a physically interpretable inference pipeline. Bootstrap resampling quantifies uncertainty propagation from raw spectra through to derived physical properties.",
+      "Analysed the gas\u2013metallicity\u2013dust cycle in massive star-forming galaxies at z~2. Designed and trained an autoencoder to detect weak emission-line structure in low signal-to-noise 1D spectra, integrating ML outputs into a physically interpretable inference pipeline.",
     tags: ["Autoencoder", "Representation Learning", "Uncertainty Decomposition", "Bootstrap"],
     year: "In prep.",
-    journal: "Taylor et al. — In preparation",
+    journal: "Taylor et al. \u2014 In preparation",
     link: null,
     image: "/images/mass_metallicity_dark.png",
   },
@@ -35,10 +35,10 @@ const projects = [
     type: "MNRAS Paper",
     title: "Modelling Molecular Gas Excitation in Distant Galaxies",
     description:
-      "Characterised molecular gas excitation in high-redshift submillimetre galaxies using multi-transition CO spectroscopy. Quantified intrinsic diversity beyond single-template models and evaluated how excitation assumptions propagate into downstream gas mass estimates. Developed a hierarchical Bayesian framework to jointly infer physical conditions across a population of 30+ galaxies.",
+      "Characterised molecular gas excitation in high-redshift submillimetre galaxies using multi-transition CO spectroscopy. Quantified intrinsic diversity beyond single-template models and evaluated how excitation assumptions propagate into downstream gas mass estimates.",
     tags: ["Multi-variable Inference", "Sensitivity Analysis", "Calibration Risk"],
     year: "2025",
-    journal: "Taylor et al. — MNRAS 2025",
+    journal: "Taylor et al. \u2014 MNRAS 2025",
     link: "https://academic.oup.com/mnras/article/536/2/1149/7909089",
     image: "/images/radex_conditions_dark.png",
   },
@@ -47,7 +47,7 @@ const projects = [
     type: "Backtest Tool",
     title: "Systematic Trading Strategy Backtesting Framework",
     description:
-      "Developed a Python-based financial backtesting framework supporting modular trading strategies, moving average signals, and performance visualisation for systematic strategy evaluation. Includes transaction cost modelling, slippage simulation, and comprehensive performance metrics including Sharpe ratio, maximum drawdown, and win rate analysis.",
+      "Developed a Python-based financial backtesting framework supporting modular trading strategies, moving average signals, and performance visualisation for systematic strategy evaluation.",
     tags: ["Backtesting", "Systematic Trading", "Python", "Modular Design"],
     year: "2025",
     journal: null,
@@ -59,10 +59,10 @@ const projects = [
     type: "MNRAS Paper",
     title: "Data-Driven Analysis of the Milky Way Bulge Formation",
     description:
-      "Investigated whether Terzan 5 is a primordial building block of the Milky Way bulge. Integrated heterogeneous stellar catalogues, standardised metallicity measurements across surveys, and compared full population distributions to evaluate competing formation scenarios. Applied rigorous statistical tests to distinguish genuine chemical differences from systematic biases.",
+      "Investigated whether Terzan 5 is a primordial building block of the Milky Way bulge. Integrated heterogeneous stellar catalogues, standardised metallicity measurements across surveys, and compared full population distributions to evaluate competing formation scenarios.",
     tags: ["Cross-source Data Harmonisation", "Bias Mitigation", "Distribution-level Statistics"],
     year: "2022",
-    journal: "Taylor et al. — MNRAS 2022",
+    journal: "Taylor et al. \u2014 MNRAS 2022",
     link: "https://academic.oup.com/mnras/article/513/3/3429/6565286",
     image: "/images/terzan.png",
   },
@@ -71,7 +71,7 @@ const projects = [
     type: "Web App",
     title: "Interactive Web Application for COVID-19 Data Analysis",
     description:
-      "Built an end-to-end data pipeline and interactive Streamlit dashboard for analysing evolving COVID-19 case data. Automated ingestion and cleaning of dynamic public datasets with rolling metrics and time-series aggregation. Features include regional filtering, trend decomposition, and exportable visualisations for epidemiological reporting.",
+      "Built an end-to-end data pipeline and interactive Streamlit dashboard for analysing evolving COVID-19 case data. Automated ingestion and cleaning of dynamic public datasets with rolling metrics and time-series aggregation.",
     tags: ["Data Pipeline", "Streamlit", "Time-series", "Visualisation"],
     year: "2020",
     journal: null,
@@ -86,9 +86,13 @@ const TOTAL = N * COPIES
 const MID_START = N // first index of center copy
 const GAP = 24
 
-/* ── Spring configs ───────────────────────────────────────── */
-const SNAP_SPRING = { type: "spring" as const, stiffness: 260, damping: 30, mass: 0.8 }
-const CARD_SPRING = { type: "spring" as const, stiffness: 300, damping: 28, mass: 0.6 }
+/* ── Spring: critically-damped, no overshoot ──────────────── */
+const SNAP_SPRING = {
+  type: "spring" as const,
+  stiffness: 320,
+  damping: 38,
+  mass: 1,
+}
 
 export function Research() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -96,7 +100,6 @@ export function Research() {
   const [visible, setVisible] = useState(false)
   const [cardW, setCardW] = useState(440)
   const [activeIndex, setActiveIndex] = useState(MID_START)
-  const [viewportWidth, setViewportWidth] = useState(1200)
 
   const x = useMotionValue(0)
   const isDragging = useRef(false)
@@ -107,9 +110,8 @@ export function Research() {
   useEffect(() => {
     const measure = () => {
       const vw = window.innerWidth
-      // Mobile: 68vw for better neighbor visibility; Desktop: max 440px
-      setCardW(vw < 768 ? vw * 0.68 : Math.min(440, vw * 0.38))
-      setViewportWidth(viewportRef.current?.offsetWidth ?? vw)
+      // Mobile: 75vw so neighbors are visible; Desktop: max 440px
+      setCardW(vw < 768 ? vw * 0.75 : Math.min(440, vw * 0.38))
     }
     measure()
     window.addEventListener("resize", measure)
@@ -131,16 +133,18 @@ export function Research() {
   /* ── Compute track x to center a given slide index ───────── */
   const centerX = useCallback(
     (idx: number) => {
-      const vw = viewportWidth
+      const vw =
+        viewportRef.current?.offsetWidth ??
+        (typeof window !== "undefined" ? window.innerWidth : 1200)
       return vw / 2 - idx * stride - cardW / 2
     },
-    [stride, cardW, viewportWidth],
+    [stride, cardW],
   )
 
   /* ── Ref to skip animation on silent recenter ─────────────── */
   const skipAnim = useRef(false)
 
-  /* ── Snap: smooth spring animation ───────────────────────── */
+  /* ── Snap: clean spring, guard against overlapping anims ─── */
   const snapTo = useCallback(
     (idx: number, instant = false) => {
       const target = centerX(idx)
@@ -173,7 +177,7 @@ export function Research() {
   useEffect(() => {
     snapTo(activeIndex, true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cardW, viewportWidth])
+  }, [cardW])
 
   /* ── When activeIndex changes: animate (unless silent jump) ─ */
   useEffect(() => {
@@ -191,30 +195,21 @@ export function Research() {
     setActiveIndex((prev) => prev + dir)
   }, [])
 
-  /* ── Drag end: determine which card to snap to ───────────── */
+  /* ── Drag end: max +-1 slide per gesture ─────────────────── */
   const handleDragEnd = useCallback(
     (_: unknown, info: { offset: { x: number }; velocity: { x: number } }) => {
       isDragging.current = false
-      
-      // Calculate which slide should be centered based on current x position
-      const currentX = x.get()
-      const centerOffset = viewportWidth / 2 - cardW / 2
-      const rawIndex = (centerOffset - currentX) / stride
-      
-      // Factor in velocity for natural feel
-      const velocityOffset = -info.velocity.x / stride * 0.3
-      const targetIndex = Math.round(rawIndex + velocityOffset)
-      
-      // Clamp to valid range and set
-      const clampedIndex = Math.max(0, Math.min(TOTAL - 1, targetIndex))
-      
-      if (clampedIndex !== activeIndex) {
-        setActiveIndex(clampedIndex)
+      const threshold = stride * 0.15
+      const velThresh = 200
+      if (info.offset.x < -threshold || info.velocity.x < -velThresh) {
+        go(1)
+      } else if (info.offset.x > threshold || info.velocity.x > velThresh) {
+        go(-1)
       } else {
         snapTo(activeIndex)
       }
     },
-    [stride, activeIndex, snapTo, x, viewportWidth, cardW],
+    [stride, go, snapTo, activeIndex],
   )
 
   /* ── Wheel: horizontal-only, +-1 per gesture ────────────── */
@@ -246,116 +241,6 @@ export function Research() {
     project: projects[i % N],
   }))
 
-  /* ── Card component with real-time position-based styling ── */
-  const Card = ({ slideIndex, project }: { slideIndex: number; project: typeof projects[0] }) => {
-    // Calculate distance from center based on x position in real-time
-    const cardCenterX = slideIndex * stride + cardW / 2
-    
-    const distanceFromCenter = useTransform(x, (xVal) => {
-      const viewportCenter = viewportWidth / 2
-      const cardPositionInViewport = cardCenterX + xVal
-      return Math.abs(cardPositionInViewport - viewportCenter) / stride
-    })
-    
-    const scale = useTransform(distanceFromCenter, [0, 1, 2, 3], [1, 0.82, 0.72, 0.65])
-    const opacity = useTransform(distanceFromCenter, [0, 0.5, 1, 2], [1, 0.7, 0.35, 0.12])
-    const cardZ = useTransform(distanceFromCenter, (d) => Math.round(10 - d))
-
-    const Wrapper = project.link ? "a" : "div"
-    const linkProps = project.link
-      ? {
-          href: project.link,
-          target: "_blank" as const,
-          rel: "noopener noreferrer",
-        }
-      : {}
-
-    return (
-      <motion.div
-        className="shrink-0"
-        style={{ width: cardW, zIndex: cardZ, scale, opacity }}
-        transition={CARD_SPRING}
-      >
-        <Wrapper
-          {...linkProps}
-          className="group flex h-full flex-col overflow-hidden rounded-3xl border border-border transition-colors duration-200 hover:border-primary/25"
-          style={{ backgroundColor: "#222222" }}
-          onClick={(e: React.MouseEvent) => {
-            if (isDragging.current) {
-              e.preventDefault()
-              return
-            }
-            // Calculate if this card is active based on current position
-            const currentX = x.get()
-            const cardPos = cardCenterX + currentX
-            const viewportCenter = viewportWidth / 2
-            const dist = Math.abs(cardPos - viewportCenter)
-            
-            if (dist > stride * 0.3) {
-              e.preventDefault()
-              setActiveIndex(slideIndex)
-            }
-          }}
-        >
-          {/* Image area */}
-          <div 
-            className={`relative flex aspect-[16/10] w-full items-center justify-center ${project.image ? "p-4 md:p-5" : ""} overflow-hidden`} 
-            style={{ backgroundColor: "#222222" }}
-          >
-            {project.image ? (
-              <img
-                src={project.image}
-                alt={`${project.title} visualization`}
-                className="h-full w-full rounded-xl object-contain"
-                crossOrigin="anonymous"
-              />
-            ) : (
-              <div className="flex flex-col items-center gap-2.5 text-foreground/25">
-                <div className="h-10 w-10 rounded-xl border border-foreground/10 bg-foreground/5" />
-                <span className="text-[11px] tracking-wide">
-                  {"[Project graphic placeholder]"}
-                </span>
-              </div>
-            )}
-            {project.link && (
-              <div className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-background/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                <ArrowUpRight className="h-3.5 w-3.5 text-foreground/60" />
-              </div>
-            )}
-          </div>
-
-          {/* Content */}
-          <div className="flex flex-1 flex-col p-5 md:p-6">
-            {/* Domain / Type / Year tags */}
-            <div className="flex flex-wrap items-center gap-1.5 text-[10px] uppercase tracking-wider text-foreground/50">
-              <span>{project.domain}</span>
-              <span className="text-foreground/30">{"\u2022"}</span>
-              <span>{project.type}</span>
-              <span className="text-foreground/30">{"\u2022"}</span>
-              <span>{project.year}</span>
-            </div>
-            <h3 className="mt-2.5 text-base font-semibold leading-snug tracking-tight text-white md:text-lg">
-              {project.title}
-            </h3>
-            {project.journal && (
-              <p className="mt-1 text-sm font-medium text-primary/80">
-                {project.journal}
-              </p>
-            )}
-            <p className="mt-2 text-sm leading-relaxed text-foreground/80">
-              {project.description}
-            </p>
-            <div className="mt-auto pt-4">
-              <p className="text-xs leading-relaxed text-foreground/65">
-                {project.tags.join(" \u2022 ")}
-              </p>
-            </div>
-          </div>
-        </Wrapper>
-      </motion.div>
-    )
-  }
-
   return (
     <section ref={sectionRef} id="research" className="relative py-24 md:py-32">
       <div className="absolute top-0 left-1/2 h-px w-1/2 -translate-x-1/2 bg-gradient-to-r from-transparent via-border to-transparent" />
@@ -384,16 +269,17 @@ export function Research() {
       {/* Carousel viewport */}
       <div
         ref={viewportRef}
-        className={`carousel-edge-fade relative mt-12 overflow-hidden transition-all duration-1000 ${
+        className={`carousel-edge-fade relative mt-12 overflow-x-visible overflow-y-hidden px-4 md:px-0 transition-all duration-1000 ${
           visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
         }`}
         style={{ transitionDelay: "200ms", touchAction: "pan-y pinch-zoom" }}
       >
         <motion.div
-          className="flex will-change-transform"
+          className="flex"
           style={{ x, gap: GAP, cursor: "grab" }}
           drag="x"
-          dragElastic={0.08}
+          dragConstraints={{ left: -stride, right: stride }}
+          dragElastic={0.12}
           dragMomentum={false}
           onDragStart={() => {
             isDragging.current = true
@@ -401,9 +287,104 @@ export function Research() {
           onDragEnd={handleDragEnd}
           whileDrag={{ cursor: "grabbing" }}
         >
-          {slides.map(({ slideIndex, project }) => (
-            <Card key={slideIndex} slideIndex={slideIndex} project={project} />
-          ))}
+          {slides.map(({ slideIndex, project }) => {
+            const dist = Math.abs(slideIndex - activeIndex)
+            const isActive = dist === 0
+            const scale = isActive ? 1 : dist === 1 ? 0.80 : 0.70
+            const opacity = isActive ? 1 : dist === 1 ? 0.30 : 0.10
+            const zIndex = 10 - dist
+
+            const Wrapper = project.link ? "a" : "div"
+            const linkProps = project.link
+              ? {
+                  href: project.link,
+                  target: "_blank" as const,
+                  rel: "noopener noreferrer",
+                }
+              : {}
+
+            return (
+              <motion.div
+                key={slideIndex}
+                className="shrink-0"
+                style={{ width: cardW, zIndex }}
+                animate={{ scale, opacity }}
+                transition={SNAP_SPRING}
+              >
+                <Wrapper
+                  {...linkProps}
+                  className={`group flex h-full flex-col overflow-hidden rounded-3xl border transition-colors duration-150 ${
+                    isActive
+                      ? "border-primary/25 shadow-lg shadow-primary/5"
+                      : "border-border"
+                  } ${project.link ? "cursor-pointer" : ""}`}
+                  style={{ backgroundColor: "#222222" }}
+                  onClick={(e: React.MouseEvent) => {
+                    if (isDragging.current) {
+                      e.preventDefault()
+                      return
+                    }
+                    if (!isActive) {
+                      e.preventDefault()
+                      setActiveIndex(slideIndex)
+                    }
+                  }}
+                >
+                  {/* Image area */}
+                  <div className={`relative flex aspect-[16/10] w-full items-center justify-center ${project.image ? "p-4 md:p-5" : ""} overflow-hidden`} style={{ backgroundColor: "#222222" }}>
+                    {project.image ? (
+                      <img
+                        src={project.image}
+                        alt={`${project.title} visualization`}
+                        className="h-full w-full rounded-xl object-contain"
+                        crossOrigin="anonymous"
+                      />
+                    ) : (
+                      <div className="flex flex-col items-center gap-2.5 text-foreground/25">
+                        <div className="h-10 w-10 rounded-xl border border-foreground/10 bg-foreground/5" />
+                        <span className="text-[11px] tracking-wide">
+                          {"[Project graphic placeholder]"}
+                        </span>
+                      </div>
+                    )}
+                    {project.link && (
+                      <div className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-background/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                        <ArrowUpRight className="h-3.5 w-3.5 text-foreground/60" />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex flex-1 flex-col p-5 md:p-6">
+                    {/* Domain / Type / Year tags */}
+                    <div className="flex flex-wrap items-center gap-1.5 text-[10px] uppercase tracking-wider text-foreground/50">
+                      <span>{project.domain}</span>
+                      <span className="text-foreground/30">{"\u2022"}</span>
+                      <span>{project.type}</span>
+                      <span className="text-foreground/30">{"\u2022"}</span>
+                      <span>{project.year}</span>
+                    </div>
+                    <h3 className="mt-2.5 text-base font-semibold leading-snug tracking-tight text-white md:text-lg">
+                      {project.title}
+                    </h3>
+                    {project.journal && (
+                      <p className="mt-1 text-sm font-medium text-primary/80">
+                        {project.journal}
+                      </p>
+                    )}
+                    <p className="mt-2 text-sm leading-relaxed text-foreground/80">
+                      {project.description}
+                    </p>
+                    <div className="mt-auto pt-4">
+                      <p className="text-xs leading-relaxed text-foreground/65">
+                        {project.tags.join(" \u2022 ")}
+                      </p>
+                    </div>
+                  </div>
+                </Wrapper>
+              </motion.div>
+            )
+          })}
         </motion.div>
       </div>
 
