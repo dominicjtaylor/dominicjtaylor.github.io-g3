@@ -8,19 +8,19 @@ const disciplines = [
     icon: Telescope,
     title: "Astronomy Research",
     description:
-      "Investigating the gas, dust, and chemical enrichment of galaxies across cosmic time. Published in MNRAS with expertise in multi-signal modelling and population analysis.",
+      "PhD research on galaxy evolution using ALMA and VLT/KMOS observations of submillimetre galaxies, with lead-author publications on molecular gas in SMGs.",
   },
   {
     icon: BarChart3,
     title: "Data Analytics",
     description:
-      "Building end-to-end data pipelines and ML tools for signal extraction. From autoencoder-based emission-line detection to production-ready interactive dashboards.",
+      "Building machine-learning models and automated pipelines to analyse large scientific datasets.",
   },
   {
     icon: TrendingUp,
     title: "Quantitative Finance",
     description:
-      "Designing systematic volatility forecasting models for FX markets. Rigorous backtesting, regime sensitivity analysis, and risk-aware performance evaluation.",
+      "Projects exploring FX volatility forecasting and systematic strategy backtesting using statistical modelling.",
   },
 ]
 
@@ -58,13 +58,9 @@ export function About() {
             Where curiosity meets precision.
           </h2>
           <p className="mt-6 max-w-3xl text-pretty text-lg leading-relaxed text-foreground/70">
-            I work at the intersection of three domains: the vast scales of
-            astrophysics, the complexity of financial markets, and the discipline
-            of rigorous data science. The common thread is extracting{" "}
-            <span className="highlight">weak signals</span> from noisy,
-            high-dimensional systems and treating{" "}
-            <span className="highlight">modelling assumptions</span> as testable
-            components.
+            My work focuses on extracting{" "}
+            <span className="highlight">signal from complex datasets</span>,
+            from galaxy evolution to financial time-series modelling.
           </p>
         </div>
 
