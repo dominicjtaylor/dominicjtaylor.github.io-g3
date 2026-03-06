@@ -82,12 +82,12 @@ const projects = [
 
 const N = projects.length
 
-/* ── Spring settings ──────────────────────────────────────── */
+/* ── Spring settings - responsive and smooth ──────────────── */
 const SNAP_SPRING = {
   type: "spring" as const,
-  stiffness: 80,
-  damping: 18,
-  mass: 1,
+  stiffness: 150,
+  damping: 22,
+  mass: 0.8,
 }
 
 export function Research() {
@@ -185,21 +185,27 @@ export function Research() {
     setActiveIndex((prev) => Math.max(0, Math.min(N - 1, prev + dir)))
   }, [])
 
-  /* ── Drag end: advance slide if threshold crossed ────────── */
+  /* ── Drag end: advance slide if any meaningful movement ──── */
   const handleDragEnd = useCallback(
     (_: unknown, info: { offset: { x: number }; velocity: { x: number } }) => {
       isDragging.current = false
-      const threshold = stride * 0.15
-      const velThresh = 80
-      if (info.offset.x < -threshold || info.velocity.x < -velThresh) {
+      // Very low thresholds - any intentional swipe should trigger
+      const offsetThreshold = 20 // Just 20px movement
+      const velocityThreshold = 30 // Very low velocity threshold
+      
+      const movedLeft = info.offset.x < -offsetThreshold || info.velocity.x < -velocityThreshold
+      const movedRight = info.offset.x > offsetThreshold || info.velocity.x > velocityThreshold
+      
+      if (movedLeft) {
         go(1)
-      } else if (info.offset.x > threshold || info.velocity.x > velThresh) {
+      } else if (movedRight) {
         go(-1)
       } else {
+        // Always snap back to current card
         snapTo(activeIndex)
       }
     },
-    [stride, go, snapTo, activeIndex],
+    [go, snapTo, activeIndex],
   )
 
   /* ── Wheel: horizontal-only, +-1 per gesture ────────────── */
@@ -276,8 +282,8 @@ export function Research() {
           className="flex"
           style={{ x, gap, cursor: "grab", touchAction: "pan-x" }}
           drag="x"
-          dragConstraints={{ left: -stride, right: stride }}
-          dragElastic={0.08}
+          dragConstraints={{ left: centerX(N - 1) - stride * 0.3, right: centerX(0) + stride * 0.3 }}
+          dragElastic={0.15}
           dragMomentum={false}
           onDragStart={() => {
             isDragging.current = true
