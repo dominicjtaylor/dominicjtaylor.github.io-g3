@@ -24,7 +24,7 @@ const projects = [
     type: "Machine Learning",
     title: "Galaxy Gas–Metal–Dust Cycles and ML Signal Extraction",
     description:
-      "Understanding the molecular gas content of high-redshift submillimetre galaxies is essential for studying extreme star formation in the early Universe. By combining ALMA observations with dust-based gas scaling relations, this project estimates gas fractions for observed SMGs and compares them with predictions from cosmological simulations, revealing important differences in the inferred gas content of these galaxies.",
+      "Understanding how gas, metals, and dust evolve together in galaxies is key to explaining the regulation of star formation and galaxy growth. This project combines observational measurements with machine learning techniques to analyse relationships between these components across galaxy datasets, revealing patterns that help constrain the physical processes governing galaxy evolution.",
     tags: ["Autoencoder", "Representation Learning", "Uncertainty Decomposition", "Bootstrap"],
     year: "In prep.",
     journal: "Taylor et al. — In preparation",
@@ -36,7 +36,7 @@ const projects = [
     type: "MNRAS Paper",
     title: "Modelling Molecular Gas Excitation in Distant Galaxies",
     description:
-      "Spectroscopic observations of distant galaxies often span multiple exposures and overlapping fields, making consistent analysis difficult. A Python pipeline was developed to automatically extract and analyse galaxy spectra from multiple KMOS observations, enabling efficient comparison of spectral features across datasets and streamlining the workflow for large observational samples.",
+      "Interpreting molecular line emission from galaxies requires understanding how gas excitation depends on the physical conditions of the interstellar medium. This project models molecular gas excitation using observational constraints to explore how different gas phases contribute to observed emission, providing insights into the structure and energetics of star-forming galaxies.",
     tags: ["Multi-variable Inference", "Sensitivity Analysis", "Calibration Risk"],
     year: "2025",
     journal: "Taylor et al. — MNRAS 2025",
@@ -48,7 +48,7 @@ const projects = [
     type: "Backtest Tool",
     title: "Systematic Trading Strategy Backtesting Framework",
     description:
-      "Large astronomical catalogues require efficient tools to analyse complex observational datasets. This project developed custom Python utilities for catalogue manipulation, spectral analysis, and scientific visualisation, improving the speed and reproducibility of analysis workflows when working with large astrophysical datasets.",
+      "Evaluating trading strategies requires robust testing against historical market data to distinguish genuine signals from noise. This project implements a Python-based backtesting framework for systematic trading strategies, enabling strategies to be tested across historical price series while analysing performance metrics such as returns, volatility, and risk-adjusted outcomes.",
     tags: ["Backtesting", "Systematic Trading", "Python", "Modular Design"],
     year: "2025",
     journal: null,
@@ -60,7 +60,7 @@ const projects = [
     type: "MNRAS Paper",
     title: "Data-Driven Analysis of the Milky Way Bulge Formation",
     description:
-      "Understanding how galaxy properties evolve requires analysing relationships between metallicity, gas content, and star-formation activity. Statistical analysis and observational scaling relations were applied to multi-wavelength galaxy datasets, revealing trends that help constrain the evolutionary pathways of high-redshift galaxies.",
+      "The formation history of the Milky Way's bulge remains an open question in galactic archaeology. This project analyses large stellar datasets using statistical methods to investigate structural and chemical patterns within the bulge population, providing constraints on competing scenarios for how the central regions of the Galaxy formed.",
     tags: ["Cross-source Data Harmonisation", "Bias Mitigation", "Distribution-level Statistics"],
     year: "2022",
     journal: "Taylor et al. — MNRAS 2022",
@@ -72,7 +72,7 @@ const projects = [
     type: "Web App",
     title: "Interactive Web Application for COVID-19 Data Analysis",
     description:
-      "Built an end-to-end data pipeline and interactive Streamlit dashboard for analysing evolving COVID-19 case data. Automated ingestion and cleaning of dynamic public datasets with rolling metrics and time-series aggregation. The tool provided real-time visualisations used by local public health discussions.",
+      "Public health data became a critical resource during the COVID-19 pandemic, but communicating trends clearly required accessible visual tools. This project developed an interactive web application that allows users to explore COVID-19 datasets through dynamic visualisations, enabling intuitive exploration of infection trends and regional patterns.",
     tags: ["Data Pipeline", "Streamlit", "Time-series", "Visualisation"],
     year: "2020",
     journal: null,
@@ -288,17 +288,17 @@ export function Research() {
             Featured Project
           </h3>
           <div className="mt-6 overflow-hidden rounded-3xl border border-white/10 bg-card">
-            {/* Image - top padding matches bottom padding of content (pb-6/pb-8) */}
-            <div className="relative aspect-[16/9] overflow-hidden bg-card pt-6 md:pt-8">
+            {/* Image - full width banner, natural height based on image aspect ratio */}
+            <div className="pt-6 md:pt-8 px-6 md:px-8">
               <img
                 src={featuredProject.image}
                 alt={`${featuredProject.title} visualization`}
-                className="h-full w-full object-contain"
+                className="w-full h-auto block"
                 crossOrigin="anonymous"
               />
             </div>
-            {/* Content - top padding is 2x the image top padding */}
-            <div className="px-6 pb-6 pt-12 md:px-8 md:pb-8 md:pt-16">
+            {/* Content - spacing below image */}
+            <div className="px-6 pb-6 pt-8 md:px-8 md:pb-8 md:pt-10">
               <h4 className="text-xl font-semibold tracking-tight text-white md:text-2xl">
                 {featuredProject.title}
               </h4>
