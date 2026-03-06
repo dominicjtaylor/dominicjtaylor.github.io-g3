@@ -7,7 +7,8 @@ import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react"
 /* ── Project data ───────────────────────────────────────────── */
 const projects = [
   {
-    category: "Quantitative Finance",
+    domain: "Quant Finance",
+    type: "ML Model",
     title: "Machine Learning Models for FX Volatility Forecasting",
     description:
       "Designed and evaluated ML models for forecasting FX volatility within a disciplined research pipeline. Built modular architecture for feature engineering, enforced strict in-sample/out-of-sample separation, and evaluated regime sensitivity with risk-adjusted metrics.",
@@ -18,7 +19,8 @@ const projects = [
     image: "/images/applied_model_dark.png",
   },
   {
-    category: "Astrophysics + ML",
+    domain: "Astrophysics",
+    type: "Machine Learning",
     title: "Galaxy Gas\u2013Metal\u2013Dust Cycles and ML Signal Extraction",
     description:
       "Analysed the gas\u2013metallicity\u2013dust cycle in massive star-forming galaxies at z~2. Designed and trained an autoencoder to detect weak emission-line structure in low signal-to-noise 1D spectra, integrating ML outputs into a physically interpretable inference pipeline.",
@@ -29,7 +31,8 @@ const projects = [
     image: "/images/mass_metallicity_dark.png",
   },
   {
-    category: "Astrophysics",
+    domain: "Astrophysics",
+    type: "MNRAS Paper",
     title: "Modelling Molecular Gas Excitation in Distant Galaxies",
     description:
       "Characterised molecular gas excitation in high-redshift submillimetre galaxies using multi-transition CO spectroscopy. Quantified intrinsic diversity beyond single-template models and evaluated how excitation assumptions propagate into downstream gas mass estimates.",
@@ -40,7 +43,8 @@ const projects = [
     image: "/images/radex_conditions_dark.png",
   },
   {
-    category: "Quantitative Finance",
+    domain: "Quant Finance",
+    type: "Backtest Tool",
     title: "Systematic Trading Strategy Backtesting Framework",
     description:
       "Developed a Python-based financial backtesting framework supporting modular trading strategies, moving average signals, and performance visualisation for systematic strategy evaluation.",
@@ -51,7 +55,8 @@ const projects = [
     image: "/images/backtest.png",
   },
   {
-    category: "Astrophysics",
+    domain: "Astrophysics",
+    type: "MNRAS Paper",
     title: "Data-Driven Analysis of the Milky Way Bulge Formation",
     description:
       "Investigated whether Terzan 5 is a primordial building block of the Milky Way bulge. Integrated heterogeneous stellar catalogues, standardised metallicity measurements across surveys, and compared full population distributions to evaluate competing formation scenarios.",
@@ -62,7 +67,8 @@ const projects = [
     image: "/images/terzan.png",
   },
   {
-    category: "Data Engineering",
+    domain: "Data Engineering",
+    type: "Web App",
     title: "Interactive Web Application for COVID-19 Data Analysis",
     description:
       "Built an end-to-end data pipeline and interactive Streamlit dashboard for analysing evolving COVID-19 case data. Automated ingestion and cleaning of dynamic public datasets with rolling metrics and time-series aggregation.",
@@ -104,7 +110,8 @@ export function Research() {
   useEffect(() => {
     const measure = () => {
       const vw = window.innerWidth
-      setCardW(vw < 768 ? vw * 0.85 : Math.min(440, vw * 0.38))
+      // Mobile: 75vw so neighbors are visible; Desktop: max 440px
+      setCardW(vw < 768 ? vw * 0.75 : Math.min(440, vw * 0.38))
     }
     measure()
     window.addEventListener("resize", measure)
@@ -262,7 +269,7 @@ export function Research() {
       {/* Carousel viewport */}
       <div
         ref={viewportRef}
-        className={`carousel-edge-fade relative mt-12 overflow-hidden transition-all duration-1000 ${
+        className={`carousel-edge-fade relative mt-12 overflow-x-visible overflow-y-hidden px-4 md:px-0 transition-all duration-1000 ${
           visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
         }`}
         style={{ transitionDelay: "200ms", touchAction: "pan-y pinch-zoom" }}
@@ -324,12 +331,12 @@ export function Research() {
                   }}
                 >
                   {/* Image area */}
-                  <div className={`relative flex aspect-[16/10] items-center justify-center ${project.image ? "p-5 md:p-6" : ""} overflow-hidden`} style={{ backgroundColor: "#222222" }}>
+                  <div className={`relative flex aspect-[16/10] w-full items-center justify-center ${project.image ? "p-4 md:p-5" : ""} overflow-hidden`} style={{ backgroundColor: "#222222" }}>
                     {project.image ? (
                       <img
                         src={project.image}
                         alt={`${project.title} visualization`}
-                        className="h-full w-full rounded-2xl object-cover"
+                        className="h-full w-full rounded-xl object-contain"
                         crossOrigin="anonymous"
                       />
                     ) : (
@@ -349,13 +356,13 @@ export function Research() {
 
                   {/* Content */}
                   <div className="flex flex-1 flex-col p-5 md:p-6">
-                    <div className="flex flex-wrap items-center gap-3">
-                      <span className="text-xs font-medium uppercase tracking-widest text-primary">
-                        {project.category}
-                      </span>
-                      <span className="text-xs text-foreground/60">
-                        {project.year}
-                      </span>
+                    {/* Domain / Type / Year tags */}
+                    <div className="flex flex-wrap items-center gap-1.5 text-[10px] uppercase tracking-wider text-foreground/50">
+                      <span>{project.domain}</span>
+                      <span className="text-foreground/30">{"\u2022"}</span>
+                      <span>{project.type}</span>
+                      <span className="text-foreground/30">{"\u2022"}</span>
+                      <span>{project.year}</span>
                     </div>
                     <h3 className="mt-2.5 text-base font-semibold leading-snug tracking-tight text-white md:text-lg">
                       {project.title}

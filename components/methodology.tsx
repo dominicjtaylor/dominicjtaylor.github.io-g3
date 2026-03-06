@@ -15,30 +15,35 @@ const principles = [
     title: "Signal from Noise",
     description:
       "Rigorous statistical and ML methods for extracting weak signals from noisy, high-dimensional systems.",
+    example: "Autoencoder model identifying weak spectral emission lines in noisy astronomical spectra.",
   },
   {
     icon: Settings2,
     title: "Testable Assumptions",
     description:
       "Modelling assumptions treated as testable components with explicit sensitivity analysis.",
+    example: "Modelling gas fractions in submillimetre galaxies while testing sensitivity to calibration assumptions.",
   },
   {
     icon: BarChart3,
     title: "Distribution-level Reasoning",
     description:
       "Full distribution comparisons with separate quantification of statistical and systematic uncertainty.",
+    example: "Probabilistic modelling of FX volatility rather than point predictions.",
   },
   {
     icon: GitCompare,
     title: "Reproducible Infrastructure",
     description:
       "Modular, version-controlled pipelines with strict in-sample/out-of-sample separation.",
+    example: "Automated Python pipelines for astronomical data analysis and financial strategy backtesting.",
   },
   {
     icon: Layers,
     title: "Cross-domain Transfer",
     description:
       "Inference techniques portable between astrophysics and financial time-series.",
+    example: "Applying inference methods honed on galaxy spectra to financial time-series modelling.",
   },
 ]
 
@@ -104,6 +109,11 @@ export function Methodology() {
               <p className="mt-3 text-base leading-relaxed text-foreground/70">
                 {item.description}
               </p>
+              {item.example && (
+                <p className="mt-2 text-sm italic leading-relaxed text-foreground/50">
+                  e.g. {item.example}
+                </p>
+              )}
             </div>
           ))}
         </div>
