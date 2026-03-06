@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react"
 import { motion, useMotionValue, animate, useMotionValueEvent } from "framer-motion"
-import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react"
+import { ArrowUpRight } from "lucide-react"
 
 /* ── Project data ───────────────────────────────────────────── */
 const projects = [
@@ -81,15 +81,12 @@ const projects = [
 ]
 
 const N = projects.length
-const COPIES = 3
-const TOTAL = N * COPIES
-const MID_START = N // first index of center copy
 
 /* ── Spring settings ──────────────────────────────────────── */
 const SNAP_SPRING = {
   type: "spring" as const,
-  stiffness: 100,
-  damping: 20,
+  stiffness: 80,
+  damping: 18,
   mass: 1,
 }
 
@@ -97,8 +94,8 @@ export function Research() {
   const sectionRef = useRef<HTMLElement>(null)
   const viewportRef = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
-  const [cardW, setCardW] = useState(440)
-  const [activeIndex, setActiveIndex] = useState(MID_START)
+  const [cardW, setCardW] = useState(520)
+  const [activeIndex, setActiveIndex] = useState(0)
   const [isMobile, setIsMobile] = useState(false)
 
   const x = useMotionValue(0)
@@ -106,8 +103,8 @@ export function Research() {
   const lastWheelTime = useRef(0)
   const isAnimating = useRef(false)
 
-  // Fixed gap: tighter on mobile, normal on desktop
-  const gap = isMobile ? 8 : 24
+  // Gap: much tighter on mobile to show more neighbor content
+  const gap = isMobile ? -8 : 28
   const stride = cardW + gap
 
   /* ── Measure card width ──────────────────────────────────── */
@@ -116,11 +113,11 @@ export function Research() {
       const vw = window.innerWidth
       const mobile = vw < 768
       setIsMobile(mobile)
-      // Mobile: 62vw cards; Desktop: wider cards (520px)
+      // Mobile: 72vw cards; Desktop: larger cards (560px max)
       if (mobile) {
-        setCardW(vw * 0.62)
+        setCardW(vw * 0.72)
       } else {
-        setCardW(Math.min(520, vw * 0.4))
+        setCardW(Math.min(560, vw * 0.42))
       }
     }
     measure()
@@ -138,24 +135,21 @@ export function Research() {
     return () => observer.disconnect()
   }, [])
 
-  /* ── Compute track x to center a given slide index ───────── */
+  /* ── Compute track x to position first card at left with padding ─ */
   const centerX = useCallback(
     (idx: number) => {
-      const vw =
-        viewportRef.current?.offsetWidth ??
-        (typeof window !== "undefined" ? window.innerWidth : 1200)
-      return vw / 2 - idx * stride - cardW / 2
+      const padding = isMobile ? 24 : 48
+      return padding - idx * stride
     },
-    [stride, cardW],
+    [stride, isMobile],
   )
-
-  /* ── Ref to skip animation on silent recenter ─────────────── */
-  const skipAnim = useRef(false)
 
   /* ── Snap: smooth spring animation ──────────────────────── */
   const snapTo = useCallback(
     (idx: number, instant = false) => {
-      const target = centerX(idx)
+      // Clamp to valid range
+      const clampedIdx = Math.max(0, Math.min(N - 1, idx))
+      const target = centerX(clampedIdx)
       if (instant) {
         x.jump(target)
         return
@@ -165,42 +159,28 @@ export function Research() {
         ...SNAP_SPRING,
         onComplete: () => {
           isAnimating.current = false
-
-          // After spring settles, silently recenter into middle copy
-          let newIdx = idx
-          if (idx < N) newIdx = idx + N
-          else if (idx >= N * 2) newIdx = idx - N
-          if (newIdx !== idx) {
-            skipAnim.current = true
-            x.jump(centerX(newIdx))
-            setActiveIndex(newIdx)
-          }
         },
       })
     },
     [centerX, x],
   )
 
-  /* ── On mount + resize: center immediately ───────────────── */
+  /* ── On mount + resize: position immediately ───────────────── */
   useEffect(() => {
     snapTo(activeIndex, true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cardW, isMobile])
 
-  /* ── When activeIndex changes: animate (unless silent jump) ─ */
+  /* ── When activeIndex changes: animate ─ */
   useEffect(() => {
-    if (skipAnim.current) {
-      skipAnim.current = false
-      return
-    }
     snapTo(activeIndex)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeIndex])
 
-  /* ── Navigate exactly +-1 slide ──────────────────────────── */
+  /* ── Navigate exactly +-1 slide (clamped) ────────────────── */
   const go = useCallback((dir: number) => {
     if (isAnimating.current) return
-    setActiveIndex((prev) => prev + dir)
+    setActiveIndex((prev) => Math.max(0, Math.min(N - 1, prev + dir)))
   }, [])
 
   /* ── Drag end: advance slide if threshold crossed ────────── */
@@ -208,7 +188,7 @@ export function Research() {
     (_: unknown, info: { offset: { x: number }; velocity: { x: number } }) => {
       isDragging.current = false
       const threshold = stride * 0.15
-      const velThresh = 100
+      const velThresh = 80
       if (info.offset.x < -threshold || info.velocity.x < -velThresh) {
         go(1)
       } else if (info.offset.x > threshold || info.velocity.x > velThresh) {
@@ -243,21 +223,19 @@ export function Research() {
     return () => el.removeEventListener("wheel", handler)
   }, [go])
 
-  /* ── Tripled slide list ──────────────────────────────────── */
-  const slides = Array.from({ length: TOTAL }, (_, i) => ({
-    slideIndex: i,
-    project: projects[i % N],
-  }))
-
   /* ── Track visual index from x position ─────────────────── */
   const [visualIndex, setVisualIndex] = useState(activeIndex)
   
   useMotionValueEvent(x, "change", (latestX) => {
-    const vw = viewportRef.current?.offsetWidth ?? window.innerWidth
-    const centerOffset = vw / 2 - cardW / 2
-    const idx = (centerOffset - latestX) / stride
+    const padding = isMobile ? 24 : 48
+    const idx = (padding - latestX) / stride
     setVisualIndex(idx)
   })
+
+  /* ── Pill slider width calculation ──────────────────────── */
+  const sliderTrackWidth = 120
+  const pillWidth = sliderTrackWidth / N
+  const pillOffset = (activeIndex / (N - 1)) * (sliderTrackWidth - pillWidth)
 
   return (
     <section ref={sectionRef} id="research" className="relative py-24 md:py-32">
@@ -294,10 +272,10 @@ export function Research() {
       >
         <motion.div
           className="flex"
-          style={{ x, gap, cursor: "grab", touchAction: "pan-x" }}
+          style={{ x, gap: Math.max(0, gap), cursor: "grab", touchAction: "pan-x" }}
           drag="x"
           dragConstraints={{ left: -stride, right: stride }}
-          dragElastic={0.1}
+          dragElastic={0.08}
           dragMomentum={false}
           onDragStart={() => {
             isDragging.current = true
@@ -305,14 +283,34 @@ export function Research() {
           onDragEnd={handleDragEnd}
           whileDrag={{ cursor: "grabbing" }}
         >
-          {slides.map(({ slideIndex, project }) => {
-            const dist = Math.abs(slideIndex - visualIndex)
-            const isActive = dist < 0.5
-            // All cards small (0.82), center scales to 1.0
-            const scale = dist < 0.5 ? 1 : 0.82
-            // Smooth opacity: center 1.0, neighbors fade
-            const opacity = dist < 0.5 ? 1 : Math.max(0.15, 0.5 - dist * 0.2)
-            const zIndex = Math.round(10 - dist)
+          {projects.map((project, slideIndex) => {
+            // Distance from active - use visualIndex for smooth interpolation
+            const dist = slideIndex - visualIndex
+            const absDist = Math.abs(dist)
+            const isActive = absDist < 0.5
+            
+            // Scale: center 1.0, others 0.88
+            const scale = absDist < 0.5 ? 1 : 0.88
+            
+            // Opacity: mobile has gradient (left brighter, right more faded)
+            // Desktop: center 1.0, neighbors faded
+            let opacity: number
+            if (isMobile) {
+              // Gradient fade: cards to the right are more faded
+              if (absDist < 0.5) {
+                opacity = 1
+              } else if (dist > 0) {
+                // Cards to the right (upcoming) - more faded
+                opacity = Math.max(0.25, 0.6 - dist * 0.15)
+              } else {
+                // Cards to the left (past) - less faded
+                opacity = Math.max(0.35, 0.7 - absDist * 0.15)
+              }
+            } else {
+              opacity = absDist < 0.5 ? 1 : Math.max(0.2, 0.5 - absDist * 0.15)
+            }
+            
+            const zIndex = Math.round(10 - absDist)
 
             const Wrapper = project.link ? "a" : "div"
             const linkProps = project.link
@@ -327,9 +325,13 @@ export function Research() {
               <motion.div
                 key={slideIndex}
                 className="shrink-0"
-                style={{ width: cardW, zIndex }}
+                style={{ 
+                  width: cardW, 
+                  zIndex,
+                  marginLeft: isMobile && slideIndex > 0 ? gap : 0,
+                }}
                 animate={{ scale, opacity }}
-                transition={{ type: "spring", stiffness: 120, damping: 18 }}
+                transition={{ type: "spring", stiffness: 100, damping: 16, mass: 0.9 }}
               >
                 <Wrapper
                   {...linkProps}
@@ -350,8 +352,8 @@ export function Research() {
                     }
                   }}
                 >
-                  {/* Image area */}
-                  <div className={`relative flex aspect-[16/10] w-full items-center justify-center ${project.image ? "p-4 md:p-5" : ""} overflow-hidden`} style={{ backgroundColor: "#222222" }}>
+                  {/* Image area - larger aspect ratio */}
+                  <div className={`relative flex aspect-[16/9] w-full items-center justify-center ${project.image ? "p-3 md:p-4" : ""} overflow-hidden`} style={{ backgroundColor: "#1a1a1a" }}>
                     {project.image ? (
                       <img
                         src={project.image}
@@ -408,26 +410,36 @@ export function Research() {
         </motion.div>
       </div>
 
-      {/* Grouped navigation buttons — centered below carousel */}
-      <div className="mt-6 flex items-center justify-center gap-3">
-        <button
-          type="button"
-          onClick={() => go(-1)}
-          aria-label="Previous project"
-          className="glass flex h-11 w-11 items-center justify-center rounded-full"
+      {/* Apple-style pill slider indicator */}
+      <div className="mt-8 flex items-center justify-center">
+        <div 
+          className="relative h-1.5 rounded-full bg-foreground/10"
+          style={{ width: sliderTrackWidth }}
         >
-          <span className="glass-edge" aria-hidden="true" />
-          <ChevronLeft className="relative z-10 h-5 w-5 text-white/80" />
-        </button>
-        <button
-          type="button"
-          onClick={() => go(1)}
-          aria-label="Next project"
-          className="glass flex h-11 w-11 items-center justify-center rounded-full"
-        >
-          <span className="glass-edge" aria-hidden="true" />
-          <ChevronRight className="relative z-10 h-5 w-5 text-white/80" />
-        </button>
+          <motion.div
+            className="absolute top-0 h-full rounded-full bg-primary/80"
+            style={{ width: pillWidth }}
+            animate={{ x: pillOffset }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          />
+        </div>
+      </div>
+
+      {/* Dot indicators for direct navigation */}
+      <div className="mt-4 flex items-center justify-center gap-2">
+        {projects.map((_, idx) => (
+          <button
+            key={idx}
+            type="button"
+            onClick={() => setActiveIndex(idx)}
+            aria-label={`Go to project ${idx + 1}`}
+            className={`h-2 w-2 rounded-full transition-all duration-300 ${
+              idx === activeIndex 
+                ? "bg-primary scale-125" 
+                : "bg-foreground/20 hover:bg-foreground/40"
+            }`}
+          />
+        ))}
       </div>
     </section>
   )
