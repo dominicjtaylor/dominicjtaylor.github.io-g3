@@ -7,8 +7,11 @@ import { ArrowUpRight } from "lucide-react"
 /* ── Featured Project data ──────────────────────────────────── */
 const featuredProject = {
   title: "Machine Learning Models for FX Volatility",
-  description:
-    "Forecasting foreign-exchange volatility is challenging because financial markets produce noisy and highly non-linear time-series signals. This project develops machine learning models using historical FX market data and engineered time-series features to learn predictive structure in volatility dynamics. The results show that statistical learning approaches can recover meaningful predictive signals when compared with baseline volatility estimators.",
+  description: [
+    "Financial markets generate highly noisy and non-linear time-series data, making reliable volatility forecasting difficult. This project investigates whether machine learning methods can extract predictive structure from foreign-exchange market behaviour using historical price data and engineered time-series features.",
+    "A modelling pipeline was developed in Python to construct features from historical FX data and train machine learning models designed to learn patterns in volatility dynamics. The approach evaluates model performance against baseline volatility estimators to determine whether statistical learning techniques can improve predictive accuracy in noisy financial environments.",
+    "The results demonstrate that data-driven models can identify meaningful predictive signals within FX time series, highlighting how machine learning methods can complement traditional statistical approaches in modelling complex financial systems.",
+  ],
   tags: ["Python", "Machine Learning", "Time-Series Modelling", "Financial Data"],
   link: "https://github.com/dominicjtaylor/fx-volatility-forecasting",
   image: "/images/applied_model_dark.png",
@@ -147,7 +150,7 @@ export function Research() {
     [stride, isMobile, viewportWidth],
   )
 
-  /* ── Snap: smooth spring animation ──────────────────────── */
+  /* ── Snap: smooth spring animation ─���────────────────────── */
   const snapTo = useCallback(
     (idx: number, instant = false) => {
       // Clamp to valid range
@@ -285,40 +288,42 @@ export function Research() {
             Featured Project
           </h3>
           <div className="mt-6 overflow-hidden rounded-3xl border border-white/10 bg-card">
-            <div className="grid md:grid-cols-2">
-              {/* Image */}
-              <div className="relative aspect-[16/10] md:aspect-auto overflow-hidden bg-card p-4 md:p-6">
-                <img
-                  src={featuredProject.image}
-                  alt={`${featuredProject.title} visualization`}
-                  className="h-full w-full rounded-xl object-contain"
-                  crossOrigin="anonymous"
-                />
-              </div>
-              {/* Content */}
-              <div className="flex flex-col justify-center p-6 md:p-8">
-                <h4 className="text-xl font-semibold tracking-tight text-white md:text-2xl">
-                  {featuredProject.title}
-                </h4>
-                <p className="mt-4 text-sm leading-relaxed text-foreground/80 text-justify md:text-base">
-                  {featuredProject.description}
-                </p>
-                <div className="mt-6 flex flex-wrap items-center gap-3">
-                  <a
-                    href={featuredProject.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-lg bg-primary/10 px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/20"
-                  >
-                    View on GitHub
-                    <ArrowUpRight className="h-4 w-4" />
-                  </a>
-                </div>
-                <div className="mt-4">
-                  <p className="text-xs leading-relaxed text-foreground/65">
-                    {featuredProject.tags.join(" \u2022 ")}
+            {/* Image - full width on top */}
+            <div className="relative aspect-[16/9] overflow-hidden bg-card p-4 md:p-6">
+              <img
+                src={featuredProject.image}
+                alt={`${featuredProject.title} visualization`}
+                className="h-full w-full rounded-xl object-contain"
+                crossOrigin="anonymous"
+              />
+            </div>
+            {/* Content - below image */}
+            <div className="p-6 md:p-8">
+              <h4 className="text-xl font-semibold tracking-tight text-white md:text-2xl">
+                {featuredProject.title}
+              </h4>
+              <div className="mt-4 space-y-4">
+                {featuredProject.description.map((para, idx) => (
+                  <p key={idx} className="text-sm leading-relaxed text-foreground/80 text-justify md:text-base">
+                    {para}
                   </p>
-                </div>
+                ))}
+              </div>
+              <div className="mt-6 flex flex-wrap items-center gap-3">
+                <a
+                  href={featuredProject.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-lg bg-primary/10 px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/20"
+                >
+                  View on GitHub
+                  <ArrowUpRight className="h-4 w-4" />
+                </a>
+              </div>
+              <div className="mt-4">
+                <p className="text-xs leading-relaxed text-foreground/65">
+                  {featuredProject.tags.join(" \u2022 ")}
+                </p>
               </div>
             </div>
           </div>
