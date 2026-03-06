@@ -289,7 +289,7 @@ export function Research() {
           </h3>
           <div className="mt-6 overflow-hidden rounded-3xl border border-white/10 bg-card">
             {/* Image - full width on top */}
-            <div className="relative aspect-[16/9] overflow-hidden bg-card p-4 md:p-6">
+            <div className="relative aspect-[16/9] overflow-hidden bg-card px-3 py-2 md:px-4 md:py-2">
               <img
                 src={featuredProject.image}
                 alt={`${featuredProject.title} visualization`}
