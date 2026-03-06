@@ -4,26 +4,24 @@ import { useEffect, useRef, useState, useCallback } from "react"
 import { motion, useMotionValue, animate, useMotionValueEvent } from "framer-motion"
 import { ArrowUpRight } from "lucide-react"
 
+/* ── Featured Project data ──────────────────────────────────── */
+const featuredProject = {
+  title: "Machine Learning Models for FX Volatility",
+  description:
+    "Forecasting foreign-exchange volatility is challenging because financial markets produce noisy and highly non-linear time-series signals. This project develops machine learning models using historical FX market data and engineered time-series features to learn predictive structure in volatility dynamics. The results show that statistical learning approaches can recover meaningful predictive signals when compared with baseline volatility estimators.",
+  tags: ["Python", "Machine Learning", "Time-Series Modelling", "Financial Data"],
+  link: "https://github.com/dominicjtaylor/fx-volatility-forecasting",
+  image: "/images/applied_model_dark.png",
+}
+
 /* ── Project data ───────────────────────────────────────────── */
 const projects = [
-  {
-    domain: "Quant Finance",
-    type: "ML Model",
-    title: "Machine Learning Models for FX Volatility Forecasting",
-    description:
-      "Designed and evaluated ML models for forecasting FX volatility within a disciplined research pipeline. Built modular architecture for feature engineering, enforced strict in-sample/out-of-sample separation, and evaluated regime sensitivity with risk-adjusted metrics. Models were trained on multi-year historical data and validated across different market regimes.",
-    tags: ["Time-series ML", "Backtesting", "Risk Evaluation", "Python"],
-    year: "2026",
-    journal: null,
-    link: "https://github.com/dominicjtaylor/fx-volatility-forecasting",
-    image: "/images/applied_model_dark.png",
-  },
   {
     domain: "Astrophysics",
     type: "Machine Learning",
     title: "Galaxy Gas–Metal–Dust Cycles and ML Signal Extraction",
     description:
-      "Analysed the gas–metallicity–dust cycle in massive star-forming galaxies at z~2. Designed and trained an autoencoder to detect weak emission-line structure in low signal-to-noise 1D spectra, integrating ML outputs into a physically interpretable inference pipeline. This approach enabled detection of signals previously hidden in the noise floor.",
+      "Understanding the molecular gas content of high-redshift submillimetre galaxies is essential for studying extreme star formation in the early Universe. By combining ALMA observations with dust-based gas scaling relations, this project estimates gas fractions for observed SMGs and compares them with predictions from cosmological simulations, revealing important differences in the inferred gas content of these galaxies.",
     tags: ["Autoencoder", "Representation Learning", "Uncertainty Decomposition", "Bootstrap"],
     year: "In prep.",
     journal: "Taylor et al. — In preparation",
@@ -35,7 +33,7 @@ const projects = [
     type: "MNRAS Paper",
     title: "Modelling Molecular Gas Excitation in Distant Galaxies",
     description:
-      "Characterised molecular gas excitation in high-redshift submillimetre galaxies using multi-transition CO spectroscopy. Quantified intrinsic diversity beyond single-template models and evaluated how excitation assumptions propagate into downstream gas mass estimates. Results inform calibration strategies for large galaxy surveys.",
+      "Spectroscopic observations of distant galaxies often span multiple exposures and overlapping fields, making consistent analysis difficult. A Python pipeline was developed to automatically extract and analyse galaxy spectra from multiple KMOS observations, enabling efficient comparison of spectral features across datasets and streamlining the workflow for large observational samples.",
     tags: ["Multi-variable Inference", "Sensitivity Analysis", "Calibration Risk"],
     year: "2025",
     journal: "Taylor et al. — MNRAS 2025",
@@ -47,7 +45,7 @@ const projects = [
     type: "Backtest Tool",
     title: "Systematic Trading Strategy Backtesting Framework",
     description:
-      "Developed a Python-based financial backtesting framework supporting modular trading strategies, moving average signals, and performance visualisation for systematic strategy evaluation. The framework enforces strict separation between signal generation and execution logic for realistic testing.",
+      "Large astronomical catalogues require efficient tools to analyse complex observational datasets. This project developed custom Python utilities for catalogue manipulation, spectral analysis, and scientific visualisation, improving the speed and reproducibility of analysis workflows when working with large astrophysical datasets.",
     tags: ["Backtesting", "Systematic Trading", "Python", "Modular Design"],
     year: "2025",
     journal: null,
@@ -59,7 +57,7 @@ const projects = [
     type: "MNRAS Paper",
     title: "Data-Driven Analysis of the Milky Way Bulge Formation",
     description:
-      "Investigated whether Terzan 5 is a primordial building block of the Milky Way bulge. Integrated heterogeneous stellar catalogues, standardised metallicity measurements across surveys, and compared full population distributions to evaluate competing formation scenarios. Published findings contributed to understanding of Galactic archaeology.",
+      "Understanding how galaxy properties evolve requires analysing relationships between metallicity, gas content, and star-formation activity. Statistical analysis and observational scaling relations were applied to multi-wavelength galaxy datasets, revealing trends that help constrain the evolutionary pathways of high-redshift galaxies.",
     tags: ["Cross-source Data Harmonisation", "Bias Mitigation", "Distribution-level Statistics"],
     year: "2022",
     journal: "Taylor et al. — MNRAS 2022",
@@ -275,6 +273,75 @@ export function Research() {
         </div>
       </div>
 
+      {/* Featured Project */}
+      <div className="mx-auto max-w-6xl px-6">
+        <div
+          className={`mt-16 transition-all duration-1000 ${
+            visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+          }`}
+          style={{ transitionDelay: "100ms" }}
+        >
+          <h3 className="text-lg font-semibold tracking-tight text-white md:text-xl">
+            Featured Project
+          </h3>
+          <div className="mt-6 overflow-hidden rounded-3xl border border-white/10 bg-card">
+            <div className="grid md:grid-cols-2">
+              {/* Image */}
+              <div className="relative aspect-[16/10] md:aspect-auto overflow-hidden bg-card p-4 md:p-6">
+                <img
+                  src={featuredProject.image}
+                  alt={`${featuredProject.title} visualization`}
+                  className="h-full w-full rounded-xl object-contain"
+                  crossOrigin="anonymous"
+                />
+              </div>
+              {/* Content */}
+              <div className="flex flex-col justify-center p-6 md:p-8">
+                <h4 className="text-xl font-semibold tracking-tight text-white md:text-2xl">
+                  {featuredProject.title}
+                </h4>
+                <p className="mt-4 text-sm leading-relaxed text-foreground/80 text-justify md:text-base">
+                  {featuredProject.description}
+                </p>
+                <div className="mt-6 flex flex-wrap items-center gap-3">
+                  <a
+                    href={featuredProject.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-lg bg-primary/10 px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/20"
+                  >
+                    View on GitHub
+                    <ArrowUpRight className="h-4 w-4" />
+                  </a>
+                </div>
+                <div className="mt-4">
+                  <p className="text-xs leading-relaxed text-foreground/65">
+                    {featuredProject.tags.join(" \u2022 ")}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Other Projects Header */}
+      <div className="mx-auto max-w-6xl px-6">
+        <div
+          className={`mt-20 transition-all duration-1000 ${
+            visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+          }`}
+          style={{ transitionDelay: "150ms" }}
+        >
+          <h3 className="text-lg font-semibold tracking-tight text-white md:text-xl">
+            Other Projects
+          </h3>
+          <p className="mt-2 max-w-2xl text-pretty text-base leading-relaxed text-foreground/60">
+            Additional projects exploring how complex data can reveal structure in physical and observational systems.
+          </p>
+        </div>
+      </div>
+
       {/* Carousel viewport */}
       <div
         ref={viewportRef}
@@ -444,19 +511,19 @@ export function Research() {
       </div>
 
       {/* Dot indicators for direct navigation */}
-      <div className={`mt-4 flex items-center justify-center ${isMobile ? "gap-4" : "gap-2"}`}>
+      <div className={`mt-4 flex items-center justify-center ${isMobile ? "gap-4" : "gap-3"}`}>
         {projects.map((_, idx) => (
           <button
             key={idx}
             type="button"
             onClick={() => setActiveIndex(idx)}
             aria-label={`Go to project ${idx + 1}`}
-            className={`rounded-full transition-all duration-300 ${
-              isMobile ? "h-3 w-3" : "h-2 w-2"
+            className={`rounded-full transition-all duration-500 ease-out ${
+              isMobile ? "h-3 w-3" : "h-2.5 w-2.5"
             } ${
               idx === activeIndex 
-                ? "bg-primary scale-125" 
-                : "bg-foreground/20 hover:bg-foreground/40"
+                ? "bg-primary scale-150 shadow-sm shadow-primary/50" 
+                : "bg-foreground/30 hover:bg-foreground/50"
             }`}
           />
         ))}
