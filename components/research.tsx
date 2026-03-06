@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState, useCallback } from "react"
-import { motion, useMotionValue, animate, useTransform } from "framer-motion"
+import { motion, useMotionValue, animate, useMotionValueEvent } from "framer-motion"
 import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react"
 
 /* ── Project data ───────────────────────────────────────────── */
@@ -85,11 +85,11 @@ const COPIES = 3
 const TOTAL = N * COPIES
 const MID_START = N // first index of center copy
 
-/* ── Spring settings - slower for smoother transitions ────── */
+/* ── Spring settings ──────────────────────────────────────── */
 const SNAP_SPRING = {
   type: "spring" as const,
-  stiffness: 120,
-  damping: 22,
+  stiffness: 100,
+  damping: 20,
   mass: 1,
 }
 
@@ -99,24 +99,28 @@ export function Research() {
   const [visible, setVisible] = useState(false)
   const [cardW, setCardW] = useState(440)
   const [activeIndex, setActiveIndex] = useState(MID_START)
+  const [isMobile, setIsMobile] = useState(false)
 
   const x = useMotionValue(0)
   const isDragging = useRef(false)
   const lastWheelTime = useRef(0)
   const isAnimating = useRef(false)
-  const [gap, setGap] = useState(24)
 
-  /* ── Measure card width and gap ──────────────────────────── */
+  // Fixed gap: tighter on mobile, normal on desktop
+  const gap = isMobile ? 8 : 24
+  const stride = cardW + gap
+
+  /* ── Measure card width ──────────────────────────────────── */
   useEffect(() => {
     const measure = () => {
       const vw = window.innerWidth
-      // Mobile: 65vw cards with -20px gap (overlap) to show neighbor content; Desktop: wider cards with normal gap
-      if (vw < 768) {
-        setCardW(vw * 0.65)
-        setGap(-16)
+      const mobile = vw < 768
+      setIsMobile(mobile)
+      // Mobile: 62vw cards; Desktop: wider cards (520px)
+      if (mobile) {
+        setCardW(vw * 0.62)
       } else {
         setCardW(Math.min(520, vw * 0.4))
-        setGap(24)
       }
     }
     measure()
@@ -133,8 +137,6 @@ export function Research() {
     if (sectionRef.current) observer.observe(sectionRef.current)
     return () => observer.disconnect()
   }, [])
-
-  const stride = cardW + gap
 
   /* ── Compute track x to center a given slide index ───────── */
   const centerX = useCallback(
@@ -183,7 +185,7 @@ export function Research() {
   useEffect(() => {
     snapTo(activeIndex, true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cardW, gap])
+  }, [cardW, isMobile])
 
   /* ── When activeIndex changes: animate (unless silent jump) ─ */
   useEffect(() => {
@@ -205,8 +207,8 @@ export function Research() {
   const handleDragEnd = useCallback(
     (_: unknown, info: { offset: { x: number }; velocity: { x: number } }) => {
       isDragging.current = false
-      const threshold = stride * 0.2
-      const velThresh = 150
+      const threshold = stride * 0.15
+      const velThresh = 100
       if (info.offset.x < -threshold || info.velocity.x < -velThresh) {
         go(1)
       } else if (info.offset.x > threshold || info.velocity.x > velThresh) {
@@ -247,12 +249,15 @@ export function Research() {
     project: projects[i % N],
   }))
 
-  /* ── Compute visual index from x position for smooth transitions ─ */
-  const computeVisualIndex = (xVal: number) => {
+  /* ── Track visual index from x position ─────────────────── */
+  const [visualIndex, setVisualIndex] = useState(activeIndex)
+  
+  useMotionValueEvent(x, "change", (latestX) => {
     const vw = viewportRef.current?.offsetWidth ?? window.innerWidth
     const centerOffset = vw / 2 - cardW / 2
-    return (centerOffset - xVal) / stride
-  }
+    const idx = (centerOffset - latestX) / stride
+    setVisualIndex(idx)
+  })
 
   return (
     <section ref={sectionRef} id="research" className="relative py-24 md:py-32">
@@ -291,8 +296,8 @@ export function Research() {
           className="flex"
           style={{ x, gap, cursor: "grab", touchAction: "pan-x" }}
           drag="x"
-          dragConstraints={{ left: -stride * 1.2, right: stride * 1.2 }}
-          dragElastic={0.08}
+          dragConstraints={{ left: -stride, right: stride }}
+          dragElastic={0.1}
           dragMomentum={false}
           onDragStart={() => {
             isDragging.current = true
@@ -301,118 +306,104 @@ export function Research() {
           whileDrag={{ cursor: "grabbing" }}
         >
           {slides.map(({ slideIndex, project }) => {
-            // Use motion value to compute distance dynamically during drag
-            const CardContent = () => {
-              const [localDist, setLocalDist] = useState(Math.abs(slideIndex - activeIndex))
-              
-              useEffect(() => {
-                const unsubscribe = x.on("change", (latestX) => {
-                  const visualIdx = computeVisualIndex(latestX)
-                  const newDist = Math.abs(slideIndex - visualIdx)
-                  setLocalDist(newDist)
-                })
-                return unsubscribe
-              }, [])
+            const dist = Math.abs(slideIndex - visualIndex)
+            const isActive = dist < 0.5
+            // All cards small (0.82), center scales to 1.0
+            const scale = dist < 0.5 ? 1 : 0.82
+            // Smooth opacity: center 1.0, neighbors fade
+            const opacity = dist < 0.5 ? 1 : Math.max(0.15, 0.5 - dist * 0.2)
+            const zIndex = Math.round(10 - dist)
 
-              const isActive = localDist < 0.5
-              // All cards start small (0.82), only center card scales up to 1.0
-              const scale = localDist < 0.5 ? 1 : 0.82
-              // Faster, more aggressive opacity falloff
-              const opacity = localDist < 0.5 ? 1 : localDist < 1.5 ? 0.35 : 0.15
-              const zIndex = Math.round(10 - localDist)
+            const Wrapper = project.link ? "a" : "div"
+            const linkProps = project.link
+              ? {
+                  href: project.link,
+                  target: "_blank" as const,
+                  rel: "noopener noreferrer",
+                }
+              : {}
 
-              const Wrapper = project.link ? "a" : "div"
-              const linkProps = project.link
-                ? {
-                    href: project.link,
-                    target: "_blank" as const,
-                    rel: "noopener noreferrer",
-                  }
-                : {}
-
-              return (
-                <motion.div
-                  className="shrink-0"
-                  style={{ width: cardW, zIndex }}
-                  animate={{ scale, opacity }}
-                  transition={{ type: "spring", stiffness: 150, damping: 20, mass: 0.8 }}
+            return (
+              <motion.div
+                key={slideIndex}
+                className="shrink-0"
+                style={{ width: cardW, zIndex }}
+                animate={{ scale, opacity }}
+                transition={{ type: "spring", stiffness: 120, damping: 18 }}
+              >
+                <Wrapper
+                  {...linkProps}
+                  className={`group flex h-full flex-col overflow-hidden rounded-3xl border transition-all duration-300 ${
+                    isActive
+                      ? "border-primary/30 shadow-lg shadow-primary/10"
+                      : "border-border/50"
+                  } ${project.link ? "cursor-pointer" : ""}`}
+                  style={{ backgroundColor: "#222222" }}
+                  onClick={(e: React.MouseEvent) => {
+                    if (isDragging.current) {
+                      e.preventDefault()
+                      return
+                    }
+                    if (!isActive) {
+                      e.preventDefault()
+                      setActiveIndex(slideIndex)
+                    }
+                  }}
                 >
-                  <Wrapper
-                    {...linkProps}
-                    className={`group flex h-full flex-col overflow-hidden rounded-3xl border transition-all duration-200 ${
-                      isActive
-                        ? "border-primary/30 shadow-lg shadow-primary/10"
-                        : "border-border/50"
-                    } ${project.link ? "cursor-pointer" : ""}`}
-                    style={{ backgroundColor: "#222222" }}
-                    onClick={(e: React.MouseEvent) => {
-                      if (isDragging.current) {
-                        e.preventDefault()
-                        return
-                      }
-                      if (!isActive) {
-                        e.preventDefault()
-                        setActiveIndex(slideIndex)
-                      }
-                    }}
-                  >
-                    {/* Image area */}
-                    <div className={`relative flex aspect-[16/10] w-full items-center justify-center ${project.image ? "p-4 md:p-5" : ""} overflow-hidden`} style={{ backgroundColor: "#222222" }}>
-                      {project.image ? (
-                        <img
-                          src={project.image}
-                          alt={`${project.title} visualization`}
-                          className="h-full w-full rounded-xl object-contain"
-                          crossOrigin="anonymous"
-                        />
-                      ) : (
-                        <div className="flex flex-col items-center gap-2.5 text-foreground/25">
-                          <div className="h-10 w-10 rounded-xl border border-foreground/10 bg-foreground/5" />
-                          <span className="text-[11px] tracking-wide">
-                            {"[Project graphic placeholder]"}
-                          </span>
-                        </div>
-                      )}
-                      {project.link && (
-                        <div className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-background/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                          <ArrowUpRight className="h-3.5 w-3.5 text-foreground/60" />
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Content */}
-                    <div className="flex flex-1 flex-col p-5 md:p-6">
-                      {/* Domain / Type / Year tags */}
-                      <div className="flex flex-wrap items-center gap-1.5 text-[10px] uppercase tracking-wider text-foreground/50">
-                        <span>{project.domain}</span>
-                        <span className="text-foreground/30">{"\u2022"}</span>
-                        <span>{project.type}</span>
-                        <span className="text-foreground/30">{"\u2022"}</span>
-                        <span>{project.year}</span>
+                  {/* Image area */}
+                  <div className={`relative flex aspect-[16/10] w-full items-center justify-center ${project.image ? "p-4 md:p-5" : ""} overflow-hidden`} style={{ backgroundColor: "#222222" }}>
+                    {project.image ? (
+                      <img
+                        src={project.image}
+                        alt={`${project.title} visualization`}
+                        className="h-full w-full rounded-xl object-contain"
+                        crossOrigin="anonymous"
+                      />
+                    ) : (
+                      <div className="flex flex-col items-center gap-2.5 text-foreground/25">
+                        <div className="h-10 w-10 rounded-xl border border-foreground/10 bg-foreground/5" />
+                        <span className="text-[11px] tracking-wide">
+                          {"[Project graphic placeholder]"}
+                        </span>
                       </div>
-                      <h3 className="mt-2.5 text-base font-semibold leading-snug tracking-tight text-white md:text-lg">
-                        {project.title}
-                      </h3>
-                      {project.journal && (
-                        <p className="mt-1 text-sm font-medium text-primary/80">
-                          {project.journal}
-                        </p>
-                      )}
-                      <p className="mt-2 text-sm leading-relaxed text-foreground/80">
-                        {project.description}
+                    )}
+                    {project.link && (
+                      <div className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-background/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                        <ArrowUpRight className="h-3.5 w-3.5 text-foreground/60" />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex flex-1 flex-col p-5 md:p-6">
+                    {/* Domain / Type / Year tags */}
+                    <div className="flex flex-wrap items-center gap-1.5 text-[10px] uppercase tracking-wider text-foreground/50">
+                      <span>{project.domain}</span>
+                      <span className="text-foreground/30">{"\u2022"}</span>
+                      <span>{project.type}</span>
+                      <span className="text-foreground/30">{"\u2022"}</span>
+                      <span>{project.year}</span>
+                    </div>
+                    <h3 className="mt-2.5 text-base font-semibold leading-snug tracking-tight text-white md:text-lg">
+                      {project.title}
+                    </h3>
+                    {project.journal && (
+                      <p className="mt-1 text-sm font-medium text-primary/80">
+                        {project.journal}
                       </p>
-                      <div className="mt-auto pt-4">
-                        <p className="text-xs leading-relaxed text-foreground/65">
-                          {project.tags.join(" \u2022 ")}
-                        </p>
-                      </div>
+                    )}
+                    <p className="mt-2 text-sm leading-relaxed text-foreground/80 text-justify">
+                      {project.description}
+                    </p>
+                    <div className="mt-auto pt-4">
+                      <p className="text-xs leading-relaxed text-foreground/65">
+                        {project.tags.join(" \u2022 ")}
+                      </p>
                     </div>
-                  </Wrapper>
-                </motion.div>
-              )
-            }
-
-            return <CardContent key={slideIndex} />
+                  </div>
+                </Wrapper>
+              </motion.div>
+            )
           })}
         </motion.div>
       </div>
