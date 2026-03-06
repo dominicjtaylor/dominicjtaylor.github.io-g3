@@ -196,9 +196,11 @@ export function Research() {
       const movedLeft = info.offset.x < -offsetThreshold || info.velocity.x < -velocityThreshold
       const movedRight = info.offset.x > offsetThreshold || info.velocity.x > velocityThreshold
       
-      if (movedLeft) {
+      if (movedLeft && activeIndex < N - 1) {
+        // Can only move right if not at the last card
         go(1)
-      } else if (movedRight) {
+      } else if (movedRight && activeIndex > 0) {
+        // Can only move left if not at the first card
         go(-1)
       } else {
         // Always snap back to current card
@@ -241,7 +243,7 @@ export function Research() {
   })
 
   /* ── Pill slider width calculation ──────────────────────── */
-  const sliderTrackWidth = 120
+  const sliderTrackWidth = isMobile ? 200 : 140
   const pillWidth = sliderTrackWidth / N
   const pillOffset = (activeIndex / (N - 1)) * (sliderTrackWidth - pillWidth)
 
@@ -282,7 +284,10 @@ export function Research() {
           className="flex"
           style={{ x, gap, cursor: "grab", touchAction: "pan-x" }}
           drag="x"
-          dragConstraints={{ left: centerX(N - 1) - stride * 0.3, right: centerX(0) + stride * 0.3 }}
+          dragConstraints={{ 
+            left: centerX(N - 1) - stride * 0.2, 
+            right: centerX(0) + (activeIndex === 0 ? 0 : stride * 0.2) 
+          }}
           dragElastic={0.15}
           dragMomentum={false}
           onDragStart={() => {
@@ -301,19 +306,23 @@ export function Research() {
             const scale = absDist < 0.5 ? 1 : 0.88
             
             // Opacity: active card always full opacity
+            // First card (index 0) never fades on mobile
             // Neighbors fade with gradient (left brighter, right more faded)
             let opacity: number
             if (absDist < 0.5) {
               // Active card - never fade
               opacity = 1
+            } else if (slideIndex === 0 && isMobile) {
+              // First card on mobile - never fade
+              opacity = 1
             } else if (isMobile) {
               // Mobile gradient: left neighbors brighter, right neighbors more faded
               if (dist > 0) {
                 // Cards to the right - gradient from brighter (left edge) to faded (right edge)
-                opacity = Math.max(0.3, 0.55 - dist * 0.1)
+                opacity = Math.max(0.35, 0.6 - dist * 0.12)
               } else {
-                // Cards to the left (previous) - slightly less faded
-                opacity = Math.max(0.4, 0.65 - absDist * 0.1)
+                // Cards to the left (previous) - less faded
+                opacity = Math.max(0.45, 0.7 - absDist * 0.12)
               }
             } else {
               // Desktop: neighbors uniformly faded
