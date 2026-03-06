@@ -4,26 +4,27 @@ import { useEffect, useRef, useState, useCallback } from "react"
 import { motion, useMotionValue, animate, useMotionValueEvent } from "framer-motion"
 import { ArrowUpRight } from "lucide-react"
 
+/* ── Featured Project data ──────────────────────────────────── */
+const featuredProject = {
+  title: "Machine Learning Models for FX Volatility",
+  description: [
+    "Financial markets generate highly noisy and non-linear time-series data, making reliable volatility forecasting difficult. This project investigates whether machine learning methods can extract predictive structure from foreign-exchange market behaviour using historical price data and engineered time-series features.",
+    "A modelling pipeline was developed in Python to construct features from historical FX data and train machine learning models designed to learn patterns in volatility dynamics. The approach evaluates model performance against baseline volatility estimators to determine whether statistical learning techniques can improve predictive accuracy in noisy financial environments.",
+    "The results demonstrate that data-driven models can identify meaningful predictive signals within FX time series, highlighting how machine learning methods can complement traditional statistical approaches in modelling complex financial systems.",
+  ],
+  tags: ["Python", "Machine Learning", "Time-Series Modelling", "Financial Data"],
+  link: "https://github.com/dominicjtaylor/fx-volatility-forecasting",
+  image: "/images/applied_model_dark.png",
+}
+
 /* ── Project data ───────────────────────────────────────────── */
 const projects = [
-  {
-    domain: "Quant Finance",
-    type: "ML Model",
-    title: "Machine Learning Models for FX Volatility Forecasting",
-    description:
-      "Designed and evaluated ML models for forecasting FX volatility within a disciplined research pipeline. Built modular architecture for feature engineering, enforced strict in-sample/out-of-sample separation, and evaluated regime sensitivity with risk-adjusted metrics. Models were trained on multi-year historical data and validated across different market regimes.",
-    tags: ["Time-series ML", "Backtesting", "Risk Evaluation", "Python"],
-    year: "2026",
-    journal: null,
-    link: "https://github.com/dominicjtaylor/fx-volatility-forecasting",
-    image: "/images/applied_model_dark.png",
-  },
   {
     domain: "Astrophysics",
     type: "Machine Learning",
     title: "Galaxy Gas–Metal–Dust Cycles and ML Signal Extraction",
     description:
-      "Analysed the gas–metallicity–dust cycle in massive star-forming galaxies at z~2. Designed and trained an autoencoder to detect weak emission-line structure in low signal-to-noise 1D spectra, integrating ML outputs into a physically interpretable inference pipeline. This approach enabled detection of signals previously hidden in the noise floor.",
+      "Understanding how gas, metals, and dust evolve together in galaxies is key to explaining the regulation of star formation and galaxy growth. This project combines observational measurements with machine learning techniques to analyse relationships between these components across galaxy datasets, revealing patterns that help constrain the physical processes governing galaxy evolution.",
     tags: ["Autoencoder", "Representation Learning", "Uncertainty Decomposition", "Bootstrap"],
     year: "In prep.",
     journal: "Taylor et al. — In preparation",
@@ -35,7 +36,7 @@ const projects = [
     type: "MNRAS Paper",
     title: "Modelling Molecular Gas Excitation in Distant Galaxies",
     description:
-      "Characterised molecular gas excitation in high-redshift submillimetre galaxies using multi-transition CO spectroscopy. Quantified intrinsic diversity beyond single-template models and evaluated how excitation assumptions propagate into downstream gas mass estimates. Results inform calibration strategies for large galaxy surveys.",
+      "Interpreting molecular line emission from galaxies requires understanding how gas excitation depends on the physical conditions of the interstellar medium. This project models molecular gas excitation using observational constraints to explore how different gas phases contribute to observed emission, providing insights into the structure and energetics of star-forming galaxies.",
     tags: ["Multi-variable Inference", "Sensitivity Analysis", "Calibration Risk"],
     year: "2025",
     journal: "Taylor et al. — MNRAS 2025",
@@ -47,7 +48,7 @@ const projects = [
     type: "Backtest Tool",
     title: "Systematic Trading Strategy Backtesting Framework",
     description:
-      "Developed a Python-based financial backtesting framework supporting modular trading strategies, moving average signals, and performance visualisation for systematic strategy evaluation. The framework enforces strict separation between signal generation and execution logic for realistic testing.",
+      "Evaluating trading strategies requires robust testing against historical market data to distinguish genuine signals from noise. This project implements a Python-based backtesting framework for systematic trading strategies, enabling strategies to be tested across historical price series while analysing performance metrics such as returns, volatility, and risk-adjusted outcomes.",
     tags: ["Backtesting", "Systematic Trading", "Python", "Modular Design"],
     year: "2025",
     journal: null,
@@ -59,7 +60,7 @@ const projects = [
     type: "MNRAS Paper",
     title: "Data-Driven Analysis of the Milky Way Bulge Formation",
     description:
-      "Investigated whether Terzan 5 is a primordial building block of the Milky Way bulge. Integrated heterogeneous stellar catalogues, standardised metallicity measurements across surveys, and compared full population distributions to evaluate competing formation scenarios. Published findings contributed to understanding of Galactic archaeology.",
+      "The formation history of the Milky Way's bulge remains an open question in galactic archaeology. This project analyses large stellar datasets using statistical methods to investigate structural and chemical patterns within the bulge population, providing constraints on competing scenarios for how the central regions of the Galaxy formed.",
     tags: ["Cross-source Data Harmonisation", "Bias Mitigation", "Distribution-level Statistics"],
     year: "2022",
     journal: "Taylor et al. — MNRAS 2022",
@@ -71,7 +72,7 @@ const projects = [
     type: "Web App",
     title: "Interactive Web Application for COVID-19 Data Analysis",
     description:
-      "Built an end-to-end data pipeline and interactive Streamlit dashboard for analysing evolving COVID-19 case data. Automated ingestion and cleaning of dynamic public datasets with rolling metrics and time-series aggregation. The tool provided real-time visualisations used by local public health discussions.",
+      "Public health data became a critical resource during the COVID-19 pandemic, but communicating trends clearly required accessible visual tools. This project developed an interactive web application that allows users to explore COVID-19 datasets through dynamic visualisations, enabling intuitive exploration of infection trends and regional patterns.",
     tags: ["Data Pipeline", "Streamlit", "Time-series", "Visualisation"],
     year: "2020",
     journal: null,
@@ -149,7 +150,7 @@ export function Research() {
     [stride, isMobile, viewportWidth],
   )
 
-  /* ── Snap: smooth spring animation ──────────────────────── */
+  /* ── Snap: smooth spring animation ─���────────────────────── */
   const snapTo = useCallback(
     (idx: number, instant = false) => {
       // Clamp to valid range
@@ -271,6 +272,77 @@ export function Research() {
             Spanning <span className="highlight">astrophysics</span> and{" "}
             <span className="highlight">quantitative finance</span>, each built
             on reproducible pipelines and rigorous evaluation.
+          </p>
+        </div>
+      </div>
+
+      {/* Featured Project */}
+      <div className="mx-auto max-w-6xl px-6">
+        <div
+          className={`mt-16 transition-all duration-1000 ${
+            visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+          }`}
+          style={{ transitionDelay: "100ms" }}
+        >
+          <h3 className="text-lg font-semibold tracking-tight text-white md:text-xl">
+            Featured Project
+          </h3>
+          <div className="mt-6 overflow-hidden rounded-3xl border border-white/10 bg-card">
+            {/* Image - full width banner, natural height based on image aspect ratio */}
+            <div className="pt-6 md:pt-8 px-6 md:px-8">
+              <img
+                src={featuredProject.image}
+                alt={`${featuredProject.title} visualization`}
+                className="w-full h-auto block"
+                crossOrigin="anonymous"
+              />
+            </div>
+            {/* Content - spacing below image */}
+            <div className="px-6 pb-6 pt-8 md:px-8 md:pb-8 md:pt-10">
+              <h4 className="text-xl font-semibold tracking-tight text-white md:text-2xl">
+                {featuredProject.title}
+              </h4>
+              <div className="mt-4 space-y-4">
+                {featuredProject.description.map((para, idx) => (
+                  <p key={idx} className="text-sm leading-relaxed text-foreground/80 text-justify md:text-base">
+                    {para}
+                  </p>
+                ))}
+              </div>
+              <div className="mt-6 flex flex-wrap items-center gap-3">
+                <a
+                  href={featuredProject.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-lg bg-primary/10 px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/20"
+                >
+                  View on GitHub
+                  <ArrowUpRight className="h-4 w-4" />
+                </a>
+              </div>
+              <div className="mt-4">
+                <p className="text-xs leading-relaxed text-foreground/65">
+                  {featuredProject.tags.join(" \u2022 ")}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Other Projects Header */}
+      <div className="mx-auto max-w-6xl px-6">
+        <div
+          className={`mt-20 transition-all duration-1000 ${
+            visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+          }`}
+          style={{ transitionDelay: "150ms" }}
+        >
+          <h3 className="text-lg font-semibold tracking-tight text-white md:text-xl">
+            Other Projects
+          </h3>
+          <p className="mt-2 max-w-2xl text-pretty text-base leading-relaxed text-foreground/60">
+            Additional projects exploring how complex data can reveal structure in physical and observational systems.
           </p>
         </div>
       </div>
@@ -444,19 +516,19 @@ export function Research() {
       </div>
 
       {/* Dot indicators for direct navigation */}
-      <div className={`mt-4 flex items-center justify-center ${isMobile ? "gap-4" : "gap-2"}`}>
+      <div className={`mt-4 flex items-center justify-center ${isMobile ? "gap-4" : "gap-3"}`}>
         {projects.map((_, idx) => (
           <button
             key={idx}
             type="button"
             onClick={() => setActiveIndex(idx)}
             aria-label={`Go to project ${idx + 1}`}
-            className={`rounded-full transition-all duration-300 ${
-              isMobile ? "h-3 w-3" : "h-2 w-2"
+            className={`rounded-full transition-all duration-500 ease-out ${
+              isMobile ? "h-3 w-3" : "h-2.5 w-2.5"
             } ${
               idx === activeIndex 
-                ? "bg-primary scale-125" 
-                : "bg-foreground/20 hover:bg-foreground/40"
+                ? "bg-primary scale-150 shadow-sm shadow-primary/50" 
+                : "bg-foreground/30 hover:bg-foreground/50"
             }`}
           />
         ))}
