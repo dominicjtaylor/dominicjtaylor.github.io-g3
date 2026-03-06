@@ -97,6 +97,7 @@ export function Research() {
   const [cardW, setCardW] = useState(520)
   const [activeIndex, setActiveIndex] = useState(0)
   const [isMobile, setIsMobile] = useState(false)
+  const [viewportWidth, setViewportWidth] = useState(1200)
 
   const x = useMotionValue(0)
   const isDragging = useRef(false)
@@ -107,12 +108,13 @@ export function Research() {
   const gap = isMobile ? 12 : 32
   const stride = cardW + gap
 
-  /* ── Measure card width ──────────────────────────────────── */
+  /* ── Measure card width and viewport ─────────────────────── */
   useEffect(() => {
     const measure = () => {
       const vw = window.innerWidth
       const mobile = vw < 768
       setIsMobile(mobile)
+      setViewportWidth(vw)
       // Mobile: 78vw cards; Desktop: larger cards (620px max)
       if (mobile) {
         setCardW(vw * 0.78)
@@ -140,10 +142,10 @@ export function Research() {
     (idx: number) => {
       // Use same padding as section titles (px-6 = 24px, max-w-6xl centered)
       // On mobile: 24px left padding; Desktop: calc to align with "Selected projects"
-      const padding = isMobile ? 24 : Math.max(24, (window.innerWidth - 1152) / 2 + 24)
+      const padding = isMobile ? 24 : Math.max(24, (viewportWidth - 1152) / 2 + 24)
       return padding - idx * stride
     },
-    [stride, isMobile],
+    [stride, isMobile, viewportWidth],
   )
 
   /* ── Snap: smooth spring animation ──────────────────────── */
