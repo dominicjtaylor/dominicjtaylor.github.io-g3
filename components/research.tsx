@@ -84,14 +84,13 @@ const N = projects.length
 const COPIES = 3
 const TOTAL = N * COPIES
 const MID_START = N // first index of center copy
-const GAP = 20
 
-/* ── Spring settings ──────────────────────────────────────── */
+/* ── Spring settings - slower for smoother transitions ────── */
 const SNAP_SPRING = {
   type: "spring" as const,
-  stiffness: 400,
-  damping: 40,
-  mass: 0.8,
+  stiffness: 200,
+  damping: 30,
+  mass: 1,
 }
 
 export function Research() {
@@ -105,13 +104,20 @@ export function Research() {
   const isDragging = useRef(false)
   const lastWheelTime = useRef(0)
   const isAnimating = useRef(false)
+  const [gap, setGap] = useState(24)
 
-  /* ── Measure card width ──────────────────────────────────── */
+  /* ── Measure card width and gap ──────────────────────────── */
   useEffect(() => {
     const measure = () => {
       const vw = window.innerWidth
-      // Mobile: 68vw to show neighbor edges clearly; Desktop: max 420px
-      setCardW(vw < 768 ? vw * 0.68 : Math.min(420, vw * 0.36))
+      // Mobile: 68vw cards with 12px gap; Desktop: wider cards (520px) with 24px gap
+      if (vw < 768) {
+        setCardW(vw * 0.68)
+        setGap(12)
+      } else {
+        setCardW(Math.min(520, vw * 0.4))
+        setGap(24)
+      }
     }
     measure()
     window.addEventListener("resize", measure)
@@ -128,7 +134,7 @@ export function Research() {
     return () => observer.disconnect()
   }, [])
 
-  const stride = cardW + GAP
+  const stride = cardW + gap
 
   /* ── Compute track x to center a given slide index ───────── */
   const centerX = useCallback(
@@ -177,7 +183,7 @@ export function Research() {
   useEffect(() => {
     snapTo(activeIndex, true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cardW])
+  }, [cardW, gap])
 
   /* ── When activeIndex changes: animate (unless silent jump) ─ */
   useEffect(() => {
@@ -283,7 +289,7 @@ export function Research() {
       >
         <motion.div
           className="flex"
-          style={{ x, gap: GAP, cursor: "grab", touchAction: "pan-x" }}
+          style={{ x, gap, cursor: "grab", touchAction: "pan-x" }}
           drag="x"
           dragConstraints={{ left: -stride * 1.2, right: stride * 1.2 }}
           dragElastic={0.08}
@@ -327,7 +333,7 @@ export function Research() {
                   className="shrink-0"
                   style={{ width: cardW, zIndex }}
                   animate={{ scale, opacity }}
-                  transition={{ type: "tween", duration: 0.15, ease: "easeOut" }}
+                  transition={{ type: "spring", stiffness: 200, damping: 25 }}
                 >
                   <Wrapper
                     {...linkProps}
