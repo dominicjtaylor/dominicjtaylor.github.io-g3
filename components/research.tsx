@@ -142,6 +142,7 @@ export function Research() {
     (idx: number) => {
       // Use same padding as section titles (px-6 = 24px, max-w-6xl centered)
       // On mobile: 24px left padding; Desktop: calc to align with "Selected projects"
+      // Use viewportWidth state (never access window directly in callback)
       const padding = isMobile ? 24 : Math.max(24, (viewportWidth - 1152) / 2 + 24)
       return padding - idx * stride
     },
