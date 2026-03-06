@@ -103,8 +103,8 @@ export function Research() {
   const lastWheelTime = useRef(0)
   const isAnimating = useRef(false)
 
-  // Gap: much tighter on mobile to show more neighbor content
-  const gap = isMobile ? -8 : 28
+  // Gap: tighter on mobile, normal on desktop
+  const gap = isMobile ? 12 : 32
   const stride = cardW + gap
 
   /* ── Measure card width ──────────────────────────────────── */
@@ -113,11 +113,11 @@ export function Research() {
       const vw = window.innerWidth
       const mobile = vw < 768
       setIsMobile(mobile)
-      // Mobile: 72vw cards; Desktop: larger cards (560px max)
+      // Mobile: 78vw cards; Desktop: larger cards (620px max)
       if (mobile) {
-        setCardW(vw * 0.72)
+        setCardW(vw * 0.78)
       } else {
-        setCardW(Math.min(560, vw * 0.42))
+        setCardW(Math.min(620, vw * 0.48))
       }
     }
     measure()
@@ -135,10 +135,12 @@ export function Research() {
     return () => observer.disconnect()
   }, [])
 
-  /* ── Compute track x to position first card at left with padding ─ */
+  /* ── Compute track x to align active card with section padding ─ */
   const centerX = useCallback(
     (idx: number) => {
-      const padding = isMobile ? 24 : 48
+      // Use same padding as section titles (px-6 = 24px, max-w-6xl centered)
+      // On mobile: 24px left padding; Desktop: calc to align with "Selected projects"
+      const padding = isMobile ? 24 : Math.max(24, (window.innerWidth - 1152) / 2 + 24)
       return padding - idx * stride
     },
     [stride, isMobile],
@@ -272,7 +274,7 @@ export function Research() {
       >
         <motion.div
           className="flex"
-          style={{ x, gap: Math.max(0, gap), cursor: "grab", touchAction: "pan-x" }}
+          style={{ x, gap, cursor: "grab", touchAction: "pan-x" }}
           drag="x"
           dragConstraints={{ left: -stride, right: stride }}
           dragElastic={0.08}
@@ -292,22 +294,24 @@ export function Research() {
             // Scale: center 1.0, others 0.88
             const scale = absDist < 0.5 ? 1 : 0.88
             
-            // Opacity: mobile has gradient (left brighter, right more faded)
-            // Desktop: center 1.0, neighbors faded
+            // Opacity: active card always full opacity
+            // Neighbors fade with gradient (left brighter, right more faded)
             let opacity: number
-            if (isMobile) {
-              // Gradient fade: cards to the right are more faded
-              if (absDist < 0.5) {
-                opacity = 1
-              } else if (dist > 0) {
-                // Cards to the right (upcoming) - more faded
-                opacity = Math.max(0.25, 0.6 - dist * 0.15)
+            if (absDist < 0.5) {
+              // Active card - never fade
+              opacity = 1
+            } else if (isMobile) {
+              // Mobile gradient: left neighbors brighter, right neighbors more faded
+              if (dist > 0) {
+                // Cards to the right - gradient from brighter (left edge) to faded (right edge)
+                opacity = Math.max(0.3, 0.55 - dist * 0.1)
               } else {
-                // Cards to the left (past) - less faded
-                opacity = Math.max(0.35, 0.7 - absDist * 0.15)
+                // Cards to the left (previous) - slightly less faded
+                opacity = Math.max(0.4, 0.65 - absDist * 0.1)
               }
             } else {
-              opacity = absDist < 0.5 ? 1 : Math.max(0.2, 0.5 - absDist * 0.15)
+              // Desktop: neighbors uniformly faded
+              opacity = Math.max(0.25, 0.5 - absDist * 0.1)
             }
             
             const zIndex = Math.round(10 - absDist)
@@ -328,17 +332,14 @@ export function Research() {
                 style={{ 
                   width: cardW, 
                   zIndex,
-                  marginLeft: isMobile && slideIndex > 0 ? gap : 0,
                 }}
                 animate={{ scale, opacity }}
                 transition={{ type: "spring", stiffness: 100, damping: 16, mass: 0.9 }}
               >
                 <Wrapper
                   {...linkProps}
-                  className={`group flex h-full flex-col overflow-hidden rounded-3xl border transition-all duration-300 ${
-                    isActive
-                      ? "border-primary/30 shadow-lg shadow-primary/10"
-                      : "border-border/50"
+                  className={`group flex h-full flex-col overflow-hidden rounded-3xl border border-white/10 transition-all duration-300 ${
+                    isActive ? "shadow-lg shadow-black/20" : ""
                   } ${project.link ? "cursor-pointer" : ""}`}
                   style={{ backgroundColor: "#222222" }}
                   onClick={(e: React.MouseEvent) => {
@@ -352,8 +353,8 @@ export function Research() {
                     }
                   }}
                 >
-                  {/* Image area - larger aspect ratio */}
-                  <div className={`relative flex aspect-[16/9] w-full items-center justify-center ${project.image ? "p-3 md:p-4" : ""} overflow-hidden`} style={{ backgroundColor: "#1a1a1a" }}>
+                  {/* Image area - same background as card */}
+                  <div className={`relative flex aspect-[16/9] w-full items-center justify-center ${project.image ? "p-4 md:p-5" : ""} overflow-hidden`} style={{ backgroundColor: "#222222" }}>
                     {project.image ? (
                       <img
                         src={project.image}
