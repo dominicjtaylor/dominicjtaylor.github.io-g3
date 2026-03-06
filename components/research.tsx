@@ -189,21 +189,21 @@ export function Research() {
   const handleDragEnd = useCallback(
     (_: unknown, info: { offset: { x: number }; velocity: { x: number } }) => {
       isDragging.current = false
-      // Very low thresholds - any intentional swipe should trigger
-      const offsetThreshold = 20 // Just 20px movement
-      const velocityThreshold = 30 // Very low velocity threshold
+      // Ultra-low thresholds - even small swipes should trigger
+      const offsetThreshold = 10 // Just 10px movement
+      const velocityThreshold = 15 // Very low velocity threshold
       
       const movedLeft = info.offset.x < -offsetThreshold || info.velocity.x < -velocityThreshold
       const movedRight = info.offset.x > offsetThreshold || info.velocity.x > velocityThreshold
       
       if (movedLeft && activeIndex < N - 1) {
-        // Can only move right if not at the last card
+        // Move to next card
         go(1)
       } else if (movedRight && activeIndex > 0) {
-        // Can only move left if not at the first card
+        // Move to previous card - always works with small swipes
         go(-1)
       } else {
-        // Always snap back to current card
+        // Snap back to current card
         snapTo(activeIndex)
       }
     },
@@ -275,7 +275,7 @@ export function Research() {
       {/* Carousel viewport */}
       <div
         ref={viewportRef}
-        className={`carousel-edge-fade relative mt-12 overflow-hidden transition-all duration-1000 ${
+        className={`relative mt-12 overflow-hidden transition-all duration-1000 ${
           visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
         }`}
         style={{ transitionDelay: "200ms" }}
@@ -442,14 +442,16 @@ export function Research() {
       </div>
 
       {/* Dot indicators for direct navigation */}
-      <div className="mt-4 flex items-center justify-center gap-2">
+      <div className={`mt-4 flex items-center justify-center ${isMobile ? "gap-4" : "gap-2"}`}>
         {projects.map((_, idx) => (
           <button
             key={idx}
             type="button"
             onClick={() => setActiveIndex(idx)}
             aria-label={`Go to project ${idx + 1}`}
-            className={`h-2 w-2 rounded-full transition-all duration-300 ${
+            className={`rounded-full transition-all duration-300 ${
+              isMobile ? "h-3 w-3" : "h-2 w-2"
+            } ${
               idx === activeIndex 
                 ? "bg-primary scale-125" 
                 : "bg-foreground/20 hover:bg-foreground/40"
