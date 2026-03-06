@@ -288,17 +288,17 @@ export function Research() {
             Featured Project
           </h3>
           <div className="mt-6 overflow-hidden rounded-3xl border border-white/10 bg-card">
-            {/* Image - full width on top, no vertical padding */}
-            <div className="relative aspect-[16/9] overflow-hidden bg-card">
+            {/* Image - top padding matches bottom padding of content (pb-6/pb-8) */}
+            <div className="relative aspect-[16/9] overflow-hidden bg-card pt-6 md:pt-8">
               <img
                 src={featuredProject.image}
                 alt={`${featuredProject.title} visualization`}
-                className="h-full w-full rounded-xl object-contain"
+                className="h-full w-full object-contain"
                 crossOrigin="anonymous"
               />
             </div>
-            {/* Content - below image */}
-            <div className="p-6 md:p-8">
+            {/* Content - top padding is 2x the image top padding */}
+            <div className="px-6 pb-6 pt-12 md:px-8 md:pb-8 md:pt-16">
               <h4 className="text-xl font-semibold tracking-tight text-white md:text-2xl">
                 {featuredProject.title}
               </h4>
