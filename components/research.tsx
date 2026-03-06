@@ -353,10 +353,9 @@ export function Research() {
               >
                 <Wrapper
                   {...linkProps}
-                  className={`group flex h-full flex-col overflow-hidden rounded-3xl border border-white/10 transition-all duration-300 ${
+                  className={`group flex h-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-card transition-all duration-300 ${
                     isActive ? "shadow-lg shadow-black/20" : ""
                   } ${project.link ? "cursor-pointer" : ""}`}
-                  style={{ backgroundColor: "#222222" }}
                   onClick={(e: React.MouseEvent) => {
                     if (isDragging.current) {
                       e.preventDefault()
@@ -369,7 +368,7 @@ export function Research() {
                   }}
                 >
                   {/* Image area - same background as card */}
-                  <div className={`relative flex aspect-[16/9] w-full items-center justify-center ${project.image ? "p-4 md:p-5" : ""} overflow-hidden`} style={{ backgroundColor: "#222222" }}>
+                  <div className={`relative flex aspect-[16/9] w-full items-center justify-center ${project.image ? "p-4 md:p-5" : ""} overflow-hidden bg-card`}>
                     {project.image ? (
                       <img
                         src={project.image}
